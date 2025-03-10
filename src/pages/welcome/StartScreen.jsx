@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from "react";
-import { View } from 'react-native';
+import React, { useEffect } from 'react';
+import { View,StyleSheet } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -8,9 +8,9 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import AdvantagesView from './ui/AdvantagesView';
-import DescriptionSection from './ui/DescriptionSection';
-import LogoSection from './ui/LogoSection';
+import AdvantagesView from '../welcome/ui/AdvantagesView';
+import DescriptionSection from '../welcome/ui/DescriptionSection';
+import LogoSection from '../welcome/ui/LogoSection';
 import { COLORS, SPACING, ANIMATION } from '../../core/styles/theme';
 import AnimatedView from '../../shared/ui/animation/AnimatedView';
 import Container from '../../shared/ui/layout/Container';
@@ -20,11 +20,12 @@ import Typo from '../../shared/ui/typo';
 
 import Button from '~/shared/ui/button';
 import ScreenTransition from "~/shared/ui/layout/ScreenTransition";
+import StartInfo from "~/pages/welcome/ui/StartInfo";
 
 const FADE_IN_DURATION = ANIMATION.medium; // 300мс для плавного появления
 const STAGGER_DELAY = ANIMATION.fast; // 200мс для последовательной анимации элементов
 
-const WelcomeScreen = () => {
+const StartScreen = () => {
   const navigation = useNavigation();
   const logoScale = useSharedValue(1);
 
@@ -33,6 +34,7 @@ const WelcomeScreen = () => {
       transform: [{ scale: logoScale.value }],
     };
   });
+
   useEffect(() => {
     // Функция для создания пульсирующей анимации
     const pulseAnimation = () => {
@@ -58,32 +60,48 @@ const WelcomeScreen = () => {
     return () => clearInterval(interval);
   }, [logoScale]);
 
-  const [exiting, setExiting] = useState(false);
-
-
-  const handleGetStarted = () => {
-    setExiting(true);
-    // Delay navigation to allow for exit animation
-    setTimeout(() => {
-      navigation.navigate('Start');
-      // Reset state for when we return to this screen
-      setTimeout(() => setExiting(false), 50);
-    }, ANIMATION.medium);
+  const handleBack = () => {
+    navigation.navigate('Welcome');
   };
 
   return (
     <ScreenTransition>
-    <GradientBackground>
-      <Container type="centered" safeArea>
-        <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />
-        <DescriptionSection duration={FADE_IN_DURATION} delay={STAGGER_DELAY} />
-        <Button loading={false} title="Хочу стройнеть!" onPress={handleGetStarted} />
-        <View style={{ flex: 0.2 }} />
+      <GradientBackground>
+        <Container type="centered" safeArea>
+          <View style={styles.logoContainer}>
+            <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />
+          </View>
+          <View style={styles.container}>
+            <StartInfo />
+          </View>
+          {/*<AnimatedView animation="custom" duration={FADE_IN_DURATION}>*/}
+          {/*  <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />*/}
+          {/*</AnimatedView>*/}
 
-      </Container>
-    </GradientBackground>
+          {/*<AnimatedView animation="custom" duration={FADE_IN_DURATION} delay={STAGGER_DELAY}>*/}
+          {/*  <DescriptionSection duration={FADE_IN_DURATION} delay={STAGGER_DELAY} />*/}
+          {/*</AnimatedView>*/}
+
+          {/*<AnimatedView animation="slide" duration={FADE_IN_DURATION} delay={STAGGER_DELAY * 2}>*/}
+          {/*  <Button loading={false} title="Вернуться назад" onPress={handleBack} />*/}
+          {/*</AnimatedView>*/}
+          <Button loading={false} title="Начать!" />
+
+          <View style={{ flex: 0.2 }} />
+        </Container>
+      </GradientBackground>
     </ScreenTransition>
   );
 };
 
-export default WelcomeScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingBottom:SPACING.xxl
+  },
+  logoContainer: {
+    flex:4
+  }
+})
+
+export default StartScreen;

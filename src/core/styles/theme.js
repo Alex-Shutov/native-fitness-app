@@ -25,9 +25,9 @@ export const COLORS = {
   // Градиентные цвета
   gradient: {
     // Начальный цвет градиента (светло-зеленый)
-    start: '#E1F5C4',
+    start: '#7DD44B',
     // Конечный цвет градиента (зеленовато-белый)
-    end: '#F9FFEF',
+    end: '#E7EDE3',
   },
 
   // Функциональные цвета
@@ -55,9 +55,19 @@ export const FONT_SIZES = {
 };
 
 export const FONT_FAMILY = {
-  regular: 'Catamaran',
-  medium: 'Lobster',
-  bold: 'Alegreya Sans SC',
+  text:{
+    regular: 'Catamaran-Regular',
+    medium: 'Catamaran-Medium',
+    bold: 'Catamaran-Bold',
+  },
+  header: {
+    regular: 'AlegreyaSansSC-Regular',
+    medium: 'AlegreyaSansSC-Medium',
+    bold: 'AlegreyaSansSC-Bold',
+  },
+  accent:{
+    regular: 'Lobster-Regular',
+  },
 };
 
 export const SPACING = {

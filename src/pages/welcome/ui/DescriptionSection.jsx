@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { COLORS, SPACING } from '../../../core/styles/theme';
+import Theme, { COLORS, SPACING } from '../../../core/styles/theme';
 import AnimatedView from '../../../shared/ui/animation/AnimatedView';
 import Typo from '../../../shared/ui/typo';
 import AdvantagesView from "~/pages/welcome/ui/AdvantagesView";
@@ -11,9 +11,9 @@ const DescriptionSection = ({ duration, delay, children }) => {
     <>
       <View style={styles.middleSection}>
         <AnimatedView animation="fade" duration={duration} delay={delay}>
-          <Typo variant="h2" weight="bold" align="center" style={styles.title}>
+          <Typo variant="body1" weight="bold" align="center" style={styles.title}>
             Стройность{' '}
-            <Typo variant="h2" weight="bold" color={COLORS.primary.main}>
+            <Typo variant="subtitle1" weight="bold" style={styles.accent} color={COLORS.primary.main}>
               навсегда
             </Typo>
           </Typo>
@@ -38,7 +38,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
+    fontSize: Theme.fontSizes.xl,
     marginBottom: SPACING.xs,
+  },
+  accent:{
+    // fontSize: Theme.fontSizes.xxl,
   },
   subtitle: {
     marginBottom: SPACING.sm,

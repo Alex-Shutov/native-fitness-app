@@ -3,28 +3,40 @@
     "name": "new-fitness-app",
     "slug": "new-fitness-app",
     "version": "1.0.0",
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "experiments": {
       "tsconfigPaths": true
     },
-
-    "plugins": [],
-
+    "plugins": [
+      ["expo-font",
+      {
+        "fonts": [
+          "./src/shared/assets/fonts/Lobster-Regular.ttf",
+          "./src/shared/assets/fonts/Catamaran-SemiBold.ttf",
+          "./src/shared/assets/fonts/Catamaran-Regular.ttf",
+          "./src/shared/assets/fonts/Catamaran-Medium.ttf",
+          "./src/shared/assets/fonts/Catamaran-ExtraBold.ttf",
+          "./src/shared/assets/fonts/Catamaran-Bold.ttf",
+          "./src/shared/assets/fonts/AlegreyaSansSC-Regular.ttf",
+          "./src/shared/assets/fonts/AlegreyaSansSC-Medium.ttf",
+          "./src/shared/assets/fonts/AlegreyaSansSC-Bold.ttf"
+        ]
+      }
+      ]
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },

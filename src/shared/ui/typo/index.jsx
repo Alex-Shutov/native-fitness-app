@@ -89,34 +89,50 @@ const styles = StyleSheet.create({
   h1: {
     fontSize: Theme.fontSizes.xxxl,
     lineHeight: Theme.fontSizes.xxxl * 1.2,
+    fontFamily:Theme.fontFamily.header.bold
   },
   h2: {
     fontSize: Theme.fontSizes.xxl,
     lineHeight: Theme.fontSizes.xxl * 1.2,
+    fontFamily:Theme.fontFamily.header.bold
+
   },
   h3: {
     fontSize: Theme.fontSizes.xl,
     lineHeight: Theme.fontSizes.xl * 1.2,
+    fontFamily:Theme.fontFamily.header.bold
+
   },
   subtitle1: {
     fontSize: Theme.fontSizes.lg,
     lineHeight: Theme.fontSizes.lg * 1.3,
+    fontFamily:Theme.fontFamily.accent.regular
+
   },
   subtitle2: {
     fontSize: Theme.fontSizes.md,
     lineHeight: Theme.fontSizes.md * 1.3,
+    fontFamily:Theme.fontFamily.accent.regular
+
+
   },
   body1: {
     fontSize: Theme.fontSizes.md,
     lineHeight: Theme.fontSizes.md * 1.5,
+    fontFamily:Theme.fontFamily.text.regular
+
   },
   body2: {
     fontSize: Theme.fontSizes.sm,
     lineHeight: Theme.fontSizes.sm * 1.5,
+    fontFamily:Theme.fontFamily.text.regular
+
   },
   caption: {
     fontSize: Theme.fontSizes.xs,
     lineHeight: Theme.fontSizes.xs * 1.5,
+    fontFamily:Theme.fontFamily.text.regular
+
   },
 
   regular: {
