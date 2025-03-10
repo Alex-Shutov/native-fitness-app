@@ -1,25 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import Animated, {
+import {
   Easing,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
 
-import AdvantagesView from './ui/AdvantagesView';
-import DescriptionSection from './ui/DescriptionSection';
-import LogoSection from './ui/LogoSection';
-import { COLORS, SPACING, ANIMATION } from '../../core/styles/theme';
-import AnimatedView from '../../shared/ui/animation/AnimatedView';
+import DescriptionSection from './widgets/DescriptionSection';
+import LogoSection from './widgets/LogoSection';
 import Container from '../../shared/ui/layout/Container';
 import GradientBackground from '../../shared/ui/layout/GradientBackground';
-import Logo from '../../shared/ui/logo';
-import Typo from '../../shared/ui/typo';
 
+import { COLORS, SPACING, ANIMATION } from '~/core/styles/theme';
 import Button from '~/shared/ui/button';
-import ScreenTransition from "~/shared/ui/layout/ScreenTransition";
+import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 
 const FADE_IN_DURATION = ANIMATION.medium; // 300мс для плавного появления
 const STAGGER_DELAY = ANIMATION.fast; // 200мс для последовательной анимации элементов
@@ -60,7 +56,6 @@ const WelcomeScreen = () => {
 
   const [exiting, setExiting] = useState(false);
 
-
   const handleGetStarted = () => {
     setExiting(true);
     // Delay navigation to allow for exit animation
@@ -73,15 +68,14 @@ const WelcomeScreen = () => {
 
   return (
     <ScreenTransition>
-    <GradientBackground>
-      <Container type="centered" safeArea>
-        <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />
-        <DescriptionSection duration={FADE_IN_DURATION} delay={STAGGER_DELAY} />
-        <Button loading={false} title="Хочу стройнеть!" onPress={handleGetStarted} />
-        <View style={{ flex: 0.2 }} />
-
-      </Container>
-    </GradientBackground>
+      <GradientBackground>
+        <Container type="centered" safeArea>
+          <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />
+          <DescriptionSection duration={FADE_IN_DURATION} delay={STAGGER_DELAY} />
+          <Button loading={false} title="Хочу стройнеть!" onPress={handleGetStarted} />
+          <View style={{ flex: 0.2 }} />
+        </Container>
+      </GradientBackground>
     </ScreenTransition>
   );
 };

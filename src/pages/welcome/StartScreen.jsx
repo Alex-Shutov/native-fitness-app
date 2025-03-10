@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { View,StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -8,19 +8,17 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import AdvantagesView from '../welcome/ui/AdvantagesView';
-import DescriptionSection from '../welcome/ui/DescriptionSection';
-import LogoSection from '../welcome/ui/LogoSection';
-import { COLORS, SPACING, ANIMATION } from '../../core/styles/theme';
+import { COLORS, SPACING, ANIMATION } from '~/core/styles/theme';
 import AnimatedView from '../../shared/ui/animation/AnimatedView';
 import Container from '../../shared/ui/layout/Container';
 import GradientBackground from '../../shared/ui/layout/GradientBackground';
 import Logo from '../../shared/ui/logo';
 import Typo from '../../shared/ui/typo';
+import LogoSection from '../welcome/widgets/LogoSection';
 
+import StartInfo from '~/pages/welcome/widgets/StartInfo';
 import Button from '~/shared/ui/button';
-import ScreenTransition from "~/shared/ui/layout/ScreenTransition";
-import StartInfo from "~/pages/welcome/ui/StartInfo";
+import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 
 const FADE_IN_DURATION = ANIMATION.medium; // 300мс для плавного появления
 const STAGGER_DELAY = ANIMATION.fast; // 200мс для последовательной анимации элементов
@@ -63,7 +61,9 @@ const StartScreen = () => {
   const handleBack = () => {
     navigation.navigate('Welcome');
   };
-
+  const handlePressButton = () => {
+    navigation.navigate('Register');
+  };
   return (
     <ScreenTransition>
       <GradientBackground>
@@ -85,7 +85,7 @@ const StartScreen = () => {
           {/*<AnimatedView animation="slide" duration={FADE_IN_DURATION} delay={STAGGER_DELAY * 2}>*/}
           {/*  <Button loading={false} title="Вернуться назад" onPress={handleBack} />*/}
           {/*</AnimatedView>*/}
-          <Button loading={false} title="Начать!" />
+          <Button loading={false} title="Начать!" onPress={handlePressButton} />
 
           <View style={{ flex: 0.2 }} />
         </Container>
@@ -97,11 +97,11 @@ const StartScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom:SPACING.xxl
+    paddingBottom: SPACING.xxl,
   },
   logoContainer: {
-    flex:4
-  }
-})
+    flex: 4,
+  },
+});
 
 export default StartScreen;

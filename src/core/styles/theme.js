@@ -30,6 +30,10 @@ export const COLORS = {
     end: '#E7EDE3',
   },
 
+  page: {
+    background: '#E7EDE3',
+  },
+
   // Функциональные цвета
   functional: {
     // Цвет для уведомлений об ошибках
@@ -55,7 +59,7 @@ export const FONT_SIZES = {
 };
 
 export const FONT_FAMILY = {
-  text:{
+  text: {
     regular: 'Catamaran-Regular',
     medium: 'Catamaran-Medium',
     bold: 'Catamaran-Bold',
@@ -65,7 +69,7 @@ export const FONT_FAMILY = {
     medium: 'AlegreyaSansSC-Medium',
     bold: 'AlegreyaSansSC-Bold',
   },
-  accent:{
+  accent: {
     regular: 'Lobster-Regular',
   },
 };
