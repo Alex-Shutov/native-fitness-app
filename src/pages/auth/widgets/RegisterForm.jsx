@@ -74,7 +74,7 @@ const RegisterForm = ({form}) => {
 const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
-    gap: SPACING.md,
+    gap: SPACING.sm,
   },
 });
 

@@ -60,9 +60,10 @@ const RegisterScreen = () => {
     <ScreenTransition>
       <ScreenBackground title="Создать аккаунт" backIcon="close">
         <Container safeArea>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}>
+          {/*<ScrollView*/}
+          {/*  contentContainerStyle={styles.scrollContent}*/}
+          {/*  showsVerticalScrollIndicator={false}>*/}
+          <View style={styles.mainContent}>
             <RegisterForm form={form} />
 
             <Button
@@ -72,23 +73,24 @@ const RegisterScreen = () => {
               loading={form.isSubmitting}
               disabled={form.isSubmitting}
               onPress={handleRegister}
-              fullWidth
+              // fullWidth
               style={styles.registerButton}
             />
+          </View>
 
-            <View style={styles.loginLinkContainer}>
-              <Typo variant="body2" align="center">
-                Уже есть аккаунт?{' '}
-                <Typo
-                  variant="body2"
-                  weight="bold"
-                  style={styles.loginLink}
-                  onPress={handleLoginPress}>
-                  Войти
-                </Typo>
+          <View style={styles.loginLinkContainer}>
+            <Typo variant="body2" align="center">
+              Уже есть аккаунт?{' '}
+              <Typo
+                variant="body2"
+                weight="bold"
+                style={styles.loginLink}
+                onPress={handleLoginPress}>
+                Войти
               </Typo>
-            </View>
-          </ScrollView>
+            </Typo>
+          </View>
+          {/*</ScrollView>*/}
         </Container>
       </ScreenBackground>
     </ScreenTransition>
@@ -101,6 +103,10 @@ const styles = StyleSheet.create({
     padding: SPACING.sm,
     marginTop: SPACING.sm,
   },
+  mainContent: {
+    flex: 1,
+    flexGrow: 1,
+  },
   titleContainer: {
     marginVertical: SPACING.xl,
   },
@@ -111,10 +117,8 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xl,
   },
   loginLinkContainer: {
-    marginTop: SPACING.xxl,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: SPACING.md,
+    // flexDirection: 'row',
+    // justifyContent: 'center',
   },
   loginLink: {
     color: '#7AB648',

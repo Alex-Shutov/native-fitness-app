@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.neutral.white,
     borderRadius: Theme.borderRadius.sm,
     paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.md,
+    paddingHorizontal: SPACING.x,
     width: '100%',
     borderWidth: 1,
     borderColor: 'transparent',

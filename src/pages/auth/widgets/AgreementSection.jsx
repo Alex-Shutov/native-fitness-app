@@ -8,12 +8,9 @@ import Typo from '../../../shared/ui/typo';
 const AgreementSection = ({ checked, onCheckboxChange }) => {
   return (
     <View style={styles.container}>
-      <Typo variant="body2" weight="medium" style={styles.title}>
-        Соглашение
-      </Typo>
-
       <View style={styles.agreementTextContainer}>
         <ScrollView contentContainerStyle={styles.scrollContent} persistentScrollbar>
+          <Typo>Соглашение</Typo>
           <Typo variant="body2" color={COLORS.neutral.medium}>
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
             has been the industry's standard dummy text ever since the 1500s, when an unknown
@@ -47,7 +44,7 @@ const AgreementSection = ({ checked, onCheckboxChange }) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    marginTop: SPACING.md,
+    // marginTop: SPACING.md,
   },
   title: {
     marginBottom: SPACING.xs,
