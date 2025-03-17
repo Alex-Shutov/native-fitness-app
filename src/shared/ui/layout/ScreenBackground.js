@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { TouchableOpacity, View, StyleSheet, SafeAreaView } from 'react-native';
 
-import { COLORS, SPACING } from '~/core/styles/theme';
+import Theme, { COLORS, SPACING } from '~/core/styles/theme';
 import Typo from '~/shared/ui/typo';
 
 const ScreenBackground = ({
@@ -34,7 +34,7 @@ const ScreenBackground = ({
           style={styles.backButton}
           onPress={handleBackPress}
           accessibilityLabel="Close">
-          <Typo variant="h2">×</Typo>
+          <Typo variant="h1">×</Typo>
         </TouchableOpacity>
       );
     } else {
@@ -58,7 +58,7 @@ const ScreenBackground = ({
               {renderBackButton()}
               {title && (
                 <View>
-                  <Typo variant="h3" weight="bold" align="center">
+                  <Typo variant="body0"  style={styles.headerTitle} align="center">
                     {title}
                   </Typo>
                 </View>
@@ -110,6 +110,10 @@ const styles = StyleSheet.create({
   titleContainer: {
     flex: 1,
   },
+  headerTitle:{
+    fontSize: Theme.fontSizes.xl,
+    lineHeight: Theme.fontSizes.xl *1.5,
+  }
 });
 
 export default ScreenBackground;

@@ -103,6 +103,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: THEME.borderRadius.xxl,
+
+
   },
   primary: {
     backgroundColor: THEME.colors.primary.dark,
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
   medium: {
     paddingVertical: THEME.spacing.sm,
     paddingHorizontal: THEME.spacing.lg,
-    minWidth: 120,
+    minWidth: 240,
   },
   large: {
     paddingVertical: THEME.spacing.md,

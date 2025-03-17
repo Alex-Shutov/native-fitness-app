@@ -3,6 +3,7 @@ import { Dimensions, View, StyleSheet } from 'react-native';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 import Theme from '../../../core/styles/theme';
+import Fog from '~/shared/ui/other/fog';
 
 const { width, height } = Dimensions.get('window');
 
@@ -62,10 +63,7 @@ const GradientBackground = ({
           <Path d={generateSinePath()} fill="url(#grad)" />
 
           {/* Дымка снизу */}
-          <Path
-            d={`M0,${height} L${width},${height} L${width},${height * 0.7} L0,${height * 0.7} Z`}
-            fill="url(#fog)"
-          />
+        <Fog/>
         </Svg>
         <View style={styles.content}>{children}</View>
       </View>

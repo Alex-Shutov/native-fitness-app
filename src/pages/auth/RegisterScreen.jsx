@@ -6,7 +6,6 @@ import { useSetRecoilState } from 'recoil';
 import RegisterForm from './widgets/RegisterForm';
 import Button from '../../shared/ui/button';
 import Container from '../../shared/ui/layout/Container';
-import GradientBackground from '../../shared/ui/layout/GradientBackground';
 import ScreenTransition from '../../shared/ui/layout/ScreenTransition';
 import Typo from '../../shared/ui/typo';
 import { authState } from '../auth/models/auth.atom';
@@ -14,7 +13,7 @@ import { authState } from '../auth/models/auth.atom';
 import useZodForm from '~/core/hooks/useZodForm';
 import { SPACING } from '~/core/styles/theme';
 import { getUserValue } from '~/pages/auth/lib/auth';
-import { registerSchema } from '~/pages/auth/models/validate.user';
+import { registerSchema } from '~/pages/auth/models/validate.auth';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 
 const RegisterScreen = () => {
@@ -38,7 +37,7 @@ const RegisterScreen = () => {
 
         setAuthState(getUserValue(values));
 
-        navigation.navigate('Onboarding');
+        navigation.navigate('SelectGoals');
       } catch (error) {
         console.error('Registration error:', error);
 
@@ -68,8 +67,8 @@ const RegisterScreen = () => {
 
             <Button
               title="Зарегестрироваться"
-              variant="primary"
-              size="large"
+              // variant="primary"
+              // size="medium"
               loading={form.isSubmitting}
               disabled={form.isSubmitting}
               onPress={handleRegister}
@@ -115,6 +114,7 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     marginTop: SPACING.xl,
+
   },
   loginLinkContainer: {
     // flexDirection: 'row',

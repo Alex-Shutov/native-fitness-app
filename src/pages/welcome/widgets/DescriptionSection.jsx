@@ -11,7 +11,7 @@ const DescriptionSection = ({ duration, delay, children }) => {
     <>
       <View style={styles.middleSection}>
         <AnimatedView animation="fade" duration={duration} delay={delay}>
-          <Typo variant="body1" weight="bold" align="center" style={styles.title}>
+          <Typo variant="body0" weight="bold" align="center" style={styles.title}>
             Стройность{' '}
             <Typo variant="subtitle1" weight="bold" style={styles.accent} color={COLORS.primary.main}>
               навсегда
@@ -19,7 +19,7 @@ const DescriptionSection = ({ duration, delay, children }) => {
           </Typo>
         </AnimatedView>
         <AnimatedView animation="fade" duration={duration} delay={delay * 1.5}>
-          <Typo variant="body1" align="center" style={styles.subtitle}>
+          <Typo variant="body0" align="center" style={styles.subtitle}>
             через мышление
           </Typo>
         </AnimatedView>
@@ -38,11 +38,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title: {
-    fontSize: Theme.fontSizes.xl,
+    // fontSize: Theme.fontSizes.xxl,
+    lineHeight: Theme.fontSizes.xxxl*1.3,
+
     marginBottom: SPACING.xs,
   },
   accent:{
-    // fontSize: Theme.fontSizes.xxl,
+    fontSize: Theme.fontSizes.xxxl*1.2,
   },
   subtitle: {
     marginBottom: SPACING.sm,

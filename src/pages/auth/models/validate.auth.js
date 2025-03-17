@@ -50,3 +50,25 @@ export const registerSchema = z.object({
     .boolean()
     .refine((val) => val === true, { message: messages.agreement.required }),
 });
+
+export const emailSchema = z.object({
+  email: z
+    .string()
+    .nonempty({ message: 'Email обязателен' })
+    .email({ message: 'Введите корректный адрес электронной почты' }),
+  password: z
+    .string()
+    .nonempty({ message: 'Пароль обязателен' })
+    .min(6, { message: 'Пароль должен содержать не менее 6 символов' }),
+});
+
+export const phoneSchema = z.object({
+  phone: z
+    .string()
+    .nonempty({ message: 'Телефон обязателен' })
+    .min(10, { message: 'Введите корректный номер телефона' }),
+  password: z
+    .string()
+    .nonempty({ message: 'Пароль обязателен' })
+    .min(6, { message: 'Пароль должен содержать не менее 6 символов' }),
+});

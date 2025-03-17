@@ -5,11 +5,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import Navigation from './core/providers/navigation';
 import RecoilProvider from './core/providers/recoil';
+import { useFonts } from '~/core/hooks/useFonts';
 
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
+  const { fontsLoaded, error } = useFonts();
+
 
   useEffect(() => {
     async function prepare() {
@@ -26,12 +29,12 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (appReady) {
+    if (appReady && fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [appReady]);
+  }, [appReady,fontsLoaded]);
 
-  if (!appReady) {
+  if (!appReady && !fontsLoaded) {
     return null;
   }
 

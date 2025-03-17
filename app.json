@@ -4,33 +4,34 @@
     "slug": "new-fitness-app",
     "version": "1.0.0",
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/shared/assets/images/favicon.png"
     },
     "experiments": {
       "tsconfigPaths": true
     },
     "plugins": [
-      ["expo-font",
-      {
-        "fonts": [
-          "./src/shared/assets/fonts/Lobster-Regular.ttf",
-          "./src/shared/assets/fonts/Catamaran-SemiBold.ttf",
-          "./src/shared/assets/fonts/Catamaran-Regular.ttf",
-          "./src/shared/assets/fonts/Catamaran-Medium.ttf",
-          "./src/shared/assets/fonts/Catamaran-ExtraBold.ttf",
-          "./src/shared/assets/fonts/Catamaran-Bold.ttf",
-          "./src/shared/assets/fonts/AlegreyaSansSC-Regular.ttf",
-          "./src/shared/assets/fonts/AlegreyaSansSC-Medium.ttf",
-          "./src/shared/assets/fonts/AlegreyaSansSC-Bold.ttf"
-        ]
-      }
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./src/shared/assets/fonts/Lobster-Regular.ttf",
+            "./src/shared/assets/fonts/Catamaran-SemiBold.ttf",
+            "./src/shared/assets/fonts/Catamaran-Regular.ttf",
+            "./src/shared/assets/fonts/Catamaran-Medium.ttf",
+            "./src/shared/assets/fonts/Catamaran-ExtraBold.ttf",
+            "./src/shared/assets/fonts/Catamaran-Bold.ttf",
+            "./src/shared/assets/fonts/AlegreyaSansSC-Regular.ttf",
+            "./src/shared/assets/fonts/AlegreyaSansSC-Medium.ttf",
+            "./src/shared/assets/fonts/AlegreyaSansSC-Bold.ttf"
+          ]
+        }
       ]
     ],
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/shared/assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/shared/assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -38,11 +39,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.new-fitness-app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/shared/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     }

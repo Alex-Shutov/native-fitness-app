@@ -2,13 +2,13 @@ import React from "react";
 import { View,StyleSheet } from "react-native";
 import AnimatedView from "~/shared/ui/animation/AnimatedView";
 import Typo from "~/shared/ui/typo";
-import { SPACING } from "~/core/styles/theme";
+import Theme, { SPACING } from "~/core/styles/theme";
 
 const StartInfo = () => {
   return (
     <View style={styles.section}>
       <AnimatedView>
-        <Typo style={styles.title} variant={'h2'} weight={'bold'} align={"center"}>Начинаем путь к твоей стройности</Typo>
+        <Typo style={styles.title} variant={'subtitle1'} weight={'bold'} align={"center"}>Начинаем путь к твоей стройности</Typo>
       </AnimatedView>
       <AnimatedView>
         <Typo weight={'bold'} align={"center"}  variant={'body1'}>Более 120 млн. пользователей</Typo>
@@ -26,6 +26,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   title:{
+    fontSize: Theme.fontSizes.xxxl,
+    lineHeight: Theme.fontSizes.xxxl,
     marginBottom:SPACING.sm
   }
 })

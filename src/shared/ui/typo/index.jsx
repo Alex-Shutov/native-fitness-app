@@ -20,6 +20,8 @@ const Typo = ({
         return styles.h2;
       case 'h3':
         return styles.h3;
+      case 'hSub':
+        return styles.hSub;
       case 'subtitle1':
         return styles.subtitle1;
       case 'subtitle2':
@@ -28,6 +30,8 @@ const Typo = ({
         return styles.body1;
       case 'body2':
         return styles.body2;
+      case 'body0':
+        return styles.body0;
       case 'caption':
         return styles.caption;
       default:
@@ -103,6 +107,11 @@ const styles = StyleSheet.create({
     fontFamily:Theme.fontFamily.header.bold
 
   },
+  hSub:{
+    fontSize: Theme.fontSizes.xxxl * 1.4,
+    lineHeight: Theme.fontSizes.xxxl * 1.4,
+    fontFamily:Theme.fontFamily.accent.regular
+  },
   subtitle1: {
     fontSize: Theme.fontSizes.lg,
     lineHeight: Theme.fontSizes.lg * 1.3,
@@ -114,6 +123,12 @@ const styles = StyleSheet.create({
     lineHeight: Theme.fontSizes.md * 1.3,
     fontFamily:Theme.fontFamily.accent.regular
 
+
+  },
+  body0: {
+    fontSize: Theme.fontSizes.xxl,
+    lineHeight: Theme.fontSizes.xxl * 1.5,
+    fontFamily:Theme.fontFamily.text.bold
 
   },
   body1: {
@@ -142,7 +157,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   bold: {
-    fontWeight: '700',
+    fontWeight: '800',
   },
 
   left: {
