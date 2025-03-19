@@ -12,6 +12,7 @@ import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
+import Container from '~/shared/ui/layout/Container';
 
 const SelectGoalsScreen = () => {
   const navigation = useNavigation();
@@ -44,6 +45,7 @@ const SelectGoalsScreen = () => {
   return (
     <ScreenTransition>
       <ScreenBackground>
+        {/*<Container type="centered" safeArea>*/}
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Typo variant="hSub" >
@@ -61,16 +63,17 @@ const SelectGoalsScreen = () => {
             maxSelection={10}
           />
 
-          <View style={styles.buttonContainer}>
-            <Button
-              title="Иду к цели"
-              variant="primary"
-              size="large"
-              onPress={handleContinue}
-              disabled={selectedGoals.length === 0}
-              fullWidth
-            />
-          </View>
+
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Иду к цели"
+            // variant="primary"
+            style={styles.button}
+            loading={false}
+            onPress={handleContinue}
+            disabled={selectedGoals.length === 0}
+          />
         </View>
       </ScreenBackground>
     </ScreenTransition>
@@ -83,6 +86,10 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     marginBottom: SPACING.xl,
+  },
+  button:{
+    width: '70%',
+    alignSelf: 'center',
   },
 
   subtitle: {

@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   medium: {
     paddingVertical: THEME.spacing.sm,
     paddingHorizontal: THEME.spacing.lg,
-    minWidth: 240,
+    minWidth: 120,
   },
   large: {
     paddingVertical: THEME.spacing.md,

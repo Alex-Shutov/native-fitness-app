@@ -23,10 +23,10 @@ const Navigation = () => {
           animationEnabled: true,
           ...customTransition,
         }}>
-        {/*<Stack.Screen name="Welcome" component={WelcomeScreen} />*/}
-        {/*<Stack.Screen name="Start" component={StartScreen} />*/}
-        {/*<Stack.Screen name="Register" component={RegisterScreen} />*/}
-        {/*<Stack.Screen name="Login" component={LoginScreen} />*/}
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Start" component={StartScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SelectGoals" component={SelectGoalsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
