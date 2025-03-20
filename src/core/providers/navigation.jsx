@@ -10,6 +10,7 @@ import RegisterScreen from '~/pages/auth/RegisterScreen';
 import LoginScreen from '~/pages/auth/LoginScreen';
 import SelectGoalsScreen from '~/pages/onboarding/SelectGoalsScreen';
 import SelectPrimaryGoalScreen from '~/pages/onboarding/SelectMainGoalScreen';
+import DescribeGoalScreen from '~/pages/onboarding/DescribeGoalScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,7 @@ const Navigation = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SelectGoals" component={SelectGoalsScreen} />
         <Stack.Screen name="SelectPrimaryGoal" component={SelectPrimaryGoalScreen} />
+        <Stack.Screen name="DescribeGoalScreen" component={DescribeGoalScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { COLORS, SPACING } from '~/core/styles/theme';
 import { goalsData } from '~/pages/onboarding/models/goals.mock';
 import { onboardingState } from '~/pages/onboarding/models/onboarding.atom';
+import PrimaryGoalGrid from '~/pages/onboarding/widgets/PrimaryGoalGrid';
+import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
-import PrimaryGoalGrid from '~/pages/onboarding/widgets/PrimaryGoalGrid';
-import { COLORS, SPACING } from '~/core/styles/theme';
-import Button from '~/shared/ui/button';
 
 const SelectPrimaryGoalScreen = () => {
   const navigation = useNavigation();
@@ -26,9 +26,8 @@ const SelectPrimaryGoalScreen = () => {
   }, [selectedGoal, setOnboarding]);
 
   const handleGoalsChange = (newSelectedGoal) => {
-    setSelectedGoal(newSelectedGoal);
+    setSelectedGoal(goals.find((goal) => goal.id === newSelectedGoal));
   };
-
 
   const handleContinue = () => {
     if (selectedGoal) {
@@ -36,7 +35,7 @@ const SelectPrimaryGoalScreen = () => {
         ...prev,
         currentStep: prev.currentStep + 1,
       }));
-      navigation.navigate('SelectPrimaryGoal');
+      navigation.navigate('DescribeGoalScreen');
     }
   };
   return (
@@ -44,7 +43,9 @@ const SelectPrimaryGoalScreen = () => {
       <ScreenBackground>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Typo variant="hSub" style={styles.header}>Выбери свою окончательную цель</Typo>
+            <Typo variant="hSub" style={styles.header}>
+              Выбери свою окончательную цель
+            </Typo>
             <Typo variant="body1" style={styles.subtitle}>
               Выбери не больше одной цели
             </Typo>
@@ -52,7 +53,7 @@ const SelectPrimaryGoalScreen = () => {
         </View>
         <PrimaryGoalGrid
           goals={goals}
-          selectedGoal={selectedGoal}
+          selectedGoal={selectedGoal?.id}
           onToggleGoal={handleGoalsChange}
         />
         <View style={styles.buttonContainer}>
@@ -71,15 +72,14 @@ const SelectPrimaryGoalScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-  },
+  container: {},
   headerContainer: {
     marginBottom: SPACING.xl,
   },
-  header:{
+  header: {
     fontSize: SPACING.xl,
   },
-  button:{
+  button: {
     width: '70%',
     alignSelf: 'center',
   },
