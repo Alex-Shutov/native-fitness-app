@@ -9,6 +9,7 @@ import { customTransition } from '~/shared/lib/animations/transitions';
 import RegisterScreen from '~/pages/auth/RegisterScreen';
 import LoginScreen from '~/pages/auth/LoginScreen';
 import SelectGoalsScreen from '~/pages/onboarding/SelectGoalsScreen';
+import SelectPrimaryGoalScreen from '~/pages/onboarding/SelectMainGoalScreen';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ const Navigation = () => {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SelectGoals" component={SelectGoalsScreen} />
+        <Stack.Screen name="SelectPrimaryGoal" component={SelectPrimaryGoalScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

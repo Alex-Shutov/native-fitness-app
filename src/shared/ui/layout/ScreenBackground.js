@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     padding: SPACING.xl,
+    paddingTop: SPACING.md,
   },
   header: {
     // ...StyleSheet.absoluteFillObject,
