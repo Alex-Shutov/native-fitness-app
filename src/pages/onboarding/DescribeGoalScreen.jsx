@@ -24,6 +24,7 @@ const DescribeGoalScreen = () => {
       goalDescription: description.trim(),
       currentStep: prev.currentStep + 1,
     }));
+    navigation.navigate('ProgressScreen')
   };
 
   return (
