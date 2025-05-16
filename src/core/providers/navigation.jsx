@@ -12,6 +12,9 @@ import SelectGoalsScreen from '~/pages/onboarding/SelectGoalsScreen';
 import SelectPrimaryGoalScreen from '~/pages/onboarding/SelectMainGoalScreen';
 import DescribeGoalScreen from '~/pages/onboarding/DescribeGoalScreen';
 import ProgressScreen from '~/pages/onboarding/ProgressScreen';
+import PersonalInfoScreen from '~/pages/onboarding/PersonalInfoScreen';
+import DietSelectionScreen from '~/pages/onboarding/DietScreen';
+import TabNavigator from '~/core/providers/tabNavigation';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +22,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="SelectGoals"
+        initialRouteName="ProgressScreen"
         screenOptions={{
           headerShown: false,
           cardStyle: { backgroundColor: 'transparent' },
@@ -34,6 +37,14 @@ const Navigation = () => {
         <Stack.Screen name="SelectPrimaryGoal" component={SelectPrimaryGoalScreen} />
         <Stack.Screen name="DescribeGoalScreen" component={DescribeGoalScreen} />
         <Stack.Screen name="ProgressScreen" component={ProgressScreen} />
+        <Stack.Screen name="PersonalInfoScreen" component={PersonalInfoScreen} />
+        <Stack.Screen name="DietSelectionScreen" component={DietSelectionScreen} />
+
+        <Stack.Screen
+          name="TabHome"
+          component={TabNavigator}
+          options={{ gestureEnabled: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -32,6 +32,8 @@ const Typo = ({
         return styles.body2;
       case 'body0':
         return styles.body0;
+      case 'bodyBolder':
+        return styles.bodyBolder;
       case 'caption':
         return styles.caption;
       default:
@@ -124,6 +126,11 @@ const styles = StyleSheet.create({
     fontFamily:Theme.fontFamily.accent.regular
 
 
+  },
+  bodyBolder:{
+    fontSize: Theme.fontSizes.xl,
+    lineHeight: Theme.fontSizes.xl * 1.5,
+    fontFamily:Theme.fontFamily.text.bold
   },
   body0: {
     fontSize: Theme.fontSizes.xxl,

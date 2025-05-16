@@ -9,5 +9,18 @@ export const authState = atom({
         token: null,
         error: null,
         loading: false,
+        gender: 'male',       // 'male' или 'female'
+        age: 24,              // возраст в годах
+        height: 175,          // рост в сантиметрах
+        weight: 60,           // вес в килограммах
+        targetWeight: 55,     // целевой вес в килограммах
+
+        diet: null,
+
+        // Расчетные параметры тела
+        bodyMassIndex: null,           // индекс массы тела
+        chestCircumference: 85,        // объем груди в сантиметрах
+        waistCircumference: 70,        // объем талии в сантиметрах
+        hipCircumference: 102,         // объем бедер в сантиметрах
     },
 });

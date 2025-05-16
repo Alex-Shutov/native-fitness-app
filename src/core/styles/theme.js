@@ -6,6 +6,8 @@ export const COLORS = {
     main: '#7AB648',
     // Основной зеленый цвет (темный)
     dark: '#81aa6b',
+    extraDark:'#486935',
+    extraLight:'#E8FFDA'
   },
   neutral: {
     // Почти черный цвет для фона

@@ -24,6 +24,7 @@ const ProgressScreen = () => {
       currentProgress: progress,
       currentStep: prev.currentStep + 1,
     }));
+    navigation.navigate('PersonalInfoScreen')
   };
 
 
