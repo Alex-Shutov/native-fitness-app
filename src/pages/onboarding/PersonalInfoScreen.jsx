@@ -97,6 +97,7 @@ const PersonalInfoScreen = () => {
         age,
         height,
         weight,
+        startWeight: weight,
         chestCircumference,
         waistCircumference,
         hipCircumference,

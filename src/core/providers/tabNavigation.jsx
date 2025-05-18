@@ -11,6 +11,7 @@ import { COLORS } from '~/core/styles/theme';
 import NutritionStack from '~/pages/nutritions';
 import TrackerScreen from '~/pages/tracker/widgets/TrackerScreen';
 import PersonalCabinetScreen from '~/pages/profile/widgets/PersonalCabinetScreen';
+import ProgressScreen from '~/pages/progress/widgets/ProgressScreen';
 
 // Импортируем компоненты
 
@@ -45,10 +46,32 @@ const tabs = {
       );
     },
   },
+  Progress: {
+    icon: ({ progress, focused }) => (
+      <MaterialIcons
+        name="track-changes"
+        size={24}
+        color={COLORS.neutral.white}
+      />
+    ),
+    renderTitle: ({ title, progress }) => {
+      return (
+        <Animated.Text
+          style={{
+            opacity: progress,
+            color: COLORS.primary.main,
+            fontWeight: '500',
+          }}
+        >
+          Питание
+        </Animated.Text>
+      );
+    },
+  },
   Tracker: {
     icon: ({ progress, focused }) => (
       <MaterialIcons
-        name="art-track"
+        name="check-circle"
         size={24}
         color={COLORS.neutral.white}
       />
@@ -171,9 +194,10 @@ const TabNavigator = () => {
       }}
     >
       <Tab.Screen name="Nutrition" component={NutritionStack} />
-      <Tab.Screen name="Calendar" component={CalendarScreen} />
+      {/*<Tab.Screen name="Calendar" component={CalendarScreen} />*/}
       <Tab.Screen name="Tracker" component={TrackerScreen} />
-      <Tab.Screen name="Favorites" component={FavoritesScreen} />
+      {/*<Tab.Screen name="Favorites" component={FavoritesScreen} />*/}
+      <Tab.Screen name="Progress" component={ProgressScreen} />
       <Tab.Screen name="Profile" component={PersonalCabinetScreen} />
     </Tab.Navigator>
   );

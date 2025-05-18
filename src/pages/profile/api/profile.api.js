@@ -19,3 +19,26 @@ export const updateProfileField = async (fieldName, value) => {
     },
   };
 };
+
+
+export const fetchProfile = async (userId) => {
+  // Simulate API latency
+  await new Promise(resolve => setTimeout(resolve, 700));
+
+  // Return mock profile data
+  return {
+    success: true,
+    data: {
+      name: 'Ника Берестова',
+      image: null, // This would be a URL in a real app
+      currentWeight: '53',
+      targetWeight: '50',
+      goal: 'Карьера',
+      age: '46',
+      gender: 'Женский',
+      height: '102',
+      phone: '+7 (919) 906 00-77',
+      email: 'nika_ber@mail.ru',
+    }
+  };
+};

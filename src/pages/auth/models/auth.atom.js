@@ -13,6 +13,7 @@ export const authState = atom({
         age: 24,              // возраст в годах
         height: 175,          // рост в сантиметрах
         weight: 60,           // вес в килограммах
+        startWeight:60,
         targetWeight: 55,     // целевой вес в килограммах
 
         diet: null,

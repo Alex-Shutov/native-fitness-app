@@ -23,7 +23,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="DietSelectionScreen"
+        initialRouteName="Welcome"
         screenOptions={{
           headerShown: false,
           cardStyle: { backgroundColor: 'transparent' },
