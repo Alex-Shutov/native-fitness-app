@@ -1,12 +1,13 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { MaterialIcons } from '@expo/vector-icons';
+
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
+import { getDayMeals, getMealTypeById } from '~/pages/nutritions/lib/utils';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
-import { getDayMeals, getMealTypeById } from '~/pages/nutritions/lib/utils';
 
 const RecipeScreen = () => {
   const navigation = useNavigation();
@@ -15,7 +16,7 @@ const RecipeScreen = () => {
 
   // Находим соответствующий рецепт
   const meals = getDayMeals(dietId, day);
-  const recipe = meals.find(meal => meal.type === mealTypeId);
+  const recipe = meals.find((meal) => meal.type === mealTypeId);
 
   // Получаем название типа приема пищи
   const mealType = getMealTypeById(mealTypeId);
@@ -37,35 +38,12 @@ const RecipeScreen = () => {
   }
 
   return (
-    <ScreenTransition>
-      <ScreenBackground>
-        <ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-        >
+    <ScreenTransition >
+      <ScreenBackground contentStyle={styles.screenBackground}>
+        <ScrollView showsVerticalScrollIndicator={true}>
           {/* Изображение рецепта */}
           <View style={styles.imageContainer}>
-            <Image
-              source={recipe.image}
-              style={styles.recipeImage}
-              resizeMode="cover"
-            />
-
-            {/* Кнопка "Назад" */}
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <MaterialIcons name="arrow-back" size={24} color={COLORS.neutral.darkest} />
-            </TouchableOpacity>
-
-            {/* Кнопка "Добавить в избранное" */}
-            <TouchableOpacity
-              style={styles.favoriteButton}
-              onPress={handleAddToFavorites}
-            >
-              <MaterialIcons name="bookmark-border" size={24} color={COLORS.neutral.darkest} />
-            </TouchableOpacity>
+            <Image source={recipe.image} style={styles.recipeImage} resizeMode="cover" />
           </View>
 
           <View style={styles.contentContainer}>
@@ -85,11 +63,12 @@ const RecipeScreen = () => {
                   <View style={styles.bulletPoint} />
                   <Typo variant="body1" style={styles.ingredientText}>
                     {ingredient.name}
-                    {ingredient.amount &&
+                    {ingredient.amount && (
                       <Typo variant="body1" style={styles.ingredientAmount}>
-                        {' '}{ingredient.amount}
+                        {'   '}
+                        {ingredient.amount}
                       </Typo>
-                    }
+                    )}
                   </Typo>
                 </View>
               ))}
@@ -118,12 +97,21 @@ const RecipeScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  screenBackground: {
+
+    padding: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    zIndex: 1,
+  },
+
   scrollView: {
-    flex: 1,
+    width:'100%'
   },
   container: {
     flex: 1,
-    padding: SPACING.md,
   },
   imageContainer: {
     position: 'relative',
@@ -142,8 +130,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: BORDER_RADIUS.full,
     backgroundColor: COLORS.neutral.white,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   favoriteButton: {
     position: 'absolute',
@@ -157,6 +145,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   contentContainer: {
+    textAlign:'left',
+
     flex: 1,
     backgroundColor: COLORS.neutral.offWhite,
     paddingHorizontal: SPACING.md,
@@ -167,41 +157,53 @@ const styles = StyleSheet.create({
     marginTop: -20, // Накладываем на изображение
   },
   recipeTitle: {
+    textAlign:'left',
+
     fontSize: SPACING.xl * 1,
     marginBottom: SPACING.md,
   },
   section: {
+    textAlign:'left',
+
     marginTop: SPACING.xl,
   },
   sectionTitle: {
+    textAlign:'left',
+
     marginBottom: SPACING.md,
     fontSize: SPACING.lg,
   },
   ingredientItem: {
+    marginLeft: SPACING.md,
+    textAlign:'left',
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: SPACING.sm,
   },
   stepItem: {
+    marginLeft: SPACING.md,
     flexDirection: 'row',
     marginBottom: SPACING.md,
   },
   bulletPoint: {
     width: 8,
     height: 8,
+    top:-5,
     borderRadius: BORDER_RADIUS.full,
     backgroundColor: COLORS.primary.main,
     marginRight: SPACING.sm,
     marginTop: 8,
   },
   ingredientText: {
-    flex: 1,
+    // flex: 1,
+
   },
   ingredientAmount: {
     color: COLORS.neutral.medium,
   },
   stepText: {
-    flex: 1,
+    textAlign:'left',
+    // flex: 1,
   },
 });
 

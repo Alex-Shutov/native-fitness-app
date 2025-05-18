@@ -4,7 +4,7 @@ import Animated, {
   useSharedValue, withDelay,
   withTiming,
   runOnJS
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 import { ANIMATION } from "~/core/styles/theme";
 import { useEffect } from "react";
 import { View, StyleSheet } from 'react-native';

@@ -2,12 +2,15 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import AnimatedTabBar from 'curved-bottom-navigation-bar';
-import Animated from 'react-native-reanimated';  // Используем отдельный импорт
+import AnimatedTabBar, { TabsConfigsType } from 'curved-bottom-navigation-bar';
+import { Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '~/core/styles/theme';
 import NutritionStack from '~/pages/nutritions';
+import TrackerScreen from '~/pages/tracker/widgets/TrackerScreen';
+import PersonalCabinetScreen from '~/pages/profile/widgets/PersonalCabinetScreen';
 
 // Импортируем компоненты
 
@@ -25,7 +28,7 @@ const tabs = {
       <MaterialIcons
         name="restaurant-menu"
         size={24}
-        color={focused ? COLORS.primary.main : COLORS.neutral.medium}
+        color={COLORS.neutral.white}
       />
     ),
     renderTitle: ({ title, progress }) => {
@@ -42,12 +45,34 @@ const tabs = {
       );
     },
   },
+  Tracker: {
+    icon: ({ progress, focused }) => (
+      <MaterialIcons
+        name="art-track"
+        size={24}
+        color={COLORS.neutral.white}
+      />
+    ),
+    renderTitle: ({ title, progress }) => {
+      return (
+        <Animated.Text
+          style={{
+            opacity: progress,
+            color: COLORS.primary.main,
+            fontWeight: '500',
+          }}
+        >
+          Трекер
+        </Animated.Text>
+      );
+    },
+  },
   Calendar: {
     icon: ({ progress, focused }) => (
       <MaterialIcons
         name="calendar-today"
         size={24}
-        color={focused ? COLORS.primary.main : COLORS.neutral.medium}
+        color={COLORS.neutral.white}
       />
     ),
     renderTitle: ({ title, progress }) => {
@@ -71,14 +96,13 @@ const tabs = {
           width: 50,
           height: 50,
           borderRadius: 25,
-          // Используем более конкретные цвета непосредственно
-          backgroundColor: '#7AB648', // Или используйте конкретное значение из COLORS.primary.main
+          backgroundColor: COLORS.primary.main,
           justifyContent: 'center',
           alignItems: 'center',
           marginBottom: 20,
         }}
       >
-        <MaterialIcons name="food-bank" size={28} color="#FFFFFF" />
+        <MaterialIcons name="food-bank" size={28} color={COLORS.neutral.white} />
       </View>
     ),
   },
@@ -87,7 +111,7 @@ const tabs = {
       <MaterialIcons
         name="favorite"
         size={24}
-        color={focused ? COLORS.primary.main : COLORS.neutral.medium}
+        color={COLORS.neutral.white}
       />
     ),
     renderTitle: ({ title, progress }) => {
@@ -109,7 +133,7 @@ const tabs = {
       <MaterialIcons
         name="person"
         size={24}
-        color={focused ? COLORS.primary.main : COLORS.neutral.medium}
+        color={COLORS.neutral.white}
       />
     ),
     renderTitle: ({ title, progress }) => {
@@ -137,9 +161,8 @@ const TabNavigator = () => {
         <AnimatedTabBar
           tabs={tabs}
           {...props}
-          // Используем строковые значения вместо объекта цветов
-          barColor="#FFFFFF" // Или можно использовать 'white'
-          dotColor="#7AB648"  // Используйте соответствующий hex-код вместо COLORS.primary.main
+          barColor={COLORS.primary.main}
+          dotColor={COLORS.primary.main}
           duration={250}
         />
       )}
@@ -149,10 +172,17 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Nutrition" component={NutritionStack} />
       <Tab.Screen name="Calendar" component={CalendarScreen} />
+      <Tab.Screen name="Tracker" component={TrackerScreen} />
       <Tab.Screen name="Favorites" component={FavoritesScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={PersonalCabinetScreen} />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default TabNavigator;

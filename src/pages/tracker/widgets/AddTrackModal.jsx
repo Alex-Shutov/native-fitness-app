@@ -1,0 +1,176 @@
+import React, { useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
+import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
+import Typo from '~/shared/ui/typo';
+import Button from '~/shared/ui/button';
+import Input from '~/shared/ui/input/input';
+import WeekdaysSelector from '~/pages/tracker/widgets/WeekdaysSelector';
+import { createTrack, getStartOfWeek } from '~/pages/tracker/lib/utils';
+import CrossIcon from '~/shared/ui/icons/CrossIcon';
+
+const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
+  const [trackName, setTrackName] = useState('');
+  const [selectedDays, setSelectedDays] = useState([0, 0, 0, 0, 0]);
+  const [nameError, setNameError] = useState(null);
+
+  const startDate = getStartOfWeek();
+
+  const handleDayToggle = (dayIndex, status) => {
+    const newSelectedDays = [...selectedDays];
+    newSelectedDays[dayIndex] = status;
+    setSelectedDays(newSelectedDays);
+  };
+
+  const validateInput = () => {
+    if (!trackName.trim()) {
+      setNameError('Введите название трека');
+      return false;
+    }
+    setNameError(null);
+    return true;
+  };
+
+  const handleAddTrack = () => {
+    if (!validateInput()) return;
+
+    // Создаем новый трек
+    const newTrack = createTrack(trackName, startDate);
+    newTrack.completionStatus = selectedDays;
+
+    // Отправляем трек родительскому компоненту
+    if (onAddTrack) {
+      onAddTrack(newTrack);
+    }
+
+    // Сбрасываем форму и закрываем модал
+    setTrackName('');
+    setSelectedDays([0, 0, 0, 0, 0]);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setTrackName('');
+    setSelectedDays([0, 0, 0, 0, 0]);
+    setNameError(null);
+    onClose();
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={handleCancel}
+    >
+      <TouchableWithoutFeedback onPress={handleCancel}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={styles.modalContainer}
+            >
+              <View style={styles.modalContent}>
+                <View style={styles.header}>
+                  <Typo variant="body0" weight="medium">
+                    Новая цель
+                  </Typo>
+                  <TouchableOpacity onPress={handleCancel}>
+                    <CrossIcon size={24}/>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.form}>
+                  <Input
+                    placeholder="Название цели"
+                    value={trackName}
+                    onChangeText={setTrackName}
+                    error={nameError}
+                    style={styles.input}
+                  />
+
+                  <View style={styles.selectorContainer}>
+                    <Typo variant="bodyBolder" style={styles.selectorLabel}>
+                      Выберите дни
+                    </Typo>
+                    <WeekdaysSelector
+                      selectedDays={selectedDays}
+                      onDayToggle={handleDayToggle}
+                      startDate={startDate}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.actions}>
+                  <Button
+                    title="Добавить"
+                    onPress={handleAddTrack}
+                    style={styles.addButton}
+                  />
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: COLORS.neutral.offWhite,
+    borderTopLeftRadius: BORDER_RADIUS.xl,
+    borderTopRightRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
+    maxHeight: '80%',
+  },
+  modalContent: {
+    width: '100%',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  form: {
+    marginBottom: SPACING.lg,
+  },
+  input: {
+    marginBottom: SPACING.md,
+  },
+  selectorContainer: {
+    marginTop: SPACING.md,
+  },
+  selectorLabel: {
+    textAlign:'left',
+  },
+  actions: {
+    paddingBottom: SPACING.xl,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cancelButton: {
+    flex: 1,
+    marginRight: SPACING.sm,
+  },
+  addButton: {
+    flex: 1,
+    marginLeft: SPACING.sm,
+  },
+});
+
+export default AddTrackModal;

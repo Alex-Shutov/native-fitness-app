@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
+    paddingLeft:16,
     flex: 1,
     fontFamily: Theme.fontFamily.text.regular,
     fontSize: Theme.fontSizes.md,

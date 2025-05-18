@@ -15,6 +15,7 @@ import ProgressScreen from '~/pages/onboarding/ProgressScreen';
 import PersonalInfoScreen from '~/pages/onboarding/PersonalInfoScreen';
 import DietSelectionScreen from '~/pages/onboarding/DietScreen';
 import TabNavigator from '~/core/providers/tabNavigation';
+import RecipeScreen from '~/pages/nutritions/widgets/RecipeScreen';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="ProgressScreen"
+        initialRouteName="DietSelectionScreen"
         screenOptions={{
           headerShown: false,
           cardStyle: { backgroundColor: 'transparent' },
@@ -39,9 +40,9 @@ const Navigation = () => {
         <Stack.Screen name="ProgressScreen" component={ProgressScreen} />
         <Stack.Screen name="PersonalInfoScreen" component={PersonalInfoScreen} />
         <Stack.Screen name="DietSelectionScreen" component={DietSelectionScreen} />
-
+        <Stack.Screen name="RecipeScreen" component={RecipeScreen} />
         <Stack.Screen
-          name="TabHome"
+          name="MainScreen"
           component={TabNavigator}
           options={{ gestureEnabled: false }}
         />

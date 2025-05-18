@@ -18,7 +18,6 @@ export const NutritionStack = () => {
       }}>
       <Stack.Screen name="MealCategories" component={MealCategoriesScreen} />
       <Stack.Screen name="MealDaysScreen" component={MealDaysScreen} />
-      <Stack.Screen name="RecipeScreen" component={RecipeScreen} />
     </Stack.Navigator>
   );
 };

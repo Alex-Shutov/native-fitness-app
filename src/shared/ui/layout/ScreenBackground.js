@@ -15,6 +15,8 @@ const ScreenBackground = ({
   style,
   contentStyle,
   headerStyle,
+                            onPlusPress,
+  hasBackButton = true,
   ...props
 }) => {
   const navigation = useNavigation();
@@ -28,6 +30,7 @@ const ScreenBackground = ({
   };
 
   const renderBackButton = () => {
+    if(!hasBackButton) return null
     if (backIcon === 'close') {
       return (
         <TouchableOpacity
@@ -49,6 +52,20 @@ const ScreenBackground = ({
     }
   };
 
+  const renderPlusButton = () => {
+    if (onPlusPress) {
+      return (
+        <TouchableOpacity
+          style={styles.plusButton}
+          onPress={onPlusPress}
+          accessibilityLabel="Add">
+          <MaterialIcons name="add" size={24} color={COLORS.neutral.darkest} />
+        </TouchableOpacity>
+      );
+    }
+    return <View style={styles.backButton} />; // Пустой элемент для сохранения выравнивания
+  };
+
   return (
     <View style={[styles.container, style]} {...props}>
       <SafeAreaView style={styles.safeArea}>
@@ -63,6 +80,7 @@ const ScreenBackground = ({
                   </Typo>
                 </View>
               )}
+              {renderPlusButton()}
               <View style={styles.backButton} />
             </View>
           </View>
@@ -102,6 +120,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'relative',
+    zIndex:20,
     left: -12,
     width: 44,
     height: 44,
@@ -110,6 +129,15 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
+  },
+  plusButton: {
+    position: 'relative',
+    zIndex: 20,
+    right: 42,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle:{
     fontSize: Theme.fontSizes.xl,
