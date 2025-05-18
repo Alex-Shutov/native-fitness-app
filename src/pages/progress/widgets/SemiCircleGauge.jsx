@@ -40,7 +40,7 @@ const SemiCircleGauge = ({
 
   const progressArc = `
     M ${strokeWidth}, ${centerY}
-    A ${radius}, ${radius} 0 ${normalizedProgress > 0.5 ? 1 : 0} 1 ${endX}, ${endY}
+    A ${radius}, ${radius} 0 ${normalizedProgress > 0.5 ? 0 : 0} 1 ${endX}, ${endY}
   `;
 
   // Create a gradient of colors for the progress
