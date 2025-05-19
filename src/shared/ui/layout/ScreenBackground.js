@@ -81,7 +81,6 @@ const ScreenBackground = ({
                 </View>
               )}
               {renderPlusButton()}
-              <View style={styles.backButton} />
             </View>
           </View>
         )}
@@ -113,6 +112,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
   },
   headerContent: {
+    display:'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

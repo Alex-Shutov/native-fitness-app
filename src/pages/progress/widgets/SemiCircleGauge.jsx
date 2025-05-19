@@ -16,8 +16,8 @@ const SemiCircleGauge = ({
                            unit = '',
                          }) => {
   // SVG dimensions and parameters - important for correct semi-circle shape
-  const width = 200;
-  const height = 115; // Increased slightly to fit full semi-circle
+  const width = 250;
+  const height = 125; // Increased slightly to fit full semi-circle
   const strokeWidth = 16;
   const radius = width / 2 - strokeWidth;
   const centerX = width / 2;
@@ -30,7 +30,7 @@ const SemiCircleGauge = ({
   // M = move to, A = arc
   const backgroundArc = `
     M ${strokeWidth}, ${centerY}
-    A ${radius}, ${radius} 0 0 1 ${width - strokeWidth}, ${centerY}
+    A ${radius}, ${radius} 0 0 1 ${(width - strokeWidth)+0}, ${centerY}
   `;
 
   // Calculate the endpoint of the progress arc based on the progress percentage
@@ -135,7 +135,7 @@ const SemiCircleGauge = ({
       <View style={styles.valueContainer}>
         <Typo style={{marginBottom:2}} variant={'caption'}>Прогресс</Typo>
       <LinearGradient
-        colors={[COLORS.primary.main, COLORS.neutral.white]}
+        colors={[COLORS.primary.lightSecond, COLORS.neutral.white]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1.1, y: 0 }}
         style={styles.gradient}>
@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
   },
   remainingText: {
     textAlign: 'center',
-    marginBottom: -8,
     color: COLORS.primary.main,
   },
   valueBox: {

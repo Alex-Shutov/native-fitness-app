@@ -12,6 +12,7 @@ import NutritionStack from '~/pages/nutritions';
 import TrackerScreen from '~/pages/tracker/widgets/TrackerScreen';
 import PersonalCabinetScreen from '~/pages/profile/widgets/PersonalCabinetScreen';
 import ProgressScreen from '~/pages/progress/widgets/ProgressScreen';
+import GamesNavigator from '~/pages/game';
 
 // Импортируем компоненты
 
@@ -64,6 +65,28 @@ const tabs = {
           }}
         >
           Питание
+        </Animated.Text>
+      );
+    },
+  },
+  Games: {
+    icon: ({ progress, focused }) => (
+      <MaterialIcons
+        name="sports-esports"
+        size={24}
+        color={COLORS.neutral.white}
+      />
+    ),
+    renderTitle: ({ title, progress }) => {
+      return (
+        <Animated.Text
+          style={{
+            opacity: progress,
+            color: COLORS.primary.main,
+            fontWeight: '500',
+          }}
+        >
+          Игры
         </Animated.Text>
       );
     },
@@ -199,6 +222,7 @@ const TabNavigator = () => {
       {/*<Tab.Screen name="Favorites" component={FavoritesScreen} />*/}
       <Tab.Screen name="Progress" component={ProgressScreen} />
       <Tab.Screen name="Profile" component={PersonalCabinetScreen} />
+      <Tab.Screen name="Games" component={GamesNavigator} />
     </Tab.Navigator>
   );
 };

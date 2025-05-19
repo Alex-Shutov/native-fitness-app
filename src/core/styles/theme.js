@@ -2,6 +2,7 @@ export const COLORS = {
   primary: {
     // Основной зеленый цвет (светло-зеленый)
     light: '#A4D65E',
+    lightSecond:'#86EA4D',
     // Основной зеленый цвет (средний)
     main: '#7AB648',
     // Основной зеленый цвет (темный)
@@ -33,7 +34,7 @@ export const COLORS = {
   },
 
   page: {
-    background: '#E7EDE3',
+    background: '#E8FFDA',
   },
 
   // Функциональные цвета

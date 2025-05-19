@@ -3,13 +3,15 @@ import { Image, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Typo from '~/shared/ui/typo';
 import { BORDER_RADIUS, COLORS, SPACING } from '~/core/styles/theme';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 
-export const DietOptionCard = ({ title, subtitle, image, isSelected, onPress,scale=1,transformX=0,transformY=0,imageFocus = { x: 0.5, y: 0.5 } }) => {
+export const DietOptionCard = ({ disabled=false, title, subtitle, image, isSelected, onPress,scale=1,transformX=0,transformY=0,imageFocus = { x: 0.5, y: 0.5 } }) => {
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
+      disabled={disabled}
       style={[
         styles.card,
         isSelected ? styles.cardSelected : styles.cardUnselected
@@ -17,7 +19,7 @@ export const DietOptionCard = ({ title, subtitle, image, isSelected, onPress,sca
     >
       {isSelected && (
         <LinearGradient
-          colors={[COLORS.primary.main, COLORS.neutral.white]}
+          colors={[COLORS.primary.lightSecond, COLORS.neutral.white]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.cardGradient}
@@ -47,6 +49,11 @@ export const DietOptionCard = ({ title, subtitle, image, isSelected, onPress,sca
           resizeMode="cover"
         />
       </View>
+      {disabled && (
+        <View style={styles.itemOverlay}>
+          <MaterialIcons name="lock" size={24} color={COLORS.neutral.light} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -101,6 +108,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     overflow: 'hidden',
+  },
+  itemOverlay: {
+    borderRadius: BORDER_RADIUS.lg,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardImage: {
     width: 200, // В 2 раза больше контейнера для эффекта зума

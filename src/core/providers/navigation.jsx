@@ -23,7 +23,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Welcome"
+        initialRouteName="MainScreen"
         screenOptions={{
           headerShown: false,
           cardStyle: { backgroundColor: 'transparent' },
