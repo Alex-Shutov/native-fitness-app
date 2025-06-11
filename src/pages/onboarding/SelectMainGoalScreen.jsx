@@ -11,12 +11,15 @@ import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
+import { useGoals } from '~/pages/onboarding/lib/useGoals';
+import LoadingOrError from '~/shared/ui/layout/LoadingOrError';
 
 const SelectPrimaryGoalScreen = () => {
   const navigation = useNavigation();
   const [onboarding, setOnboarding] = useRecoilState(onboardingState);
   const [selectedGoal, setSelectedGoal] = useState(onboarding.primaryGoal);
-  const goals = goalsData.filter((goal) => onboarding.selectedGoals.includes(goal.id));
+  const {goals,loading,error} = useGoals()
+  const primGoals = goals.filter((goal) => onboarding.selectedGoals.includes(goal.id));
 
   useEffect(() => {
     setOnboarding((prev) => ({
@@ -26,7 +29,7 @@ const SelectPrimaryGoalScreen = () => {
   }, [selectedGoal, setOnboarding]);
 
   const handleGoalsChange = (newSelectedGoal) => {
-    setSelectedGoal(goals.find((goal) => goal.id === newSelectedGoal));
+    setSelectedGoal(primGoals.find((goal) => goal.id === newSelectedGoal));
   };
 
   const handleContinue = () => {
@@ -39,6 +42,7 @@ const SelectPrimaryGoalScreen = () => {
     }
   };
   return (
+    <LoadingOrError loading={loading} error={error}>
     <ScreenTransition>
       <ScreenBackground>
         <View style={styles.container}>
@@ -52,7 +56,7 @@ const SelectPrimaryGoalScreen = () => {
           </View>
         </View>
         <PrimaryGoalGrid
-          goals={goals}
+          goals={primGoals}
           selectedGoal={selectedGoal?.id}
           onToggleGoal={handleGoalsChange}
         />
@@ -68,6 +72,7 @@ const SelectPrimaryGoalScreen = () => {
         </View>
       </ScreenBackground>
     </ScreenTransition>
+    </LoadingOrError>
   );
 };
 

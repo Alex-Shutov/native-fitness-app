@@ -7,15 +7,37 @@ import { useRecoilState } from 'recoil';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import { updateProfileField } from '~/pages/profile/api/profile.api';
 import { profileState } from '~/pages/profile/model/profille.state';
-import { goalsData } from '~/pages/onboarding/models/goals.mock'; // Import the goals data
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
 import ParamInput from '~/widgets/paramInput/ParamInput';
+import { useGoals } from '~/pages/onboarding/lib/useGoals';
 
 const PersonalCabinetScreen = () => {
   const [profile, setProfile] = useRecoilState(profileState);
   const [loading, setLoading] = useState({});
+  const { goals, loading: goalsLoading, updateGoal } = useGoals();
+
+// Обработка изменения цели
+  const handleGoalChange = async (value) => {
+    try {
+      // Находим выбранную цель в списке
+      const selectedGoal = goals.find(g => g.value === value);
+
+      if (selectedGoal) {
+        // Обновляем цель на сервере
+        await updateGoal(selectedGoal);
+
+        // Обновляем профиль в локальном состоянии
+        setProfile(prev => ({
+          ...prev,
+          goal: value,
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to update goal:', error);
+    }
+  };
 
   // Prepare options for select inputs
   const genderOptions = [
@@ -24,7 +46,7 @@ const PersonalCabinetScreen = () => {
   ];
 
   // Transform goalsData to the format needed for select options
-  const goalOptions = goalsData.map(goal => ({
+  const goalOptions = goals.map(goal => ({
     value: goal.value,
     label: goal.value
   }));
@@ -82,7 +104,7 @@ const PersonalCabinetScreen = () => {
                 <ParamInput
                   label="Цель"
                   value={profile.goal}
-                  onChangeText={(value) => handleUpdateField('goal', value)}
+                  onChangeText={handleGoalChange}
                   isSelect={true}
                   options={goalOptions}
                 />

@@ -11,3 +11,13 @@ export const onboardingState = atom({
         currentProgress: 0,
     },
 });
+
+
+export const goalsState = atom({
+    key: 'goalsState',
+    default: {
+        goals: [],
+        loading: false,
+        error: null,
+    },
+});

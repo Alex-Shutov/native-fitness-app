@@ -6,19 +6,19 @@ import { useRecoilState } from 'recoil';
 
 import { COLORS, SPACING } from '~/core/styles/theme';
 import { onboardingState } from '~/pages/onboarding/models/onboarding.atom';
-import { goalsData } from '~/pages/onboarding/models/goals.mock';
 import GoalsGrid from '~/pages/onboarding/widgets/GoalsGrid';
 import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
 import Container from '~/shared/ui/layout/Container';
+import LoadingOrError from '~/shared/ui/layout/LoadingOrError';
 
 const SelectGoalsScreen = () => {
   const navigation = useNavigation();
   const [onboarding, setOnboarding] = useRecoilState(onboardingState);
   const [selectedGoals, setSelectedGoals] = useState(onboarding.selectedGoals || []);
-
+  const { goals, loading, error } = useGoals();
   // Update the Recoil state when selected goals change
   useEffect(() => {
     setOnboarding(prev => ({
@@ -41,7 +41,9 @@ const SelectGoalsScreen = () => {
     }
   };
 
+
   return (
+    <LoadingOrError loading={loading} error={error} >
     <ScreenTransition>
       <ScreenBackground>
         {/*<Container type="centered" safeArea>*/}
@@ -56,7 +58,7 @@ const SelectGoalsScreen = () => {
           </View>
 
           <GoalsGrid
-            goals={goalsData}
+            goals={goals}
             selectedGoals={selectedGoals}
             onToggleGoal={handleGoalsChange}
             maxSelection={10}
@@ -76,6 +78,7 @@ const SelectGoalsScreen = () => {
         </View>
       </ScreenBackground>
     </ScreenTransition>
+      </LoadingOrError>
   );
 };
 
