@@ -31,7 +31,7 @@
     "icon": "./src/shared/assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/shared/assets/images/splash.png",
+      "image": "./src/shared/assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -48,6 +48,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.newfitnessapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9dce7407-dffb-4e19-b618-3a81e612c1dd"
+      }
     }
   }
 }
