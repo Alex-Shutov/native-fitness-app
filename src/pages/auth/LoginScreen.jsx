@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '~/pages/auth/models/auth.atom';
 import useZodForm from '~/core/hooks/useZodForm';
-import {emailSchema,phoneSchema} from './models/validate.auth'
+import { emailSchema, phoneSchema, usernameSchema } from './models/validate.auth';
 import { SPACING } from '~/core/styles/theme';
 import { View,StyleSheet } from 'react-native';
 import Typo from '~/shared/ui/typo';
@@ -13,14 +13,17 @@ import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import Container from '~/shared/ui/layout/Container';
 import Toggle from '~/shared/ui/toogle';
+import { getUserValue } from '~/pages/auth/lib/auth';
+import AuthService from '~/pages/auth/api/auth.service';
+import useAuth from '~/pages/auth/lib/useAuth';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const setAuthState = useSetRecoilState(authState);
   const [loginMethod, setLoginMethod] = useState(0);
 
-  const emailForm = useZodForm(emailSchema, {
-    email: '',
+  const emailForm = useZodForm(usernameSchema, {
+    username: '',
     password: '',
   });
 
@@ -31,7 +34,7 @@ const LoginScreen = () => {
 
   const activeForm = loginMethod === 0 ? emailForm : phoneForm;
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const {login,loading} = useAuth()
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -42,22 +45,20 @@ const LoginScreen = () => {
 
     await currentForm.handleSubmit(async (values) => {
       try {
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // simulate API call
+        await login(values);
+        // const userData = await AuthService.login(values)
+        //
+        // console.log('Logging in with:', values);
+        //
+        // // Create user object for auth state
+        //
+        //
+        // setAuthState(getUserValue(userData));
 
-        console.log('Logging in with:', values);
-
-        // Create user object for auth state
-        const userData = {
-          name: 'User', // Placeholder since we don't ask for name during login
-          email: loginMethod === 0 ? values.email : '',
-          phone: loginMethod === 1 ? values.phone : '',
-        };
-
-        setAuthState(getUserValue(userData));
-
-        // Navigate to the main app
-        navigation.navigate('Start'); // or wherever you want to go after login
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "MainScreen" }],
+        })
       } catch (error) {
         console.error('Login error:', error);
 
@@ -65,8 +66,6 @@ const LoginScreen = () => {
           ...prev,
           error: 'Login failed: ' + error.message,
         }));
-      } finally {
-        setLoading(false);
       }
     });
   };
@@ -83,7 +82,7 @@ const LoginScreen = () => {
           <View style={styles.mainContent}>
             {/* Login method toggle */}
             <Toggle
-              options={['Почта', 'Телефон']}
+              options={['Имя пользователя', 'Телефон']}
               selectedIndex={loginMethod}
               onSelect={setLoginMethod}
               style={styles.toggle}
@@ -94,14 +93,14 @@ const LoginScreen = () => {
               {/* Email or phone input based on selected method */}
               {loginMethod === 0 ? (
                 <Input
-                  icon="email"
-                  placeholder="Электронная почта"
-                  value={emailForm.values.email}
-                  onChangeText={(text) => emailForm.handleChange('email', text)}
-                  onBlur={() => emailForm.handleBlur('email')}
-                  keyboardType="email-address"
+                  icon="person"
+                  placeholder="Имя пользователя"
+                  value={emailForm.values.username}
+                  onChangeText={(text) => emailForm.handleChange('username', text)}
+                  onBlur={() => emailForm.handleBlur('username')}
+                  // keyboardType=""
                   autoCapitalize="none"
-                  error={emailForm.errors.email}
+                  error={emailForm.errors.username}
                 />
               ) : (
                 <Input

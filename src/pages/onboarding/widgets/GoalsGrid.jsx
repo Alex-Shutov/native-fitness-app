@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   goalButton: {
     marginBottom: SPACING.md,
     width: '100%',
-    backgroundColor: COLORS.neutral.offWhite,
+    backgroundColor: COLORS.neutral.white,
 
   },
   buttonWrapper: {

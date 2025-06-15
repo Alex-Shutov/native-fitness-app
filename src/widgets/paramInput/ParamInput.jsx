@@ -16,6 +16,7 @@ const ParamInput = ({
                       label,
                       value,
                       onChangeText,
+                      onBlur,
                       placeholder = '--',
                       isSelect = false,
                       options = [],
@@ -46,6 +47,7 @@ const ParamInput = ({
 
       return (
         <TouchableOpacity
+          onBlur={onBlur}
           style={styles.inputContainer}
           onPress={handleOpenModal}
           activeOpacity={0.7}
@@ -71,6 +73,7 @@ const ParamInput = ({
       return (
         <View style={styles.inputContainer}>
           <TextInput
+            onBlur={onBlur}
             style={styles.parameterInput}
             value={value}
             onChangeText={onChangeText}

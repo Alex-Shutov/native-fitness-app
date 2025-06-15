@@ -1,6 +1,7 @@
 export const DIET_OPTIONS = [
   {
-    id: 'regular',
+
+    id: 1,
     title: 'Обычная',
     subtitle: 'Любая еда',
     image: require('src/shared/assets/images/regular.png'), // Замените на фактический путь
@@ -9,7 +10,7 @@ export const DIET_OPTIONS = [
     transformY:-80,
   },
   {
-    id: 'vegetarian',
+    id: 2,
     title: 'Вегетарианская',
     subtitle: 'Без мяса и рыбы',
     image: require('src/shared/assets/images/vegeterian.png'), // Замените на фактический путь
@@ -18,7 +19,7 @@ export const DIET_OPTIONS = [
     transformY:-80,
   },
   {
-    id: 'lactose-free',
+    id: 3,
     title: 'Безмолочная',
     subtitle: 'Без молочных продуктов',
     image: require('src/shared/assets/images/no-milk.png'), // Замените на фактический путь

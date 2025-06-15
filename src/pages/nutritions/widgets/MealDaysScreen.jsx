@@ -1,32 +1,57 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+
+import { useSnackbar } from '~/core/hooks/useSnackbar';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
+import MealService from '~/pages/nutritions/api/meals.service';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
-import { getPlanDays } from '~/pages/nutritions/lib/utils';
 
 const MealDaysScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { mealTypeId, dietId, title } = route.params || {};
+  console.log(route.params,'params');
+  const { showSnackbar } = useSnackbar();
+  const [availableDays, setAvailableDays] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Получаем все доступные дни для выбранного плана
-  const availableDays = getPlanDays(dietId);
+  useEffect(() => {
+    const fetchPlanDays = async () => {
+      try {
+        setLoading(true);
+        const days = await MealService.getPlanDays(dietId);
+        setAvailableDays(days);
+      } catch (error) {
+        showSnackbar('Не удалось загрузить дни питания', 'error');
+        console.error('Error fetching plan days:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleDaySelection = (day) => {
-    // Навигация к экрану с рецептом для выбранного дня и типа приема пищи
-    navigation.navigate('RecipeScreen', {
-      dietId,
-      mealTypeId,
-      day,
-    });
+    fetchPlanDays();
+  }, [dietId]);
+
+  const handleDaySelection = async (day) => {
+    try {
+      console.log(dietId,day,mealTypeId,'diet');
+      const recipe = await MealService.getMealRecipe(dietId, day, mealTypeId);
+      navigation.navigate('RecipeScreen', {
+        recipe,
+        dietId,
+        mealTypeId,
+        day,
+      });
+    } catch (error) {
+      showSnackbar('Не удалось загрузить рецепт', 'error');
+      console.error('Error fetching meal recipe:', error);
+    }
   };
 
-  // Создаем сетку из дней (2 колонки)
   const renderDaysGrid = () => {
-    // Разбиваем все дни на пары (для отображения в 2 колонки)
     const dayPairs = [];
     for (let i = 0; i < availableDays.length; i += 2) {
       dayPairs.push(availableDays.slice(i, i + 2));
@@ -39,13 +64,12 @@ const MealDaysScreen = () => {
             key={day}
             style={styles.dayButton}
             onPress={() => handleDaySelection(day)}
-          >
+            disabled={loading}>
             <Typo variant="body1" align="center">
               {day}-й день
             </Typo>
           </TouchableOpacity>
         ))}
-        {/* Если в паре только один день, добавляем пустую ячейку для сохранения сетки */}
         {pair.length === 1 && <View style={styles.emptyCell} />}
       </View>
     ));
@@ -58,10 +82,15 @@ const MealDaysScreen = () => {
           <ScrollView
             style={styles.scrollView}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
+            contentContainerStyle={styles.scrollContent}>
             <View style={styles.daysContainer}>
-              {renderDaysGrid()}
+              {loading ? (
+                <Typo variant="body1" align="center">
+                  Загрузка...
+                </Typo>
+              ) : (
+                renderDaysGrid()
+              )}
             </View>
           </ScrollView>
         </View>

@@ -6,21 +6,22 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
-  Platform
+  Platform, ActivityIndicator,
 } from 'react-native';
+
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
-import Button from '~/shared/ui/button';
-import Input from '~/shared/ui/input/input';
-import WeekdaysSelector from '~/pages/tracker/widgets/WeekdaysSelector';
 import { createTrack, getStartOfWeek } from '~/pages/tracker/lib/utils';
+import WeekdaysSelector from '~/pages/tracker/widgets/WeekdaysSelector';
+import Button from '~/shared/ui/button';
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
+import Input from '~/shared/ui/input/input';
+import Typo from '~/shared/ui/typo';
 
 const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
   const [trackName, setTrackName] = useState('');
   const [selectedDays, setSelectedDays] = useState([0, 0, 0, 0, 0]);
   const [nameError, setNameError] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const startDate = getStartOfWeek();
 
   const handleDayToggle = (dayIndex, status) => {
@@ -38,22 +39,25 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
     return true;
   };
 
-  const handleAddTrack = () => {
+  const handleAddTrack = async () => {
     if (!validateInput()) return;
 
-    // Создаем новый трек
-    const newTrack = createTrack(trackName, startDate);
-    newTrack.completionStatus = selectedDays;
+    setIsLoading(true);
+    try {
+      await onAddTrack({
+        title: trackName,
+        completionStatus: selectedDays,
+      });
 
-    // Отправляем трек родительскому компоненту
-    if (onAddTrack) {
-      onAddTrack(newTrack);
+      // Сбрасываем форму только если успешно
+      setTrackName('');
+      setSelectedDays([0, 0, 0, 0, 0]);
+      onClose();
+    } catch (error) {
+      console.error('Error adding track:', error);
+    } finally {
+      setIsLoading(false);
     }
-
-    // Сбрасываем форму и закрываем модал
-    setTrackName('');
-    setSelectedDays([0, 0, 0, 0, 0]);
-    onClose();
   };
 
   const handleCancel = () => {
@@ -64,26 +68,20 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={handleCancel}
-    >
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleCancel}>
       <TouchableWithoutFeedback onPress={handleCancel}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback onPress={() => {}}>
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.modalContainer}
-            >
+              style={styles.modalContainer}>
               <View style={styles.modalContent}>
                 <View style={styles.header}>
                   <Typo variant="body0" weight="medium">
                     Новая цель
                   </Typo>
                   <TouchableOpacity onPress={handleCancel}>
-                    <CrossIcon size={24}/>
+                    <CrossIcon size={24} />
                   </TouchableOpacity>
                 </View>
 
@@ -109,11 +107,11 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
                 </View>
 
                 <View style={styles.actions}>
-                  <Button
-                    title="Добавить"
-                    onPress={handleAddTrack}
-                    style={styles.addButton}
-                  />
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={COLORS.primary.main} />
+                  ) : (
+                    <Button title="Добавить" onPress={handleAddTrack} style={styles.addButton} />
+                  )}
                 </View>
               </View>
             </KeyboardAvoidingView>
@@ -156,7 +154,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.md,
   },
   selectorLabel: {
-    textAlign:'left',
+    textAlign: 'left',
   },
   actions: {
     paddingBottom: SPACING.xl,

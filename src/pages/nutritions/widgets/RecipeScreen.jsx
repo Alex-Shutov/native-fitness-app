@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
@@ -8,24 +8,47 @@ import { getDayMeals, getMealTypeById } from '~/pages/nutritions/lib/utils';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
-
+import { useSnackbar } from '~/core/hooks/useSnackbar';
+import MealService from '~/pages/nutritions/api/meals.service';
 const RecipeScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { dietId, mealTypeId, day } = route.params || {};
+  const { showSnackbar } = useSnackbar();
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Находим соответствующий рецепт
-  const meals = getDayMeals(dietId, day);
-  const recipe = meals.find((meal) => meal.type === mealTypeId);
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        setLoading(true);
+        const recipeData = await MealService.getMealRecipe(dietId, day, mealTypeId);
+        setRecipe(recipeData);
+      } catch (error) {
+        showSnackbar('Не удалось загрузить рецепт', 'error');
+        console.error('Error fetching recipe:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Получаем название типа приема пищи
-  const mealType = getMealTypeById(mealTypeId);
+    fetchRecipe();
+  }, [dietId, mealTypeId, day]);
 
-  // Обработчик для кнопки "Добавить в избранное"
   const handleAddToFavorites = () => {
-    // Логика для добавления рецепта в избранное
     console.log('Add to favorites:', recipe?.id);
+    // Здесь можно добавить вызов API для добавления в избранное
   };
+
+  if (loading) {
+    return (
+      <ScreenBackground>
+        <View style={styles.container}>
+          <Typo variant="body1">Загрузка...</Typo>
+        </View>
+      </ScreenBackground>
+    );
+  }
 
   if (!recipe) {
     return (
@@ -38,24 +61,27 @@ const RecipeScreen = () => {
   }
 
   return (
-    <ScreenTransition >
+    <ScreenTransition>
       <ScreenBackground contentStyle={styles.screenBackground}>
         <ScrollView showsVerticalScrollIndicator={true}>
-          {/* Изображение рецепта */}
           <View style={styles.imageContainer}>
             <Image source={recipe.image} style={styles.recipeImage} resizeMode="cover" />
           </View>
 
           <View style={styles.contentContainer}>
-            {/* Заголовок рецепта */}
             <Typo variant="hSub" style={styles.recipeTitle}>
               {recipe.title}
             </Typo>
 
-            {/* Ингридиенты */}
+            {recipe.description && (
+              <Typo variant="body1" style={styles.description}>
+                {recipe.description}
+              </Typo>
+            )}
+
             <View style={styles.section}>
               <Typo variant="body0" style={styles.sectionTitle}>
-                Ингридиенты
+                Ингредиенты
               </Typo>
 
               {recipe.ingredients.map((ingredient, index) => (
@@ -74,7 +100,6 @@ const RecipeScreen = () => {
               ))}
             </View>
 
-            {/* Способ приготовления */}
             <View style={styles.section}>
               <Typo variant="body0" style={styles.sectionTitle}>
                 Способ приготовления
@@ -82,7 +107,9 @@ const RecipeScreen = () => {
 
               {recipe.preparationSteps.map((step, index) => (
                 <View key={index} style={styles.stepItem}>
-                  <View style={styles.bulletPoint} />
+                  <View style={styles.stepNumber}>
+                    <Typo variant="body1">{index + 1}.</Typo>
+                  </View>
                   <Typo variant="body1" style={styles.stepText}>
                     {step}
                   </Typo>
@@ -95,7 +122,6 @@ const RecipeScreen = () => {
     </ScreenTransition>
   );
 };
-
 const styles = StyleSheet.create({
   screenBackground: {
 

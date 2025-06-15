@@ -6,27 +6,24 @@ import Typo from '~/shared/ui/typo';
 import { COLORS, SPACING } from '~/core/styles/theme';
 
 const LoadingOrError = ({loading,error,children}) => {
-
+  debugger
+  console.log(loading,error,'loading123');
   if (loading) {
     return (
-      <ScreenTransition>
         <ScreenBackground>
           <View style={styles.container}>
             <Typo variant="hSub">Загрузка ...</Typo>
           </View>
         </ScreenBackground>
-      </ScreenTransition>
     );
   }
   if (error) {
     return (
-      <ScreenTransition>
         <ScreenBackground>
           <View style={styles.container}>
             <Typo variant="hSub" color="error">{error}</Typo>
           </View>
         </ScreenBackground>
-      </ScreenTransition>
     );
   }
   return (

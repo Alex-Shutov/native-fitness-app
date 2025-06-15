@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import Typo from '~/shared/ui/typo';
-import { getTrackCompletionPercentage } from '~/pages/tracker/lib/utils';
+import { getCurrentWeekdayIndex, getTrackCompletionPercentage, isFutureDay } from '~/pages/tracker/lib/utils';
 import Svg, { Circle } from 'react-native-svg';
 import CheckIcon from '~/shared/ui/icons/CheckIcon';
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
@@ -14,7 +14,7 @@ const TrackItem = ({
                      weekdays, // получаем дни недели
                    }) => {
   const completionPercentage = getTrackCompletionPercentage(track);
-
+  const currentDayIndex = getCurrentWeekdayIndex();
   const handleStatusToggle = (dayIndex, status) => {
     if (onStatusChange) {
       onStatusChange(track.id, dayIndex, status);
@@ -54,25 +54,24 @@ const TrackItem = ({
   };
 
   const renderDayButtons = () => {
-    return weekdays.map((_, index) => (
-      <TouchableOpacity
-        key={index}
-        style={styles.dayButton}
-        onPress={() => handleStatusToggle(index, !track.completionStatus[index])}
-      >
-        {track.completionStatus[index] ? (
-          <CheckIcon
-            color={COLORS.primary.main}
-            size={24}
-          />
-        ) : (
-          <CrossIcon
-            color={COLORS.neutral.medium}
-            size={24}
-          />
-        )}
-      </TouchableOpacity>
-    ));
+    return weekdays.map((day, index) => {
+      console.log(index,currentDayIndex,'day');
+      const isFuture = isFutureDay(index, currentDayIndex);
+      return (
+        <TouchableOpacity
+          disabled={isFuture}
+
+          key={index}
+          style={styles.dayButton}
+          onPress={() => handleStatusToggle(index, !track.completionStatus[index])}>
+          {track.completionStatus[index] ? (
+            <CheckIcon color={COLORS.primary.main} size={24} />
+          ) : (
+            <CrossIcon color={COLORS.neutral.medium} size={24} />
+          )}
+        </TouchableOpacity>
+      );
+    });
   };
   return (
     <TouchableOpacity

@@ -1,8 +1,15 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, ScrollView, Dimensions, TextInput } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+  TextInput,
+} from 'react-native';
 import { useRecoilState } from 'recoil';
-import { MaterialIcons } from '@expo/vector-icons';
 
 import { COLORS, SPACING, BORDER_RADIUS, FONT_FAMILY, FONT_SIZES } from '~/core/styles/theme';
 import { authState } from '~/pages/auth/models/auth.atom';
@@ -36,10 +43,7 @@ const PersonalInfoScreen = () => {
     return bmi;
   };
 
-// Создаем состояние для ИМТ
-  const [bmi, setBmi] = useState(calculateBodyMassIndex());
-
-
+  const [bmi, setBmi] = useState(auth.bodyMassIndex);
 
   // Состояние для раскрывающихся секций
   const [expandedSections, setExpandedSections] = useState({
@@ -65,7 +69,7 @@ const PersonalInfoScreen = () => {
     return {
       chest: chestCircumference,
       waist: waistCircumference,
-      hip: hipCircumference
+      hip: hipCircumference,
     };
   };
 
@@ -87,37 +91,27 @@ const PersonalInfoScreen = () => {
   };
 
   const handleContinue = () => {
-    if (currentPage === 0) {
-      goToNextPage();
-      const bmi = calculateBodyMassIndex();
+    const bmi = calculateBodyMassIndex();
 
-      setAuth((prevState) => ({
-        ...prevState,
-        gender,
-        age,
-        height,
-        weight,
-        startWeight: weight,
-        chestCircumference,
-        waistCircumference,
-        hipCircumference,
-        bodyMassIndex: bmi,
-      }));
-    } else {
-      setAuth((prevState) => ({
-        ...prevState,
-        targetWeight,
-      }));
-      navigation.navigate('MainScreen');
-    }
+    setAuth((prevState) => ({
+      ...prevState,
+      gender,
+      age,
+      height,
+      weight,
+      targetWeight,
+      chestCircumference,
+      waistCircumference,
+      hipCircumference,
+      bodyMassIndex: bmi,
+    }));
+    navigation.navigate('DietSelectionScreen');
   };
 
   return (
     <ScreenTransition>
       <ScreenBackground>
-        <ScrollView
-          ref={scrollViewRef}
-        >
+        <ScrollView ref={scrollViewRef}>
           {/* Первая страница - Ввод основных параметров */}
           <View style={[styles.page]}>
             <View style={styles.headerContainer}>
@@ -130,12 +124,8 @@ const PersonalInfoScreen = () => {
             <SectionContainer label="Пол">
               <View style={styles.genderContainer}>
                 <TouchableOpacity
-                  style={[
-                    styles.genderOption,
-                    gender === 'male' && styles.selectedGender,
-                  ]}
-                  onPress={() => setGender('male')}
-                >
+                  style={[styles.genderOption, gender === 'male' && styles.selectedGender]}
+                  onPress={() => setGender('male')}>
                   <MaterialIcons
                     name="male"
                     size={48}
@@ -144,12 +134,8 @@ const PersonalInfoScreen = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[
-                    styles.genderOption,
-                    gender === 'female' && styles.selectedGender,
-                  ]}
-                  onPress={() => setGender('female')}
-                >
+                  style={[styles.genderOption, gender === 'female' && styles.selectedGender]}
+                  onPress={() => setGender('female')}>
                   <MaterialIcons
                     name="female"
                     size={48}
@@ -196,7 +182,10 @@ const PersonalInfoScreen = () => {
             <SectionContainer label="Параметры">
               <View style={styles.parametersInputContainer}>
                 <View style={styles.parameterInputWrapper}>
-                  <Typo variant="caption" color={COLORS.neutral.medium} style={styles.parameterLabel}>
+                  <Typo
+                    variant="caption"
+                    color={COLORS.neutral.medium}
+                    style={styles.parameterLabel}>
                     Объем груди
                   </Typo>
                   <View style={styles.inputContainer}>
@@ -213,7 +202,10 @@ const PersonalInfoScreen = () => {
                 </View>
 
                 <View style={styles.parameterInputWrapper}>
-                  <Typo variant="caption" color={COLORS.neutral.medium} style={styles.parameterLabel}>
+                  <Typo
+                    variant="caption"
+                    color={COLORS.neutral.medium}
+                    style={styles.parameterLabel}>
                     Объем талии
                   </Typo>
                   <View style={styles.inputContainer}>
@@ -230,7 +222,10 @@ const PersonalInfoScreen = () => {
                 </View>
 
                 <View style={styles.parameterInputWrapper}>
-                  <Typo variant="caption" color={COLORS.neutral.medium} style={styles.parameterLabel}>
+                  <Typo
+                    variant="caption"
+                    color={COLORS.neutral.medium}
+                    style={styles.parameterLabel}>
                     Объем бедер
                   </Typo>
                   <View style={styles.inputContainer}>
@@ -286,7 +281,8 @@ const PersonalInfoScreen = () => {
 
             {/* Индекс массы тела */}
             <SectionContainer label="Индекс массы тела">
-              <View style={styles.bmiValueContainer}>G
+              <View style={styles.bmiValueContainer}>
+                G
                 <Typo variant="h3" weight="bold" color={COLORS.primary.main}>
                   {bmi}
                 </Typo>
@@ -346,7 +342,7 @@ const SectionContainer = ({ label, children }) => {
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.sectionContent}>
-        <Typo variant="body0" weight={'bold'} style={styles.sectionLabel}>
+        <Typo variant="body0" weight="bold" style={styles.sectionLabel}>
           {label}
         </Typo>
         {children}
@@ -363,9 +359,9 @@ const ParameterBox = ({ label, value }) => {
         {label}
       </Typo>
       <View style={styles.parameterValue}>
-      <Typo variant="body1" weight="bold">
-        {value}
-      </Typo>
+        <Typo variant="body1" weight="bold">
+          {value}
+        </Typo>
       </View>
     </View>
   );
@@ -420,11 +416,11 @@ const SliderInputV2 = ({ value, onValueChange, minimumValue, maximumValue, step 
       <View style={styles.sliderValueContainer}>
         <Typo
           variant="body1"
-          weight={'bold'}
+          weight="bold"
           style={[
             styles.sliderValue,
             {
-              fontFamily:FONT_FAMILY.text.bold,
+              fontFamily: FONT_FAMILY.text.bold,
               left: `${calculateValuePos()}%`,
             },
           ]}>
@@ -487,7 +483,7 @@ const styles = StyleSheet.create({
     // top: SPACING.xs,
     // left: SPACING.sm,
     color: COLORS.primary.extraDark,
-    fontSize: SPACING.md ,
+    fontSize: SPACING.md,
   },
   genderContainer: {
     flexDirection: 'row',
@@ -518,8 +514,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   sliderValue: {
-    lineHeight:24,
-    textAlign:'start',
+    lineHeight: 24,
+    textAlign: 'start',
     fontSize: SPACING.md,
     color: COLORS.primary.dark,
   },
@@ -556,11 +552,11 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     marginBottom: SPACING.md,
   },
-  parameterValue:{
+  parameterValue: {
     borderRadius: BORDER_RADIUS.sm,
     backgroundColor: COLORS.primary.extraLight,
-    paddingVertical:16,
-    paddingHorizontal:32
+    paddingVertical: 16,
+    paddingHorizontal: 32,
   },
   parametersContainer: {
     flexDirection: 'row',
@@ -581,7 +577,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xs,
   },
   bmiValueContainer: {
-    backgroundColor:COLORS.primary.extraLight,
+    backgroundColor: COLORS.primary.extraLight,
     padding: SPACING.md,
     alignItems: 'center',
     marginTop: SPACING.md,
@@ -607,7 +603,7 @@ const styles = StyleSheet.create({
   accordionContent: {
     padding: SPACING.md,
     paddingTop: 0,
-    textAlign:'start',
+    textAlign: 'start',
     // borderTopWidth: 1,
     borderTopColor: COLORS.neutral.light,
   },
@@ -623,7 +619,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent:'center',
+    justifyContent: 'center',
     backgroundColor: COLORS.primary.extraLight,
     borderRadius: BORDER_RADIUS.sm,
     paddingHorizontal: SPACING.sm,

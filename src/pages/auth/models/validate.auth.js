@@ -62,6 +62,16 @@ export const emailSchema = z.object({
     .min(6, { message: 'Пароль должен содержать не менее 6 символов' }),
 });
 
+export const usernameSchema = z.object({
+  username: z
+    .string()
+    .nonempty({ message: 'Имя пользователя обязательно обязателен' }),
+  password: z
+    .string()
+    .nonempty({ message: 'Пароль обязателен' })
+    .min(6, { message: 'Пароль должен содержать не менее 6 символов' }),
+});
+
 export const phoneSchema = z.object({
   phone: z
     .string()

@@ -1,43 +1,74 @@
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useRecoilState } from 'recoil';
-import { LinearGradient } from 'expo-linear-gradient';
 
+import { useSnackbar } from '~/core/hooks/useSnackbar';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import { authState } from '~/pages/auth/models/auth.atom';
+import { DIET_OPTIONS } from '~/pages/onboarding/models/diet.model';
+import profileApi from '~/pages/profile/api/profile.api'; // Предполагается, что у вас есть API клиент
 import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Typo from '~/shared/ui/typo';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
-import { DIET_OPTIONS } from '~/pages/onboarding/models/diet.model';
-
-// Создаём константу с вариантами питания
 
 const DietSelectionScreen = () => {
   const navigation = useNavigation();
   const [auth, setAuth] = useRecoilState(authState);
+  const { showSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Состояние для выбранного варианта питания
   const [selectedDiet, setSelectedDiet] = useState(auth.diet || null);
 
-  // Обработчик выбора варианта питания
   const handleDietSelection = (dietId) => {
     console.log(dietId);
     setSelectedDiet(dietId);
   };
 
-  // Обработчик нажатия кнопки "Иду к цели"
-  const handleContinue = () => {
-    // Обновляем данные в хранилище
-    setAuth((prevState) => ({
-      ...prevState,
-      diet: selectedDiet,
-    }));
+  const handleContinue = async () => {
+    console.log(selectedDiet,'diet');
+    if (selectedDiet===null) return;
+    showSnackbar('Подождите...', 'info');
+    setIsLoading(true);
+    console.log(123123123);
+    try {
+      // Подготавливаем данные для отправки
+      const profileData = {
+        age: auth.age,
+        weight: auth.weight,
+        height: auth.height,
+        gender: auth.gender,
+        targetWeight: auth.targetWeight,
+        chestCircumference: auth.chestCircumference,
+        waistCircumference: auth.waistCircumference,
+        hipCircumference: auth.hipCircumference,
+        diet: selectedDiet,
+      };
+      console.log(profileData,'data');
+      // Отправляем данные на сервер
+      const upgradedMe = await profileApi.updateProfile(profileData);
+      console.log(upgradedMe,'me');
+      // Обновляем локальное состояние
+      setAuth((prevState) => ({
+        ...prevState,
+        ...upgradedMe,
+        diet: selectedDiet,
+      }));
 
-    // Переходим на следующий экран
-    navigation.navigate('MainScreen'); // Замените на фактический экран
+      // Показываем уведомление об успехе
+      showSnackbar('Данные успешно обновлены', 'success');
+
+      // Переходим на следующий экран
+      navigation.navigate('MainScreen');
+    } catch (error) {
+      console.error('Ошибка при обновлении профиля:', error);
+      showSnackbar('Не удалось обновить данные', 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,9 +104,9 @@ const DietSelectionScreen = () => {
             <Button
               title="Иду к цели"
               style={styles.button}
-              loading={false}
+              loading={isLoading}
               onPress={handleContinue}
-              disabled={!selectedDiet}
+              disabled={selectedDiet===null}
             />
           </View>
         </View>
@@ -83,7 +114,6 @@ const DietSelectionScreen = () => {
     </ScreenTransition>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -109,7 +139,6 @@ const styles = StyleSheet.create({
   optionsContainer: {
     marginBottom: SPACING.xl,
   },
-
   buttonContainer: {
     marginTop: 'auto',
     paddingBottom: SPACING.md,

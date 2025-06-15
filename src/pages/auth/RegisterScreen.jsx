@@ -12,9 +12,11 @@ import { authState } from '../auth/models/auth.atom';
 
 import useZodForm from '~/core/hooks/useZodForm';
 import { SPACING } from '~/core/styles/theme';
-import { getUserValue } from '~/pages/auth/lib/auth';
 import { registerSchema } from '~/pages/auth/models/validate.auth';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
+import { useSnackbar } from '~/core/hooks/useSnackbar';
+import AuthService from '~/pages/auth/api/auth.service';
+import useAuth from '~/pages/auth/lib/useAuth';
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -26,29 +28,29 @@ const RegisterScreen = () => {
     password: '',
     agreementAccepted: false,
   });
-  const [loading, setLoading] = useState(false);
+  const {register,loading} = useAuth()
+  const { showSnackbar } = useSnackbar();
 
   const handleRegister = async () => {
     await form.handleSubmit(async (values) => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await register({
+          username: values.name,
+          ...values,
+        });
 
-        console.log('Registering with data:', values);
-
-        setAuthState(getUserValue(values));
-
-        navigation.navigate('SelectGoals');
-      } catch (error) {
-        console.error('Registration error:', error);
-
-        setAuthState((prev) => ({
-          ...prev,
-          error: 'Registration failed: ' + error.message,
-        }));
-      } finally {
-        setLoading(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "SelectGoals" }],
+        })
+      } catch (err) {
+        if (err.response?.status === 409) {
+          showSnackbar("Username or email already exists", 'error');
+        } else {
+          showSnackbar(err.response?.data || "Registration failed. Please try again.", 'error')
+        }
       }
-    });
+    })
   };
 
   const handleLoginPress = () => {

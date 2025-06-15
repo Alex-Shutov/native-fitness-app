@@ -6,6 +6,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Navigation from './core/providers/navigation';
 import RecoilProvider from './core/providers/recoil';
 import { useFonts } from '~/core/hooks/useFonts';
+import { SnackbarProvider } from '~/core/providers/snackbar';
+import { NavigationContainer } from '@react-navigation/native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,7 +19,6 @@ const App = () => {
   useEffect(() => {
     async function prepare() {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -41,8 +42,13 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <RecoilProvider>
-        <Navigation />
-        <StatusBar style="auto" />
+        <SnackbarProvider>
+          <NavigationContainer>
+
+          <Navigation />
+          <StatusBar style="auto" />
+          </NavigationContainer>
+        </SnackbarProvider>
       </RecoilProvider>
     </SafeAreaProvider>
   );

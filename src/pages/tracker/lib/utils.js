@@ -87,3 +87,13 @@ export const updateTrackStatus = (track, dayIndex, status) => {
     completionStatus: updatedCompletionStatus,
   };
 };
+
+export const getCurrentWeekdayIndex = () => {
+  const today = new Date().getDay(); // 0 (воскресенье) до 6 (суббота)
+  // Преобразуем в наш формат: 0 (понедельник) до 6 (воскресенье)
+  return today === 0 ? 6 : today - 1;
+};
+
+export const isFutureDay = (dayIndex, currentDayIndex) => {
+  return dayIndex > currentDayIndex;
+};

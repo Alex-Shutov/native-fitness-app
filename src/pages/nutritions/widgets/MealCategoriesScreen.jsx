@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS, SPACING } from '~/core/styles/theme';
@@ -9,23 +9,39 @@ import Typo from '~/shared/ui/typo';
 import { useRecoilValue } from 'recoil';
 import { authState } from '~/pages/auth/models/auth.atom';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
+import { useSnackbar } from '~/core/hooks/useSnackbar';
+import MealService from '~/pages/nutritions/api/meals.service';
 
 const MealCategoriesScreen = () => {
   const navigation = useNavigation();
   const auth = useRecoilValue(authState);
+  const { showSnackbar } = useSnackbar();
+  const [mealTypes, setMealTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Получаем информацию о выбранном плане питания из authState
-  const nutritionPlan = getMealTypeById(auth.diet);
-  const daysCount = nutritionPlan?.days || 14;
+  useEffect(() => {
+    const fetchMealTypes = async () => {
+      try {
+        setLoading(true);
+        // Предполагаем, что у нас есть метод для получения типов питания
+        const types = await MealService.getMealTypes();
+        setMealTypes(types);
+      } catch (error) {
+        showSnackbar('Не удалось загрузить типы питания', 'error');
+        console.error('Error fetching meal types:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMealTypes();
+  }, []);
 
   const handleMealTypeSelection = (mealTypeId) => {
-    // Получаем информацию о типе приема пищи
-    const mealType = MEAL_TYPES.find(type => type.id === mealTypeId);
-
-    // Навигация к экрану с выбором дня
+    const mealType = mealTypes.find(type => type.id === mealTypeId);
     navigation.navigate('MealDaysScreen', {
       mealTypeId,
-      dietId: auth.diet,
+      dietId: auth.diet??1,
       title: mealType?.title || '',
     });
   };
@@ -36,26 +52,32 @@ const MealCategoriesScreen = () => {
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Typo variant="hSub" style={styles.header}>
-              Питание на {daysCount} дней
+              Питание на 14 дней
             </Typo>
           </View>
 
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-          >
-            {MEAL_TYPES.map((mealType) => (
-              <DietOptionCard
-                key={mealType.id}
-                title={mealType.title}
-                subtitle=""
-                image={mealType.image}
-                isSelected={false}
-                onPress={() => handleMealTypeSelection(mealType.id)}
-              />
-            ))}
-          </ScrollView>
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <Typo variant="body1">Загрузка...</Typo>
+            </View>
+          ) : (
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
+            >
+              {mealTypes.map((mealType) => (
+                <DietOptionCard
+                  key={mealType.id}
+                  title={mealType.title}
+                  // subtitle={mealType.description}
+                  image={mealType.image}
+                  isSelected={false}
+                  onPress={() => handleMealTypeSelection(mealType.id)}
+                />
+              ))}
+            </ScrollView>
+          )}
         </View>
       </ScreenBackground>
     </ScreenTransition>
@@ -77,6 +99,11 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollContent: {
     paddingBottom: SPACING.xl, // Дополнительный отступ снизу

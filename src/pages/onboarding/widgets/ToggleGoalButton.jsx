@@ -40,7 +40,7 @@ const ToggleGoalButton = ({
         disabled={disabled}
         style={[styles.button, style]}>
         <LinearGradient
-          colors={[COLORS.primary.main, COLORS.neutral.white]}
+          colors={[COLORS.primary.lightSecond, COLORS.neutral.white]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1.1, y: 0 }}
           style={styles.gradient}>
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     textAlignVertical: 'top',
     lineHeight: 10,
+
     textAlign: 'left',
   },
 });

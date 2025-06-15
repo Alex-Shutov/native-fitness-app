@@ -16,7 +16,7 @@ export const authState = atom({
         startWeight:60,
         targetWeight: 55,     // целевой вес в килограммах
 
-        diet: null,
+        diet: 0,
 
         // Расчетные параметры тела
         bodyMassIndex: null,           // индекс массы тела

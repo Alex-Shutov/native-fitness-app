@@ -1,4 +1,3 @@
-const mockToken = 'mock-auth-token-' + Math.random().toString(36).substring(2);
 
 
 export const getUserValue = (formData) => {
@@ -11,7 +10,6 @@ export const getUserValue = (formData) => {
   return {
     isAuthenticated: true,
     user,
-    token: mockToken,
     error: null,
     loading: false,
   }

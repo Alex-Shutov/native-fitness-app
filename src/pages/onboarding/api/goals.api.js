@@ -1,5 +1,6 @@
 // src/shared/api/goalService.js
 import apiClient from '~/shared/api/client';
+import { mapGoalsFromApi } from '~/pages/onboarding/lib/goals.mapper';
 
 /**
  * Сервис для работы с целями пользователя
@@ -10,8 +11,9 @@ const GoalService = {
    */
   async getGoals() {
     try {
-      const response = await apiClient.get('/api/goals');
-      return response.data;
+      const response = await apiClient.get('/api/predefined-goals');
+      debugger
+      return mapGoalsFromApi(response.data);
     } catch (error) {
       console.error('Error fetching goals:', error);
       throw error;
@@ -26,7 +28,7 @@ const GoalService = {
   async createGoal(goalData) {
     try {
       const response = await apiClient.post('/api/goals', goalData);
-      return response.data;
+      return mapGoalsFromApi([response.data])[0];
     } catch (error) {
       console.error('Error creating goal:', error);
       throw error;
@@ -39,7 +41,7 @@ const GoalService = {
   async updateGoal(goalData) {
     try {
       const response = await apiClient.put('/api/goals', goalData);
-      return response.data;
+      return mapGoalsFromApi([response.data])[0];
     } catch (error) {
       console.error('Error updating goal:', error);
       throw error;
