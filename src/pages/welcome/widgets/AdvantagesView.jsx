@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 
 import { COLORS, SPACING } from '../../../core/styles/theme';
 import AnimatedView from '../../../shared/ui/animation/AnimatedView';
-import Typo from '../../../shared/ui/typo';
+import {Typo}from '../../../shared/ui/typo/typo';
 
 const AdvantagesView = ({ duration, delay }) => {
   return (

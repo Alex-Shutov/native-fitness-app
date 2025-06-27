@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  TextInput,
+  TextInput, TouchableWithoutFeedback,
 } from 'react-native';
 import { useRecoilState } from 'recoil';
 
@@ -16,7 +16,8 @@ import { authState } from '~/pages/auth/models/auth.atom';
 import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
+import SliderInputV2 from '../../shared/ui/slider';
 
 const { width } = Dimensions.get('window');
 
@@ -395,60 +396,7 @@ const AccordionSection = ({ title, isExpanded, onToggle, content }) => {
   );
 };
 
-// Компонент для слайдера с отображением значения и треугольником (как в макете)
-const SliderInputV2 = ({ value, onValueChange, minimumValue, maximumValue, step }) => {
-  const [localValue, setLocalValue] = useState(value);
 
-  React.useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
-  const calculatePosition = () => {
-    return ((localValue - minimumValue) / (maximumValue - minimumValue)) * 100;
-  };
-
-  const calculateValuePos = () => {
-    return ((localValue - minimumValue) / (maximumValue - minimumValue)) * 100 - 4;
-  };
-
-  return (
-    <View style={styles.sliderContainerV2}>
-      <View style={styles.sliderValueContainer}>
-        <Typo
-          variant="body1"
-          weight="bold"
-          style={[
-            styles.sliderValue,
-            {
-              fontFamily: FONT_FAMILY.text.bold,
-              left: `${calculateValuePos()}%`,
-            },
-          ]}>
-          {localValue}
-        </Typo>
-      </View>
-      <View style={styles.sliderTrackV2}>
-        <View
-          style={[
-            styles.sliderFillV2,
-            {
-              width: `${calculatePosition()}%`,
-            },
-          ]}
-        />
-        <View
-          style={[
-            styles.sliderTriangle,
-            {
-              transform: 'rotate(180deg)',
-              left: `${calculatePosition()}%`,
-            },
-          ]}
-        />
-      </View>
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   page: {
@@ -518,6 +466,16 @@ const styles = StyleSheet.create({
     textAlign: 'start',
     fontSize: SPACING.md,
     color: COLORS.primary.dark,
+  },
+  sliderThumb: {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: COLORS.primary.main,
+    top: -8,
+    marginLeft: -12,
+    zIndex: 2,
   },
   sliderTrackV2: {
     height: 8,

@@ -5,7 +5,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import { getDayNames, getDayNumbers, getStartOfWeek } from '~/pages/tracker/lib/utils';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 const WeekdaysSelector = ({
   selectedDays = [0, 0, 0, 0, 0],

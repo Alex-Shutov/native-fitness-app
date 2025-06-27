@@ -4,7 +4,7 @@ import React from 'react';
 import { TouchableOpacity, View, StyleSheet, SafeAreaView } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 const ScreenBackground = ({
   children,

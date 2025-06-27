@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS, SPACING } from '~/core/styles/theme';
 

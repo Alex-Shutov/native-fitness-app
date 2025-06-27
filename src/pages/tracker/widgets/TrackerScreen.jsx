@@ -16,7 +16,7 @@ import { mapApiTrackToFrontend, trackerQuery, trackerState } from '~/pages/track
 import TrackItem from '~/pages/tracker/widgets/TrackItem';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 const TrackerScreen = () => {
   const [tracker, setTracker] = useRecoilState(trackerState);

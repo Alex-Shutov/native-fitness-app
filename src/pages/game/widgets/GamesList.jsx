@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS, SPACING } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
 import InfoCard from '~/widgets/InfoCard/InfoCard';

@@ -15,7 +15,7 @@ import WeekdaysSelector from '~/pages/tracker/widgets/WeekdaysSelector';
 import Button from '~/shared/ui/button';
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
 import Input from '~/shared/ui/input/input';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
   const [trackName, setTrackName] = useState('');

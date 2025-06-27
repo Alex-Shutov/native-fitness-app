@@ -5,7 +5,7 @@ import { COLORS, SPACING } from '~/core/styles/theme';
 import { MEAL_TYPES, getMealTypeById } from '../lib/utils';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { useRecoilValue } from 'recoil';
 import { authState } from '~/pages/auth/models/auth.atom';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
@@ -41,7 +41,7 @@ const MealCategoriesScreen = () => {
     const mealType = mealTypes.find(type => type.id === mealTypeId);
     navigation.navigate('MealDaysScreen', {
       mealTypeId,
-      dietId: auth.diet??1,
+      dietId: auth.diet ?? 1,
       title: mealType?.title || '',
     });
   };

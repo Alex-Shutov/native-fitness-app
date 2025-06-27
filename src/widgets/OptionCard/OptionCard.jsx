@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, TouchableOpacity, View, StyleSheet } from 'react-native';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { BORDER_RADIUS, COLORS, SPACING } from '~/core/styles/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';

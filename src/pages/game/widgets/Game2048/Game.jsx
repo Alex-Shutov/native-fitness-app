@@ -10,7 +10,7 @@ import {
 import { useSwipeHandler } from '~/pages/game/lib/useSwipeHandler';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import Theme, { SPACING } from '~/core/styles/theme';
 import InfoCard from '~/widgets/InfoCard/InfoCard';
 

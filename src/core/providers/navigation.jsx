@@ -4,7 +4,6 @@ import React from 'react';
 
 import WelcomeScreen from '../../pages/welcome/WelcomeScreen';
 
-import TabNavigator from '~/core/providers/tabNavigation';
 import LoginScreen from '~/pages/auth/LoginScreen';
 import RegisterScreen from '~/pages/auth/RegisterScreen';
 import useAuth from '~/pages/auth/lib/useAuth';
@@ -17,6 +16,7 @@ import SelectGoalsScreen from '~/pages/onboarding/SelectGoalsScreen';
 import StartScreen from '~/pages/welcome/StartScreen';
 import { customTransition } from '~/shared/lib/animations/transitions';
 import SelectPrimaryGoalScreen from '~/pages/onboarding/SelectMainGoalScreen';
+import TabNavigator from './tabNavigation';
 
 const Stack = createStackNavigator();
 

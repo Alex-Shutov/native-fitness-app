@@ -13,7 +13,7 @@ import AnimatedView from '../../shared/ui/animation/AnimatedView';
 import Container from '../../shared/ui/layout/Container';
 import GradientBackground from '../../shared/ui/layout/GradientBackground';
 import Logo from '../../shared/ui/logo';
-import Typo from '../../shared/ui/typo';
+import {Typo}from '../../shared/ui/typo/typo';
 import LogoSection from '../welcome/widgets/LogoSection';
 
 import StartInfo from '~/pages/welcome/widgets/StartInfo';

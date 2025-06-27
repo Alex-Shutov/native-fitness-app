@@ -9,7 +9,7 @@ import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Button from '~/shared/ui/button';
 import ProgressBar from '~/pages/onboarding/widgets/ProgressBar';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 
 
@@ -38,7 +38,7 @@ const ProgressScreen = () => {
           <Typo variant="body1" style={styles.subheader}>На текущий момент</Typo>
           </View>
           <ProgressBar progress={progress} setProgress={setProgress} />
-
+          <View style={styles.divider}/>
           <View style={styles.buttonContainer}>
             <Button
               title="Иду к цели"
@@ -65,6 +65,10 @@ const styles = StyleSheet.create({
   },
   subheader: {
     color: COLORS.neutral.dark,
+  },
+  divider:{
+    display: 'flex',
+    flexGrow:2
   },
   buttonContainer: {
     marginTop: SPACING.xl,

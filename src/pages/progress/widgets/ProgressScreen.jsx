@@ -9,7 +9,7 @@ import { authState } from '~/pages/auth/models/auth.atom';
 import { onboardingState } from '~/pages/onboarding/models/onboarding.atom';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import SemiCircleGauge from '~/pages/progress/widgets/SemiCircleGauge';
 import { progressQuery, progressState } from '~/pages/progress/models/progress.model';
 

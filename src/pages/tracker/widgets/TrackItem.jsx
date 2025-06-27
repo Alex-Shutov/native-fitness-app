@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { getCurrentWeekdayIndex, getTrackCompletionPercentage, isFutureDay } from '~/pages/tracker/lib/utils';
 import Svg, { Circle } from 'react-native-svg';
 import CheckIcon from '~/shared/ui/icons/CheckIcon';

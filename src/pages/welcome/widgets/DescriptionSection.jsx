@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '../../../core/styles/theme';
 import AnimatedView from '../../../shared/ui/animation/AnimatedView';
-import Typo from '../../../shared/ui/typo';
+import {Typo}from '../../../shared/ui/typo/typo';
 import AdvantagesView from "~/pages/welcome/widgets/AdvantagesView";
 
 const DescriptionSection = ({ duration, delay, children }) => {

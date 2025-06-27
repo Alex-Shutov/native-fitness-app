@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { MaterialIcons } from '@expo/vector-icons';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';

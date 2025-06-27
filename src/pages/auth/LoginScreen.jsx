@@ -6,7 +6,6 @@ import useZodForm from '~/core/hooks/useZodForm';
 import { emailSchema, phoneSchema, usernameSchema } from './models/validate.auth';
 import { SPACING } from '~/core/styles/theme';
 import { View,StyleSheet } from 'react-native';
-import Typo from '~/shared/ui/typo';
 import Button from '~/shared/ui/button';
 import Input from '~/shared/ui/input/input';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
@@ -16,6 +15,7 @@ import Toggle from '~/shared/ui/toogle';
 import { getUserValue } from '~/pages/auth/lib/auth';
 import AuthService from '~/pages/auth/api/auth.service';
 import useAuth from '~/pages/auth/lib/useAuth';
+import { Typo } from '../../shared/ui/typo';
 
 const LoginScreen = () => {
   const navigation = useNavigation();

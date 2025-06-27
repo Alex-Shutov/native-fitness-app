@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Modal, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const Game2048InfoModal = ({ visible, onClose }) => {

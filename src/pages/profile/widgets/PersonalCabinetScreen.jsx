@@ -14,7 +14,7 @@ import { blobToBase64 } from '~/pages/profile/lib/utils';
 import AvatarSkeleton from '~/pages/profile/widgets/AvatarSkeleton';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
 import ParamInput from '~/widgets/paramInput/ParamInput';
 
 const PersonalCabinetScreen = () => {
@@ -30,13 +30,14 @@ const PersonalCabinetScreen = () => {
     () => goals.find((el) => el.id === Number(auth.goal))?.value,
     [auth.goal]
   );
-  console.log(goalValue,auth.goal,'vaule');
+  console.log(goalValue, auth.goal, 'vaule');
   const handleGenderChange = async (value) => {
     const genderValue = value === 'Мужской' ? 'male' : 'female';
     await handleUpdateField('gender', genderValue);
   };
   // Обработчик изменения временных значений
   const handleTempChange = (fieldName, value) => {
+    debugger
     setTempValues((prev) => ({
       ...prev,
       [fieldName]: value,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import Typo from '../typo';
+import {Typo}from '../typo/typo';
 import { BORDER_RADIUS, COLORS, SPACING } from '~/core/styles/theme';
 
 const Toggle = ({

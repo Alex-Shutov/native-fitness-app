@@ -3,7 +3,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '../../../core/styles/theme';
-import Typo from '../../../shared/ui/typo';
+import {Typo}from '../../../shared/ui/typo/typo';
 
 const AgreementSection = ({ checked, onCheckboxChange }) => {
   return (

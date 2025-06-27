@@ -9,7 +9,8 @@ import Button from '~/shared/ui/button';
 import ScrollableTextInput from '~/shared/ui/input/textInput';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
+import Container from '../../shared/ui/layout/Container';
 
 const DescribeGoalScreen = () => {
   const navigation = useNavigation();
@@ -28,9 +29,10 @@ const DescribeGoalScreen = () => {
   };
 
   return (
-    // <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
     <ScreenTransition>
       <ScreenBackground>
+        <Container fullScreen={true} safeArea>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Typo variant="hSub" style={styles.header}>
@@ -58,9 +60,10 @@ const DescribeGoalScreen = () => {
             />
           </View>
         </View>
+        </Container>
       </ScreenBackground>
     </ScreenTransition>
-    // </ScrollView>
+ </ScrollView>
   );
 };
 
@@ -87,7 +90,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: SPACING.xl,
   },
-
+  scrollContent: {
+    flexGrow: 1,
+  },
   buttonContainer: {
     marginTop: SPACING.lg,
     paddingBottom: SPACING.md,

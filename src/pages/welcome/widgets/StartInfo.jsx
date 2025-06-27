@@ -1,7 +1,7 @@
 import React from "react";
 import { View,StyleSheet } from "react-native";
 import AnimatedView from "~/shared/ui/animation/AnimatedView";
-import Typo from "~/shared/ui/typo";
+import {Typo}from "~/shared/ui/typo";
 import Theme, { SPACING } from "~/core/styles/theme";
 
 const StartInfo = () => {

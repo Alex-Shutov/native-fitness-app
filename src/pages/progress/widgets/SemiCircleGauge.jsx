@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Svg, { Path, Text as SvgText, Circle } from 'react-native-svg';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const SemiCircleGauge = ({

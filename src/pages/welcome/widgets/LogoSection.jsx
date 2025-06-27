@@ -3,9 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 
 import AnimatedView from '../../../shared/ui/animation/AnimatedView';
-import Logo from '../../../shared/ui/logo';
 
 import { SPACING } from '~/core/styles/theme';
+import Logo from '../../../shared/ui/logo';
 
 const LogoSection = ({ duration, logoStyle }) => {
   return (

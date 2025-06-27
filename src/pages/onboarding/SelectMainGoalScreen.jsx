@@ -10,7 +10,7 @@ import PrimaryGoalGrid from '~/pages/onboarding/widgets/PrimaryGoalGrid';
 import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { useGoals } from '~/pages/onboarding/lib/useGoals';
 import LoadingOrError from '~/shared/ui/layout/LoadingOrError';
 

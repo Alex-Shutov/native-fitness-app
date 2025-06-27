@@ -1,6 +1,6 @@
 import React from 'react';
 import {View,StyleSheet} from "react-native";
-import Typo from "../typo";
+import {Typo}from "../typo/typo";
 import Theme from "../../../core/styles/theme";
 
 const Logo = ({

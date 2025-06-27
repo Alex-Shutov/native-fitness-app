@@ -7,7 +7,7 @@ import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import MealService from '~/pages/nutritions/api/meals.service';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 const MealDaysScreen = () => {
   const navigation = useNavigation();

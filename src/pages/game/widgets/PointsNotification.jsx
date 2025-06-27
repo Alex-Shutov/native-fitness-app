@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Animated, Easing } from 'react-native';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const PointsNotification = ({ points, visible, onAnimationEnd }) => {

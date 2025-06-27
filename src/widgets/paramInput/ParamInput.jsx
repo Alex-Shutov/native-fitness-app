@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { BORDER_RADIUS, COLORS, FONT_FAMILY, SPACING } from '~/core/styles/theme';
 import {
   TextInput,

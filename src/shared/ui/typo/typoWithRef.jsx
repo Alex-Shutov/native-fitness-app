@@ -3,15 +3,15 @@ import { Text, StyleSheet } from 'react-native';
 
 import Theme from '../../../core/styles/theme';
 
-const Typo = ({
-  children,
-  color,
-  style,
-  variant = 'body1',
-  weight = 'regular',
-  align = 'center',
-  ...props
-}) => {
+export const TypoWithRef = React.forwardRef(({
+                children,
+                color,
+                style,
+                variant = 'body1',
+                weight = 'regular',
+                align = 'center',
+                ...props
+              },ref) => {
   const getVariantStyle = () => {
     switch (variant) {
       case 'h1':
@@ -74,6 +74,7 @@ const Typo = ({
 
   return (
     <Text
+      ref={ref}
       style={[
         styles.base,
         getVariantStyle(),
@@ -86,7 +87,7 @@ const Typo = ({
       {children}
     </Text>
   );
-};
+});
 
 const styles = StyleSheet.create({
   base: {
@@ -178,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Typo;
+

@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator, TouchableOpacity, StyleSheet, Text } from "react-native";
 
 import THEME from '../../../core/styles/theme';
-import Typo from "~/shared/ui/typo";
+import {Typo}from "~/shared/ui/typo";
 
 const Button = ({
   title,

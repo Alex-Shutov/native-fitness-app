@@ -4,7 +4,7 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '../../../core/styles/theme';
 
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 
 const ToggleGoalButton = ({
   title,

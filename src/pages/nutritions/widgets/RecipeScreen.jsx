@@ -7,7 +7,7 @@ import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import { getDayMeals, getMealTypeById } from '~/pages/nutritions/lib/utils';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import Typo from '~/shared/ui/typo';
+import {Typo}from '~/shared/ui/typo';
 import { useSnackbar } from '~/core/hooks/useSnackbar';
 import MealService from '~/pages/nutritions/api/meals.service';
 const RecipeScreen = () => {

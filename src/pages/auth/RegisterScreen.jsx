@@ -14,7 +14,7 @@ import RegisterForm from './widgets/RegisterForm';
 import Button from '../../shared/ui/button';
 import Container from '../../shared/ui/layout/Container';
 import ScreenTransition from '../../shared/ui/layout/ScreenTransition';
-import Typo from '../../shared/ui/typo';
+import {Typo}from '../../shared/ui/typo/typo';
 import { authState } from '../auth/models/auth.atom';
 
 import { useSnackbar } from '~/core/hooks/useSnackbar';
