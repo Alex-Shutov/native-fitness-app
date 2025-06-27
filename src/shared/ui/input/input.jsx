@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.neutral.white,
     borderRadius: Theme.borderRadius.sm,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.x,
+    // paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
     width: '100%',
     borderWidth: 1,
     borderColor: 'transparent',
@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
+
     paddingLeft:16,
     flex: 1,
     fontFamily: Theme.fontFamily.text.regular,

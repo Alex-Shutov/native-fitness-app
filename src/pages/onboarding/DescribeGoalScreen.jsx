@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useRecoilState } from 'recoil';
 
 import { COLORS, SPACING } from '~/core/styles/theme';
@@ -28,6 +28,7 @@ const DescribeGoalScreen = () => {
   };
 
   return (
+    // <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
     <ScreenTransition>
       <ScreenBackground>
         <View style={styles.container}>
@@ -59,6 +60,7 @@ const DescribeGoalScreen = () => {
         </View>
       </ScreenBackground>
     </ScreenTransition>
+    // </ScrollView>
   );
 };
 

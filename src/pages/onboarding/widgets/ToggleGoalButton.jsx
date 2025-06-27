@@ -16,7 +16,6 @@ const ToggleGoalButton = ({
   variant,
   textStyle,
 }) => {
-  // Render different styles based on selection state
   const renderContent = () => (
     <View style={styles.contentContainer}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
@@ -31,7 +30,6 @@ const ToggleGoalButton = ({
     </View>
   );
 
-  // If selected, show gradient background
   if (isSelected) {
     return (
       <TouchableOpacity
@@ -68,7 +66,7 @@ const styles = StyleSheet.create({
 
     overflow: 'hidden',
     marginBottom: SPACING.sm,
-    height: 48,
+    height: 56,
     display: 'flex',
     justifyContent: 'center',
   },
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
   text: {
     paddingVertical: SPACING.sm,
     textAlignVertical: 'top',
-    lineHeight: 10,
+    lineHeight: 14,
 
     textAlign: 'left',
   },

@@ -8,6 +8,7 @@ import Animated, {
 import { ANIMATION } from "~/core/styles/theme";
 import { useEffect } from "react";
 import { View, StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const ScreenTransition = ({
                             children,
@@ -95,9 +96,11 @@ const ScreenTransition = ({
   });
 
   return (
-    <Animated.View style={[styles.container, animatedStyle, style]}>
-      {children}
-    </Animated.View>
+    // <SafeAreaProvider>
+      <Animated.View style={[styles.container, animatedStyle, style]}>
+        {children}
+      </Animated.View>
+    // </SafeAreaProvider>
   );
 };
 

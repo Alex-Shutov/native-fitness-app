@@ -91,7 +91,7 @@ class AuthService {
         ProfileApi.getCurrentUser(),
         ProgressService.getProgressData().catch(e => null)
       ]);
-      return userResponse ? {user:userResponse,progress:progress} : {user:null,progress: null};
+      return userResponse ? {user:userResponse,progress:progress??null} : {user:null,progress: null};
     } catch (error) {
       console.error('Get user data error:', error);
       return null;

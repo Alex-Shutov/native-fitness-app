@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-// Создаем экземпляр axios с базовыми настройками
+
 const apiClient = axios.create({
-  baseURL: 'https://stroyna-ya.onrender.com/', // или ваш production URL
+  baseURL: 'http://5.129.205.45:8080',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

@@ -1,6 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { useSetRecoilState } from 'recoil';
 
 import RegisterForm from './widgets/RegisterForm';
@@ -10,13 +17,13 @@ import ScreenTransition from '../../shared/ui/layout/ScreenTransition';
 import Typo from '../../shared/ui/typo';
 import { authState } from '../auth/models/auth.atom';
 
+import { useSnackbar } from '~/core/hooks/useSnackbar';
 import useZodForm from '~/core/hooks/useZodForm';
 import { SPACING } from '~/core/styles/theme';
-import { registerSchema } from '~/pages/auth/models/validate.auth';
-import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
-import { useSnackbar } from '~/core/hooks/useSnackbar';
 import AuthService from '~/pages/auth/api/auth.service';
 import useAuth from '~/pages/auth/lib/useAuth';
+import { registerSchema } from '~/pages/auth/models/validate.auth';
+import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -28,7 +35,7 @@ const RegisterScreen = () => {
     password: '',
     agreementAccepted: false,
   });
-  const {register,loading} = useAuth()
+  const { register, loading } = useAuth();
   const { showSnackbar } = useSnackbar();
 
   const handleRegister = async () => {
@@ -41,16 +48,16 @@ const RegisterScreen = () => {
 
         navigation.reset({
           index: 0,
-          routes: [{ name: "SelectGoals" }],
-        })
+          routes: [{ name: 'SelectGoals' }],
+        });
       } catch (err) {
         if (err.response?.status === 409) {
-          showSnackbar("Username or email already exists", 'error');
+          showSnackbar('Username or email already exists', 'error');
         } else {
-          showSnackbar(err.response?.data || "Registration failed. Please try again.", 'error')
+          showSnackbar(err.response?.data || 'Registration failed. Please try again.', 'error');
         }
       }
-    })
+    });
   };
 
   const handleLoginPress = () => {
@@ -58,43 +65,41 @@ const RegisterScreen = () => {
   };
 
   return (
-    <ScreenTransition>
-      <ScreenBackground title="Создать аккаунт" backIcon="close">
-        <Container safeArea>
-          {/*<ScrollView*/}
-          {/*  contentContainerStyle={styles.scrollContent}*/}
-          {/*  showsVerticalScrollIndicator={false}>*/}
-          <View style={styles.mainContent}>
-            <RegisterForm form={form} />
+    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScreenTransition>
+        <ScreenBackground title="Создать аккаунт" backIcon="close">
+          <Container fullScreen={true} safeArea>
+            <View style={styles.mainContent}>
+              <RegisterForm form={form} />
 
-            <Button
-              title="Зарегестрироваться"
-              // variant="primary"
-              // size="medium"
-              loading={form.isSubmitting}
-              disabled={form.isSubmitting}
-              onPress={handleRegister}
-              // fullWidth
-              style={styles.registerButton}
-            />
-          </View>
+              <Button
+                title="Зарегестрироваться"
+                // variant="primary"
+                // size="medium"
+                loading={form.isSubmitting}
+                disabled={form.isSubmitting}
+                onPress={handleRegister}
+                // fullWidth
+                style={styles.registerButton}
+              />
+            </View>
 
-          <View style={styles.loginLinkContainer}>
-            <Typo variant="body2" align="center">
-              Уже есть аккаунт?{' '}
-              <Typo
-                variant="body2"
-                weight="bold"
-                style={styles.loginLink}
-                onPress={handleLoginPress}>
-                Войти
+            <View style={styles.loginLinkContainer}>
+              <Typo variant="body2" align="center">
+                Уже есть аккаунт?{' '}
+                <Typo
+                  variant="body2"
+                  weight="bold"
+                  style={styles.loginLink}
+                  onPress={handleLoginPress}>
+                  Войти
+                </Typo>
               </Typo>
-            </Typo>
-          </View>
-          {/*</ScrollView>*/}
-        </Container>
-      </ScreenBackground>
-    </ScreenTransition>
+            </View>
+          </Container>
+        </ScreenBackground>
+      </ScreenTransition>
+    </ScrollView>
   );
 };
 
@@ -116,9 +121,9 @@ const styles = StyleSheet.create({
   },
   registerButton: {
     marginTop: SPACING.xl,
-
   },
   loginLinkContainer: {
+    display: 'flex',
     // flexDirection: 'row',
     // justifyContent: 'center',
   },
