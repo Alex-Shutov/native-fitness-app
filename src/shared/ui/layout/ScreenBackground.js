@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     // ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
     paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.md,
   },
   headerContent: {
     display:'flex',

@@ -241,8 +241,8 @@ const PersonalCabinetScreen = () => {
                 <ParamInput
                   label="Текущий вес"
                   value={String(tempValues.weight ?? '--')}
-                  onChangeText={(value) => handleTempChange('currentWeight', value)}
-                  onBlur={() => handleBlur('currentWeight')}
+                  onChangeText={(value) => handleTempChange('weight', value)}
+                  onBlur={() => handleBlur('weight')}
                   keyboardType="numeric"
                 />
                 <ParamInput

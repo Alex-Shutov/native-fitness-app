@@ -2,13 +2,16 @@ import { atom, selector } from 'recoil';
 import TrackerService from '~/pages/tracker/api/tracker.service';
 
 // Функция для преобразования данных из API в формат фронта
-export const mapApiTrackToFrontend = (apiTrack) => ({
-  id: String(apiTrack.id),
-  title: apiTrack.description ?? 'Не указано', // Нужно реализовать эту функцию
-  startDate: apiTrack.startDate,
-  completionStatus: apiTrack.daysStatus.split('').map(Number),
-  createdAt: apiTrack.startDate
-});
+export const mapApiTrackToFrontend = (apiTrack) => {
+  debugger
+  return {
+    id: String(apiTrack.id),
+    title: apiTrack.description ?? 'Не указано', // Нужно реализовать эту функцию
+    startDate: apiTrack.startDate,
+    completionStatus: apiTrack.habitsStatus.split('').map(Number),
+    createdAt: apiTrack.startDate,
+  };
+};
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
-  Platform, ActivityIndicator,
+  Platform, ActivityIndicator, Keyboard, ScrollView,
 } from 'react-native';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
@@ -23,6 +23,23 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
   const [nameError, setNameError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const startDate = getStartOfWeek();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleDayToggle = (dayIndex, status) => {
     const newSelectedDays = [...selectedDays];
@@ -67,15 +84,24 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
     onClose();
   };
 
+
+
+
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleCancel}>
+    <Modal statusBarTranslucent={true} visible={visible} transparent animationType="slide" onRequestClose={handleCancel}>
       <TouchableWithoutFeedback onPress={handleCancel}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback onPress={() => {}}>
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.modalContainer}>
-              <View style={styles.modalContent}>
+              style={styles.modalContainer}
+              keyboardVerticalOffset={Platform.select({
+                ios: 60,
+                android: 0
+              })}
+              enabled={keyboardVisible}
+            >
+              <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={'handled'} style={styles.modalContent}>
                 <View style={styles.header}>
                   <Typo variant="body0" weight="medium">
                     Новая цель
@@ -113,7 +139,7 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
                     <Button title="Добавить" onPress={handleAddTrack} style={styles.addButton} />
                   )}
                 </View>
-              </View>
+              </ScrollView>
             </KeyboardAvoidingView>
           </TouchableWithoutFeedback>
         </View>

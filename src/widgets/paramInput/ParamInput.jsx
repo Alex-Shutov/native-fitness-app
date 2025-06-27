@@ -104,6 +104,7 @@ const ParamInput = ({
 
       {/* Select Modal */}
       <Modal
+        statusBarTranslucent={true}
         visible={modalVisible}
         transparent
         animationType="slide"
