@@ -5,6 +5,7 @@ import { TouchableOpacity, View, StyleSheet, SafeAreaView } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '~/core/styles/theme';
 import {Typo}from '~/shared/ui/typo';
+import { StatusBar } from 'expo-status-bar';
 
 const ScreenBackground = ({
   children,
@@ -15,9 +16,11 @@ const ScreenBackground = ({
   style,
   contentStyle,
   headerStyle,
+
                             onPlusPress,
   hasBackButton = true,
-  ...props
+                            headerRight,
+                            ...props
 }) => {
   const navigation = useNavigation();
 
@@ -52,14 +55,23 @@ const ScreenBackground = ({
     }
   };
 
+
+
   const renderPlusButton = () => {
+    if (headerRight){
+      return <View
+        style={styles.plusButton}
+        >
+        {headerRight}
+      </View>
+    }
     if (onPlusPress) {
       return (
         <TouchableOpacity
           style={styles.plusButton}
           onPress={onPlusPress}
           accessibilityLabel="Add">
-          <MaterialIcons name="add" size={24} color={COLORS.neutral.darkest} />
+          {headerRight ?? <MaterialIcons name="add" size={24} color={COLORS.neutral.darkest} />}
         </TouchableOpacity>
       );
     }
@@ -68,6 +80,10 @@ const ScreenBackground = ({
 
   return (
     <View style={[styles.container, style]} {...props}>
+      <StatusBar
+        backgroundColor={COLORS.primary.main}
+        // barStyle={statusBarStyle}
+      />
       <SafeAreaView style={styles.safeArea}>
         {showHeader && (
           <View style={[styles.header, headerStyle]}>
@@ -135,7 +151,7 @@ const styles = StyleSheet.create({
   plusButton: {
     position: 'relative',
     zIndex: 20,
-    right: 42,
+    // right: 42,
     width: 44,
     height: 44,
     alignItems: 'center',

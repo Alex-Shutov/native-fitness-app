@@ -12,7 +12,6 @@ const GoalService = {
   async getGoals() {
     try {
       const response = await apiClient.get('/api/predefined-goals');
-      debugger
       return mapGoalsFromApi(response.data);
     } catch (error) {
       console.error('Error fetching goals:', error);

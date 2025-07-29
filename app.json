@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "new-fitness-app",
+    "name": "СтройнаЯ",
     "slug": "new-fitness-app",
     "version": "1.0.0",
     "web": {
       "favicon": "./src/shared/assets/images/favicon.png"
     },
     "experiments": {
-      "tsconfigPaths": true
+      "tsconfigPaths": true,
+      "jsconfigPaths": true
     },
     "plugins": [
       [
@@ -25,28 +26,39 @@
             "./src/shared/assets/fonts/AlegreyaSansSC-Bold.ttf"
           ]
         }
-      ]
-
+      ],
+      ["expo-build-properties", {
+        "android": {
+          "usesCleartextTraffic": true
+        }
+      }]
     ],
     "orientation": "portrait",
-    "icon": "./src/shared/assets/images/icon.png",
+    "icon": "./src/shared/assets/images/logo-1.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/shared/assets/images/splash-icon.png",
+      "image": "./src/shared/assets/images/logo-1.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#c7f5ae"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      },
       "bundleIdentifier": "com.anonymous.new-fitness-app"
     },
     "android": {
+      "permissions": ["android.permission.READ_EXTERNAL_STORAGE"],
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
-        "foregroundImage": "./src/shared/assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./src/shared/assets/images/adaptive-logo-1.png",
+        "backgroundColor": "#c7f5ae"
       },
       "package": "com.anonymous.newfitnessapp"
     },

@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { APP_API_URL } from './const';
 
 
 const apiClient = axios.create({
-  baseURL: 'http://5.129.205.45:8080',
+  baseURL: APP_API_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -25,6 +26,27 @@ const TOKEN_KEY = 'auth_token';
 //   },
 // ];
 
+let navigationRef;
+
+export function setNavigationRef(ref) {
+  navigationRef = ref;
+}
+
+async function handleUnauthorized() {
+  try {
+    // Очищаем хранилище
+    await AsyncStorage.removeItem('auth_token');
+    await AsyncStorage.removeItem('user_data');
+
+    // Перенаправляем на экран входа
+    if (navigationRef) {
+      navigationRef.navigate('Login');
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+}
+
 apiClient.interceptors.request.use(
   async (request) => {
     if (
@@ -35,7 +57,9 @@ apiClient.interceptors.request.use(
     }
 
     if (request.method === 'GET' || request.method === 'get') {
-      request.headers['Cache-Control'] = 'no-cache';
+      request.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      request.headers['Pragma'] = 'no-cache';
+      request.headers['Expires'] = '0';
 
       if (request.params) {
         const newParams = {};
@@ -96,8 +120,7 @@ apiClient.interceptors.response.use(
         case 401:
           // Unauthorized - clear token and notify about authentication failure
           try {
-            await AsyncStorage.removeItem(TOKEN_KEY);
-            // You can dispatch an event or use a callback here to notify the app
+            await handleUnauthorized();
             console.warn('Authentication failed. Please log in again.');
           } catch (storageError) {
             console.error('Error clearing token:', storageError);

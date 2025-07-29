@@ -4,7 +4,7 @@ export const profileState = atom({
   key: 'profileState',
   default: {
     name: 'Ника Берестова',
-    image: require('~/shared/assets/images/profile.png'), // Assuming this exists
+    image: require('~/shared/assets/images/placeholder-image.jpg'), // Assuming this exists
     currentWeight: '53',
     targetWeight: '50',
     goal: 'Карьера',

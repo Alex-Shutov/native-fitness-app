@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import * as Font from 'expo-font';
 
 const customFonts = {
-  'Lobster-Regular': require('~/shared/assets/fonts/Lobster-Regular.ttf'),
-  'Catamaran-SemiBold': require('~/shared/assets/fonts/Catamaran-SemiBold.ttf'),
-  'Catamaran-Regular': require('~/shared/assets/fonts/Catamaran-Regular.ttf'),
-  'Catamaran-Medium': require('~/shared/assets/fonts/Catamaran-Medium.ttf'),
-  'Catamaran-ExtraBold': require('~/shared/assets/fonts/Catamaran-ExtraBold.ttf'),
-  'Catamaran-Bold': require('~/shared/assets/fonts/Catamaran-Bold.ttf'),
-  'AlegreyaSansSC-Regular': require('~/shared/assets/fonts/AlegreyaSansSC-Regular.ttf'),
-  'AlegreyaSansSC-Medium': require('~/shared/assets/fonts/AlegreyaSansSC-Medium.ttf'),
-  'AlegreyaSansSC-Bold': require('~/shared/assets/fonts/AlegreyaSansSC-Bold.ttf'),
+  'Lobster-Regular': require('../../shared/assets/fonts/Lobster-Regular.ttf'),
+  'Catamaran-SemiBold': require('../../shared/assets/fonts/Catamaran-SemiBold.ttf'),
+  'Catamaran-Regular': require('../../shared/assets/fonts/Catamaran-Regular.ttf'),
+  'Catamaran-Medium': require('../../shared/assets/fonts/Catamaran-Medium.ttf'),
+  'Catamaran-ExtraBold': require('../../shared/assets/fonts/Catamaran-ExtraBold.ttf'),
+  'Catamaran-Bold': require('../../shared/assets/fonts/Catamaran-Bold.ttf'),
+  'AlegreyaSansSC-Regular': require('../../shared/assets/fonts/AlegreyaSansSC-Regular.ttf'),
+  'AlegreyaSansSC-Medium': require('../../shared/assets/fonts/AlegreyaSansSC-Medium.ttf'),
+  'AlegreyaSansSC-Bold': require('../../shared/assets/fonts/AlegreyaSansSC-Bold.ttf'),
 };
 
 export const useFonts = () => {

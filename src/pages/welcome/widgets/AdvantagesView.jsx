@@ -8,7 +8,7 @@ import {Typo}from '../../../shared/ui/typo/typo';
 const AdvantagesView = ({ duration, delay }) => {
   return (
     <View style={styles.benefitsContainer}>
-      <AnimatedView animation="slide" duration={duration} delay={duration * 3}>
+      <AnimatedView animation="slide" duration={duration} delay={duration * 1}>
         <View style={styles.benefitItem}>
           <View style={styles.benefitIcon}>
             {/* Иконка "Научная основа" */}
@@ -20,7 +20,7 @@ const AdvantagesView = ({ duration, delay }) => {
         </View>
       </AnimatedView>
 
-      <AnimatedView animation="slide" duration={duration} delay={delay * 4}>
+      <AnimatedView animation="slide" duration={duration} delay={delay * 2}>
         <View style={styles.benefitItem}>
           <View style={styles.benefitIcon}>
             {/* Иконка "Игровой формат" */}
@@ -32,7 +32,7 @@ const AdvantagesView = ({ duration, delay }) => {
         </View>
       </AnimatedView>
 
-      <AnimatedView animation="slide" duration={duration} delay={delay * 5}>
+      <AnimatedView animation="slide" duration={duration} delay={delay * 3}>
         <View style={styles.benefitItem}>
           <View style={styles.benefitIcon}>
             {/* Иконка "Легкое похудение" */}

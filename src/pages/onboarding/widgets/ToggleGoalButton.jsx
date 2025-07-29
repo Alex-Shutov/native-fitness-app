@@ -13,6 +13,7 @@ const ToggleGoalButton = ({
   onPress,
   style,
   disabled = false,
+                            inGrid=true,
   variant,
   textStyle,
 }) => {
@@ -21,10 +22,14 @@ const ToggleGoalButton = ({
       {icon && <View style={styles.iconContainer}>{icon}</View>}
       <Typo
         variant="body2"
-        weight="medium"
         color={COLORS.neutral.darkest}
-        style={[styles.text, textStyle]}
-        numberOfLines={2}>
+        style={[styles.text, textStyle, inGrid && { fontSize: title.length > 18 ? 12 : 14 }]}
+
+        numberOfLines={3}
+        // allowFontScaling={true}
+        adjustsFontSizeToFit={true}
+        // minimumFontScale={0.8}
+      >
         {title}
       </Typo>
     </View>
@@ -63,10 +68,9 @@ const ToggleGoalButton = ({
 const styles = StyleSheet.create({
   button: {
     borderRadius: Theme.borderRadius.md,
-
     overflow: 'hidden',
     marginBottom: SPACING.sm,
-    height: 56,
+    height: 74,
     display: 'flex',
     justifyContent: 'center',
   },
@@ -75,12 +79,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
   },
   unselectedButton: {
+
     backgroundColor: COLORS.neutral.light,
     paddingVertical: SPACING.sm * 1.5,
 
     paddingHorizontal: SPACING.lg,
   },
   contentContainer: {
+    width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',
     display: 'flex',

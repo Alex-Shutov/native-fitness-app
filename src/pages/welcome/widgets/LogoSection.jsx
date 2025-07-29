@@ -12,7 +12,7 @@ const LogoSection = ({ duration, logoStyle }) => {
     <View style={styles.topSection}>
       <AnimatedView animation="fade" duration={duration}>
         <Animated.View style={logoStyle}>
-          <Logo size="large" />
+          <Logo size="large" title={'СтройнаЯ'}/>
         </Animated.View>
       </AnimatedView>
     </View>
@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xxl,
+    // top:-40
   },
 });
 

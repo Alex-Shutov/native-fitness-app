@@ -2,13 +2,13 @@ export const COLORS = {
   primary: {
     // Основной зеленый цвет (светло-зеленый)
     light: '#A4D65E',
-    lightSecond:'#86EA4D',
+    lightSecond: '#86EA4D',
     // Основной зеленый цвет (средний)
     main: '#7AB648',
     // Основной зеленый цвет (темный)
     dark: '#81aa6b',
-    extraDark:'#486935',
-    extraLight:'#E8FFDA'
+    extraDark: '#486935',
+    extraLight: '#E8FFDA',
   },
   neutral: {
     // Почти черный цвет для фона
@@ -19,10 +19,16 @@ export const COLORS = {
     medium: '#9E9E9E',
     // Светло-серый цвет
     light: '#E0E0E0',
+    lighter: '#ececec',
     // Белый цвет
     white: '#FFFFFF',
     // Светло-бежевый цвет фона
     offWhite: '#F5F5F0',
+  },
+
+  accent: {
+    primary: '#73d23d',
+    light:"#b4f390"
   },
 
   // Градиентные цвета

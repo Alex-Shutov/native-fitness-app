@@ -21,6 +21,7 @@ const PrimaryGoalGrid = ({
         {goals.map((goal) => (
           <View key={goal.id} style={styles.buttonWrapper}>
             <ToggleGoalButton
+              inGrid={false}
               textStyle={styles.textButton}
               key={goal.id}
               title={goal.value}

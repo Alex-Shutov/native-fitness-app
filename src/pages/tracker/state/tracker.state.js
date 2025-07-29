@@ -1,38 +1,91 @@
-import { atom, selector } from 'recoil';
-import TrackerService from '~/pages/tracker/api/tracker.service';
+// src/pages/tracker/state/tracker.state.js
 
-// Функция для преобразования данных из API в формат фронта
+import { atom, selector } from 'recoil';
+import TrackerService from '../api/tracker.service';
+
+const HABIT_NAMES = [
+  'Есть овощи перед едой',
+  'Пережевывать пищу',
+  'Пешая прогулка',
+  'Последний прием пищи не ранее чем за 4 часа до сна',
+  'Отказ от сахара'
+];
+
 export const mapApiTrackToFrontend = (apiTrack) => {
-  debugger
+  if (!apiTrack) return { tracks: [], isLoading: false, error: null };
+
+  const daysPerHabit = 5;
+  const habitsStatus = apiTrack.habitsStatus || '0000000000000000000000000';
+  const habitsCount = apiTrack.habitsCount || daysPerHabit;
+
+  const tracks = Array.from({ length: habitsCount }).map((_, habitIndex) => {
+    const startIndex = habitIndex * daysPerHabit;
+    const completionStatus = habitsStatus
+      .slice(startIndex, startIndex + daysPerHabit)
+      .split('')
+      .map(Number);
+
+    return {
+      id: `habit-${habitIndex}`,
+      trackerId: apiTrack.id,
+      title: HABIT_NAMES[habitIndex] || `Привычка ${habitIndex + 1}`,
+      startDate: apiTrack.startDate,
+      completionStatus,
+      createdAt: apiTrack.startDate,
+      isDoublePoints: habitIndex === apiTrack.doubleHabitIndex
+    };
+  });
+
   return {
-    id: String(apiTrack.id),
-    title: apiTrack.description ?? 'Не указано', // Нужно реализовать эту функцию
-    startDate: apiTrack.startDate,
-    completionStatus: apiTrack.habitsStatus.split('').map(Number),
-    createdAt: apiTrack.startDate,
+    tracks,
+    trackerId: apiTrack.id,
+    programMonth: apiTrack.programMonth || 1,
+    weekInMonth: apiTrack.weekInMonth || 1,
+    isCompleted: apiTrack.isCompleted || false,
+    isLoading: false,
+    error: null
   };
 };
-
-
 
 export const trackerState = atom({
   key: 'trackerState',
   default: {
     tracks: [],
-    isLoading: false,
+    trackerId: null,
+    programMonth: 1,
+    weekInMonth: 1,
+    isCompleted: false,
+    isLoading: true,
     error: null
   }
+});
+
+export const trackerVersion = atom({
+  key: 'trackerVersionState',
+  default: 0,
 });
 
 export const trackerQuery = selector({
   key: 'trackerQuery',
   get: async () => {
     try {
-      const apiTracks = await TrackerService.getTracks();
-      const tracks = apiTracks.map(mapApiTrackToFrontend);
-      return { tracks, isLoading: false, error: null };
+      let apiTracker = await TrackerService.getTracks();
+
+      if (!apiTracker) {
+        apiTracker = await TrackerService.createTrack();
+      }
+
+      return mapApiTrackToFrontend(apiTracker);
     } catch (error) {
-      return { tracks: [], isLoading: false, error: error.message };
+      return {
+        tracks: [],
+        trackerId: null,
+        programMonth: 1,
+        weekInMonth: 1,
+        isCompleted: false,
+        isLoading: false,
+        error: error.message
+      };
     }
   },
   set: ({ set }, newValue) => set(trackerState, newValue)

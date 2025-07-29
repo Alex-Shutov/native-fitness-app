@@ -7,7 +7,7 @@ import { SPACING } from '../../../core/styles/theme';
 
 import Input from '~/shared/ui/input/input';
 
-const RegisterForm = ({form}) => {
+const RegisterForm = ({form,setError}) => {
   const { values, errors, handleChange, handleBlur } = form;
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -23,7 +23,10 @@ const RegisterForm = ({form}) => {
         placeholder="Ваше имя"
         value={values.name}
         onChangeText={(text) => handleChange('name', text)}
-        onBlur={() => handleBlur('name')}
+        onBlur={() => {
+          setError(null)
+          return handleBlur('name');
+        }}
         autoCapitalize="words"
         error={errors.name}
       />
@@ -32,7 +35,10 @@ const RegisterForm = ({form}) => {
         icon="email"
         placeholder="Электронная почта"
         value={values.email}
-        onChangeText={(text) => handleChange('email', text)}
+        onChangeText={(text) => {
+          setError(null)
+          return handleChange('email', text);
+        }}
         onBlur={() => handleBlur('email')}
         keyboardType="email-address"
         autoCapitalize="none"
@@ -57,7 +63,7 @@ const RegisterForm = ({form}) => {
         onChangeText={(text) => handleChange('password', text)}
         onBlur={() => handleBlur('password')}
         secureTextEntry={!passwordVisible}
-        rightIcon="eye"
+        rightIcon="abc"
         onRightIconPress={togglePasswordVisibility}
         error={errors.password}
       />

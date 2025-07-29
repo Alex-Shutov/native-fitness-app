@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '~/shared/api/client';
 import { mapBackendToAuthState } from '~/pages/auth/lib/auth.mapper';
-import ProgressService from '~/pages/progress/api/progress.service';
-import ProfileApi from '~/pages/profile/api/profile.api';
+import ProfileApi from '../../profile/api/profile.api';
+import ProgressService from '../../progress/api/progress.service';
 
 
 /**
@@ -22,7 +22,7 @@ class AuthService {
       const response = await apiClient.post('/api/auth/register', userData);
       return response.data;
     } catch (error) {
-      this._handleError(error);
+      this._handleError(error)
       throw error;
     }
   }
@@ -40,6 +40,7 @@ class AuthService {
 
       // Store the token in AsyncStorage
       if (response.data) {
+        await AsyncStorage.setItem('user_credentials', JSON.stringify(credentials));
         await AsyncStorage.setItem('auth_token', response.data);
         await this._fetchAndStoreUserData();
       }
@@ -91,7 +92,8 @@ class AuthService {
         ProfileApi.getCurrentUser(),
         ProgressService.getProgressData().catch(e => null)
       ]);
-      return userResponse ? {user:userResponse,progress:progress??null} : {user:null,progress: null};
+      const x = userResponse ? {user:userResponse,progress:progress??null} : {user:null,progress: null};
+      return x
     } catch (error) {
       console.error('Get user data error:', error);
       return null;
@@ -106,7 +108,6 @@ class AuthService {
     try {
       const response = await apiClient.get('/api/users/me');
       if (response.data) {
-        console.log(response.data);
         await AsyncStorage.setItem('user_data', JSON.stringify(mapBackendToAuthState(response.data)));
       }
     } catch (error) {
@@ -127,15 +128,19 @@ class AuthService {
       // Handle specific error codes
       switch (error.response.status) {
         case 401:
-          console.error('Authentication failed: Invalid credentials');
+          console.error('Неверно введен логин или пароль');
+          error.response.data.error = 'Неверно введен логин или пароль'
           break;
         case 409:
           console.error('Registration failed: User already exists');
+          error.response.data.error = 'Кажется, имяп ользователя уже занято :( Попробуйте еще раз'
           break;
         case 400:
           console.error('Bad request:', error.response.data);
+          error.response.data.error = 'Проверьте введенные вами данные'
           break;
         default:
+          error.response.data.error = 'Произошла ошибка, попробуйте еще раз.'
           console.error(`Server error (${error.response.status}):`, error.response.data);
       }
     } else if (error.request) {

@@ -1,8 +1,12 @@
 import StorageService from '@react-native-async-storage/async-storage/src';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
-import { AuthService, UserService } from '../../shared/api';
 import { useNavigation } from '@react-navigation/native';
+import AuthService from '../../pages/auth/api/auth.service';
+import ProfileApi from '../../pages/profile/api/profile.api';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { authState } from '../../pages/auth/models/auth.atom';
+import { progressState } from '../../pages/progress/models/progress.model';
 
 // Create context
 export const AuthContext = createContext({
@@ -19,10 +23,12 @@ export const AuthContext = createContext({
 // Auth provider component
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const [authUserState,setAuthState] = useRecoilState(authState);
+  const navigation = useNavigation();
+  const setRecoilProgress = useSetRecoilState(progressState); // Для Recoil
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigation = useNavigation();
 
 
   // Check authentication status on mount
@@ -30,31 +36,29 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         setLoading(true);
-        const token = await StorageService.getItem('auth_token', false);
+        const authStatus = await AuthService.isAuthenticated();
+        setIsAuthenticated(authStatus);
+        if (authStatus) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "MainScreen" }],
+          })
+          const { user: userData, progress: progressData } = await AuthService.getCurrentUser();
 
-        if (token) {
-          setIsAuthenticated(true);
-          const userData = await StorageService.getItem('user_data');
-          setUser(userData);
+          setAuthState(userData);
+          setRecoilProgress(progressData);
 
-          // Refresh user data in background
-          try {
-            const freshUserData = await UserService.getCurrentUser();
-            setUser(freshUserData);
-            await StorageService.setItem('user_data', freshUserData);
-          } catch (refreshError) {
-            console.error('Failed to refresh user data:', refreshError);
-          }
         }
       } catch (err) {
-        console.error('Auth check error:', err);
+        setError(err.message);
+        await logout()
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [isAuthenticated]);
 
   // Login function
   const login = useCallback(async (credentials) => {
@@ -62,24 +66,21 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      // Call login API
-      const token = await AuthService.login(credentials);
+      await AuthService.login(credentials);
+      setIsAuthenticated(true);
 
-      // Store token
-      await StorageService.setItem('auth_token', token);
-
-      // Get and store user data
-      const userData = await UserService.getCurrentUser();
+      const { user: userData, progress: progressData }   = await AuthService.getCurrentUser();
       if (!userData.diet || !userData.weight || !userData.height){
         navigation.navigate('SelectGoals')
       }
+      setRecoilProgress(progressData);
 
-      setUser(userData);
-      setIsAuthenticated(true);
+      setAuthState(userData);
 
       return true;
     } catch (err) {
-      setError(err.response?.data || err.message);
+      setError(err?.response?.data || err?.message || err.error);
+      throw err;
       return false;
     } finally {
       setLoading(false);
@@ -93,16 +94,14 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         setError(null);
 
-        // Call register API
         await AuthService.register(userData);
-
-        // After registration, login automatically
         return await login({
           username: userData.username,
           password: userData.password,
         });
       } catch (err) {
-        setError(err.response?.data || err.message);
+        setError(err?.response?.data?.error ?? err.message);
+        throw err
         return false;
       } finally {
         setLoading(false);
@@ -112,17 +111,12 @@ export const AuthProvider = ({ children }) => {
   );
 
   // Logout function
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (test) => {
     try {
       setLoading(true);
-
-      // Clear stored data
-      await StorageService.removeItem('auth_token');
-      await StorageService.removeItem('user_data');
-
+      await AuthService.logout();
       setIsAuthenticated(false);
-      setUser(null);
-
+      setAuthState(null);
       return true;
     } catch (err) {
       setError(err.message);
@@ -132,37 +126,16 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Update user data
-  const updateUser = useCallback(async (userData) => {
-    try {
-      setLoading(true);
 
-      // Update user profile
-      const updatedUser = await UserService.updateProfile(userData);
-
-      // Update stored user data
-      await StorageService.setItem('user_data', updatedUser);
-      setUser(updatedUser);
-
-      return updatedUser;
-    } catch (err) {
-      setError(err.response?.data || err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   // Context value
   const value = {
     isAuthenticated,
-    user,
     loading,
     error,
     login,
     register,
     logout,
-    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

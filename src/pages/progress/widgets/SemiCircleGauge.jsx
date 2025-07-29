@@ -119,13 +119,13 @@ const SemiCircleGauge = ({
 
         {/* Max value label */}
         <SvgText
-          x={width - strokeWidth}
-          y={height + 20} // Смещаем вниз на 20 пикселей
+          x={width - strokeWidth+0}
+          y={height + 20}
           fontSize="14"
           fill={COLORS.neutral.medium}
           textAnchor="end"
         >
-          {maxValue}{unit}
+          {maxValue}{unit ==='%' ? `${unit}   ` : `${unit}`}
         </SvgText>
 
       </Svg>

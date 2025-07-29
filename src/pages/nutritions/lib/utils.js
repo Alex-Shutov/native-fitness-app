@@ -7,24 +7,45 @@ export const MEAL_TYPES = [
     id: 'breakfast',
     title: 'Завтраки',
     image: require('~/shared/assets/images/breakfast.png'),
+    imageFocus: { x: 0.5, y: 0.55 },
+    transformX:-100,
+    transformY:-40,
     description: 'Лёгкие и питательные завтраки для отличного начала дня'
   },
   {
-    id: 'snack',
-    title: 'Перекусы',
+    id: 'snack1',
+    title: 'Первые перекусы',
     image: require('~/shared/assets/images/snack.png'),
+    imageFocus: { x: 0.5, y: 0.55 },
+    transformX:-100,
+    transformY:-80,
     description: 'Быстрые и полезные перекусы между основными приемами пищи'
   },
   {
     id: 'lunch',
     title: 'Обеды',
     image: require('~/shared/assets/images/lunch.png'),
+    imageFocus: { x: 0.5, y: 0.55 },
+    transformX:-100,
+    transformY:-80,
     description: 'Питательные обеды для поддержания энергии в течение дня'
+  },
+  {
+    id: 'snack2',
+    title: 'Вторые перекусы',
+    image: require('~/shared/assets/images/snack.png'),
+    imageFocus: { x: 0.5, y: 0.55 },
+    transformX:-100,
+    transformY:-80,
+    description: 'Быстрые и полезные перекусы между основными приемами пищи'
   },
   {
     id: 'dinner',
     title: 'Ужины',
     image: require('~/shared/assets/images/dinner.png'),
+    imageFocus: { x: 0.5, y: 0.4 },
+    transformX:-100,
+    transformY:-80,
     description: 'Лёгкие вечерние блюда для хорошего сна'
   },
 ];

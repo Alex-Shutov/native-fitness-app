@@ -1,6 +1,6 @@
 // src/navigation/TabNavigator.jsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,10 +9,12 @@ import { Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { COLORS } from '~/core/styles/theme';
 import NutritionStack from '~/pages/nutritions';
-import TrackerScreen from '~/pages/tracker/widgets/TrackerScreen';
 import PersonalCabinetScreen from '~/pages/profile/widgets/PersonalCabinetScreen';
-import ProgressScreen from '~/pages/progress/widgets/ProgressScreen';
 import GamesNavigator from '~/pages/game';
+import TrackerScreen from '../../pages/tracker/widgets/TrackerScreen';
+import useAuth from '../../pages/auth/lib/useAuth';
+import ProgressScreen from '../../pages/progress/widgets/ProgressScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Импортируем компоненты
 
@@ -200,9 +202,19 @@ const tabs = {
 
 // Основной навигатор с нижней панелью
 const TabNavigator = () => {
+
+
+  useEffect(() => {
+    // Устанавливаем флаг при первом рендере
+    const setRegisteredFlag = async () => {
+      await AsyncStorage.setItem('isAlreadyRegistered', 'true');
+    };
+    setRegisteredFlag();
+  }, []);
+
   return (
     <Tab.Navigator
-      initialRouteName="Nutrition"
+      initialRouteName="Progress"
       tabBar={props => (
         <AnimatedTabBar
           tabs={tabs}

@@ -132,7 +132,7 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
                   </View>
                 </View>
 
-                <View style={styles.actions}>
+                <View style={[styles.actions, isLoading && styles.addBackground]}>
                   {isLoading ? (
                     <ActivityIndicator size="small" color={COLORS.primary.main} />
                   ) : (
@@ -190,6 +190,9 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     marginRight: SPACING.sm,
+  },
+  addBackground: {
+    backgroundColor: COLORS.page.background,
   },
   addButton: {
     flex: 1,

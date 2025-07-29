@@ -13,8 +13,11 @@ import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import {Typo}from '~/shared/ui/typo';
 import Theme, { SPACING } from '~/core/styles/theme';
 import InfoCard from '~/widgets/InfoCard/InfoCard';
+import { useNavigation } from '@react-navigation/native';
 
 const Game2048 = () => {
+  const navigation = useNavigation();
+
   const [board, setBoard] = useState(() => {
     let initialBoard = [
       [{ value: 0 }, { value: 0 }, { value: 0 }, { value: 0 }],
@@ -43,6 +46,10 @@ const Game2048 = () => {
     setGameOver(false);
     setGameWon(false);
   };
+
+  const closeGame = () => {
+    navigation.goBack()
+  }
 
   const handleMove = useCallback((direction) => {
     let newBoard;
@@ -89,7 +96,7 @@ const Game2048 = () => {
 
   return (
     <ScreenTransition>
-      <ScreenBackground showHeader={true} title={<Typo variant={'subtitle1'} style={styles.screenHeader}>2048</Typo>} >>
+      <ScreenBackground showHeader={true} title={<Typo variant={'subtitle1'} style={styles.screenHeader}>2048</Typo>} >
     <PanGestureHandler onHandlerStateChange={gestureHandler}>
 
       <View style={styles.container}>
@@ -110,8 +117,8 @@ const Game2048 = () => {
           <Typo variant={'body0'} style={styles.buttonText}>Перезапустить</Typo>
         </TouchableOpacity>
 
-        <GameOverModal visible={gameOver} onRestart={restartGame} />
-        <GameWonModal visible={gameWon} onRestart={restartGame} />
+        <GameOverModal visible={true} onRestart={restartGame} onClose={closeGame} />
+        <GameWonModal visible={gameWon} onRestart={restartGame} onClose={closeGame} />
       </View>
     </PanGestureHandler>
       </ScreenBackground>
@@ -123,15 +130,14 @@ const Game2048 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: 80, // Отступ для нижней навигации
+    paddingBottom: 136, // Отступ для нижней навигации
 
   },
   screenHeader:{
-    fontSize: SPACING.xl * 1.5,
-    lineHeight: SPACING.xl * 1.8,
+    fontSize: SPACING.xl * 1.5 ,
+    lineHeight: SPACING.xl * 2.2,
   },
   headerContainer: {
     marginBottom: SPACING.xl,

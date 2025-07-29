@@ -12,20 +12,30 @@ import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import {Typo}from '~/shared/ui/typo';
 import Container from '../../shared/ui/layout/Container';
 
-const DescribeGoalScreen = () => {
+const DescribeGoalScreen = ({ route }) => {
   const navigation = useNavigation();
   const [onboarding, setOnboarding] = useRecoilState(onboardingState);
   const [description, setDescription] = useState('');
-  const primaryGoal = onboarding.primaryGoal;
+  const { goalId, goalValue, fromProfile } = route.params || {};
+  const primaryGoal = fromProfile ? { id: goalId, value: goalValue } : onboarding.primaryGoal;
 
   const handleContinue = () => {
-    // Update the goal descriptions in the onboarding state
-    setOnboarding((prev) => ({
-      ...prev,
-      goalDescription: description.trim(),
-      currentStep: prev.currentStep + 1,
-    }));
-    navigation.navigate('ProgressScreen')
+    if (fromProfile) {
+      // Если пришли из профиля, сразу переходим к экрану прогресса
+      navigation.navigate('OnBoardProgressScreen', {
+        goalId,
+        goalDescription: description.trim(),
+        fromProfile: true
+      });
+    } else {
+      // Стандартное поведение для onboarding
+      setOnboarding((prev) => ({
+        ...prev,
+        goalDescription: description.trim(),
+        currentStep: prev.currentStep + 1,
+      }));
+      navigation.navigate('OnBoardProgressScreen');
+    }
   };
 
   return (
@@ -36,7 +46,8 @@ const DescribeGoalScreen = () => {
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Typo variant="hSub" style={styles.header}>
-              Опиши свою цель
+              Опи<Typo variant="hSub" style={[styles.header,styles.underline]}>ш</Typo>и свою цель
+
             </Typo>
             <Typo variant="body1" style={styles.subtitle}>
               Что это для тебя на 10 из 10
@@ -92,6 +103,9 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+  },
+  underline:{
+    textDecorationLine: 'underline',
   },
   buttonContainer: {
     marginTop: SPACING.lg,

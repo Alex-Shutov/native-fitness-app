@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     height: 100,
     position: 'absolute',
     right: 0,
+    // left:-40,
     overflow: 'hidden',
     borderTopRightRadius: BORDER_RADIUS.lg,
     borderTopLeftRadius: BORDER_RADIUS.lg*3,

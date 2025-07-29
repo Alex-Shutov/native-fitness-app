@@ -13,7 +13,6 @@ const MealDaysScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { mealTypeId, dietId, title } = route.params || {};
-  console.log(route.params,'params');
   const { showSnackbar } = useSnackbar();
   const [availableDays, setAvailableDays] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +36,6 @@ const MealDaysScreen = () => {
 
   const handleDaySelection = async (day) => {
     try {
-      console.log(dietId,day,mealTypeId,'diet');
       const recipe = await MealService.getMealRecipe(dietId, day, mealTypeId);
       navigation.navigate('RecipeScreen', {
         recipe,

@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { PanGestureHandler } from 'react-native-gesture-handler';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import Slider from '@react-native-assets/slider';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedGestureHandler,
-  runOnJS,
-  withSpring,
+  withTiming,
+  Easing
 } from 'react-native-reanimated';
 import { COLORS, BORDER_RADIUS, SPACING } from '~/core/styles/theme';
+import { MaterialIcons } from '@expo/vector-icons';
 
+const AnimatedSlider = Animated.createAnimatedComponent(Slider);
+const THUMB_WIDTH = 18
 const SliderInputV2 = ({
                          value,
                          onValueChange,
@@ -17,133 +19,165 @@ const SliderInputV2 = ({
                          maximumValue = 100,
                          step = 1,
                        }) => {
+  const [sliderValue, setSliderValue] = useState(value);
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
+  const thumbPosition = useSharedValue(
+    ((value - minimumValue) / (maximumValue - minimumValue)) * 300 // 300 - примерная начальная ширина
+  );
   const sliderWidth = useSharedValue(0);
-  const thumbPosition = useSharedValue(0);
-  const isSliding = useSharedValue(false);
-  const currentValue = useSharedValue(value);
 
-  // Инициализация позиции
+  // Инициализация и обновление при изменении пропсов
   useEffect(() => {
-    const initialPosition = ((value - minimumValue) / (maximumValue - minimumValue)) * sliderWidth.value;
-    thumbPosition.value = initialPosition;
-    currentValue.value = value;
-  }, [value, sliderWidth.value]);
+    setSliderValue(value);
+    if (isLayoutReady) {
+      updateThumbPosition(value);
+    }
+  }, [value, isLayoutReady]);
 
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (_, ctx) => {
-      isSliding.value = true;
-      ctx.startX = thumbPosition.value;
-    },
-    onActive: (event, ctx) => {
-      // Новая позиция с ограничениями
-      let newPosition = ctx.startX + event.translationX;
-      newPosition = Math.max(0, Math.min(newPosition, sliderWidth.value));
+  const updateThumbPosition = (val) => {
+    if (sliderWidth.value === 0) return;
 
-      // Расчет нового значения
-      const newValue = Math.round(
-        minimumValue +
-        (newPosition / sliderWidth.value) * (maximumValue - minimumValue)
-      );
+    const position = ((val - minimumValue) / (maximumValue - minimumValue)) * sliderWidth.value;
+    thumbPosition.value = withTiming(position, {
+      duration: 200,
+      easing: Easing.out(Easing.ease),
+    });
+  };
 
-      // Применение шага
-      const steppedValue = step > 1
-        ? Math.round(newValue / step) * step
-        : newValue;
+  const handleValueChange = (val) => {
+    const steppedValue = step > 1 ? Math.round(val / step) * step : val;
+    setSliderValue(steppedValue);
+    updateThumbPosition(steppedValue);
+    onValueChange(steppedValue);
+  };
 
-      // Обновление позиции с учетом шага
-      const steppedPosition = ((steppedValue - minimumValue) / (maximumValue - minimumValue)) * sliderWidth.value;
+  const handleDecrease = () => {
+    const newValue = Math.max(minimumValue, sliderValue - step);
+    handleValueChange(newValue);
+  };
 
-      thumbPosition.value = steppedPosition;
-      currentValue.value = steppedValue;
-      runOnJS(onValueChange)(steppedValue);
-    },
-    onEnd: () => {
-      isSliding.value = false;
-    },
-  });
+  const handleIncrease = () => {
+    const newValue = Math.min(maximumValue, sliderValue + step);
+    handleValueChange(newValue);
+  };
 
-  // Стили для анимированных элементов
+  const handleLayout = (event) => {
+    const newWidth = event.nativeEvent.layout.width;
+    if (sliderWidth.value !== newWidth) {
+      sliderWidth.value = newWidth;
+      setIsLayoutReady(true);
+
+      // Пересчитываем позицию при первом измерении ширины
+      const newPosition = ((sliderValue - minimumValue) / (maximumValue - minimumValue)) * newWidth;
+      thumbPosition.value = newPosition;
+    }
+  };
+
   const thumbStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: thumbPosition.value },{rotate: '180deg' }],
-
+    transform: [{ translateX: thumbPosition.value - THUMB_WIDTH }],
   }));
 
   const fillStyle = useAnimatedStyle(() => ({
     width: thumbPosition.value,
   }));
 
-  const bubbleStyle = useAnimatedStyle(() => ({
-    opacity: withSpring(isSliding.value ? 1 : 0),
-    transform: [
-      { translateX: thumbPosition.value - 20 },
-      { translateY: -35 },
-      { scale: withSpring(isSliding.value ? 1.2 : 1) }
-    ],
-  }));
-
-  const staticValueStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: thumbPosition.value - 15 }],
-  }));
-
   return (
     <View style={styles.container}>
-      {/* Фон слайдера */}
-      <View
-        style={styles.trackBackground}
-        onLayout={(event) => {
-          sliderWidth.value = event.nativeEvent.layout.width;
-          // Обновляем позицию при изменении ширины
-          thumbPosition.value = ((value - minimumValue) / (maximumValue - minimumValue)) * event.nativeEvent.layout.width;
-        }}
+      <TouchableOpacity
+        style={styles.arrowButton}
+        onPress={handleDecrease}
+        disabled={sliderValue <= minimumValue}
       >
-        {/* Активная часть слайдера */}
-        <Animated.View style={[styles.trackFill, fillStyle]} />
+        <MaterialIcons
+          name="chevron-left"
+          size={24}
+          color={sliderValue <= minimumValue ? COLORS.neutral.medium : COLORS.primary.main}
+        />
+      </TouchableOpacity>
+
+      <View
+        style={styles.sliderWrapper}
+        onLayout={handleLayout}
+      >
+        <View style={styles.trackBackground}>
+          <Animated.View style={[styles.trackFill, fillStyle]} />
+        </View>
+
+        <Animated.View style={[styles.thumb, thumbStyle]}>
+          <View style={styles.triangle} />
+        </Animated.View>
+
+        <Animated.View style={[styles.staticValue, thumbStyle]}>
+          <Text style={styles.staticValueText}>{sliderValue}</Text>
+        </Animated.View>
+
+        <Slider
+          style={styles.hiddenSlider}
+          minimumValue={minimumValue}
+          maximumValue={maximumValue}
+          step={step}
+          value={sliderValue}
+          onValueChange={handleValueChange}
+          minimumTrackTintColor="transparent"
+          maximumTrackTintColor="transparent"
+          thumbTintColor="transparent"
+          thumbStyle={styles.hiddenThumb}
+        />
       </View>
 
-      {/* Ползунок */}
-      <PanGestureHandler onGestureEvent={gestureHandler}>
-        <Animated.View>
-        <Animated.View style={[styles.thumb, thumbStyle]}>
-          {/* Всплывающее значение при перемещении */}
-          {/*<Animated.View style={[styles.valueBubble, bubbleStyle]}>*/}
-          {/*  <Text style={styles.bubbleText}>{currentValue.value}</Text>*/}
-          {/*</Animated.View>*/}
-        </Animated.View>
-
-      {/* Статическое значение */}
-      <Animated.View style={[styles.staticValue, staticValueStyle]}>
-        <Text style={styles.staticValueText}>{currentValue.value}</Text>
-      </Animated.View>
-        </Animated.View>
-      </PanGestureHandler>
-
+      <TouchableOpacity
+        style={styles.arrowButton}
+        onPress={handleIncrease}
+        disabled={sliderValue >= maximumValue}
+      >
+        <MaterialIcons
+          name="chevron-right"
+          size={24}
+          color={sliderValue >= maximumValue ? COLORS.neutral.medium : COLORS.primary.main}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 70,
-    justifyContent: 'center',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginVertical: SPACING.md,
-    paddingHorizontal: SPACING.md,
+    paddingHorizontal: SPACING.sm,
+  },
+  sliderWrapper: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
+    marginHorizontal: SPACING.sm,
+    position: 'relative',
   },
   trackBackground: {
-    height: 6,
+    height: 8,
     backgroundColor: COLORS.neutral.light,
     borderRadius: BORDER_RADIUS.full,
-    position: 'relative',
+    position: 'absolute',
+    width: '100%',
   },
   trackFill: {
     height: '100%',
+    // width: 220,
     backgroundColor: COLORS.primary.main,
     borderRadius: BORDER_RADIUS.full,
-    position: 'absolute',
   },
   thumb: {
     position: 'absolute',
-    bottom: -16,
-    marginLeft: -10,
+    bottom: -4,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  triangle: {
     width: 0,
     height: 0,
     backgroundColor: 'transparent',
@@ -155,33 +189,34 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderTopColor: COLORS.primary.main,
-  },
-  valueBubble: {
-    position: 'absolute',
-    backgroundColor: COLORS.primary.main,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-    borderRadius: BORDER_RADIUS.sm,
-    minWidth: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bubbleText: {
-    color: COLORS.neutral.white,
-    fontSize: 14,
-    fontWeight: 'bold',
+    transform: [{ rotate: '180deg' }],
   },
   staticValue: {
     position: 'absolute',
-    top: -28,
-    // backgroundColor: COLORS.primary.light,
-    paddingHorizontal: 8,
-    borderRadius: BORDER_RADIUS.sm,
+    top: -2,
+    minWidth: 30,
+    alignItems: 'center',
   },
   staticValueText: {
     color: COLORS.primary.dark,
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  arrowButton: {
+    // width: 40,
+    // height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: BORDER_RADIUS.full,
+  },
+  hiddenSlider: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0,
+    zIndex: 10,
+  },
+  hiddenThumb: {
+    width: 40,
+    height: 40,
   },
 });
 

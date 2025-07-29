@@ -6,6 +6,7 @@ import { getCurrentWeekdayIndex, getTrackCompletionPercentage, isFutureDay } fro
 import Svg, { Circle } from 'react-native-svg';
 import CheckIcon from '~/shared/ui/icons/CheckIcon';
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
+import { isTodayOrTomorrow } from '../lib/utils';
 
 const TrackItem = ({
                      track,
@@ -55,11 +56,11 @@ const TrackItem = ({
 
   const renderDayButtons = () => {
     return weekdays.map((day, index) => {
-      console.log(index,currentDayIndex,'day');
-      const isFuture = isFutureDay(index, currentDayIndex);
+      // const isFuture = isFutureDay(index, currentDayIndex);
+      const isTodayOrTomorrowValue = isTodayOrTomorrow(index, currentDayIndex);
       return (
         <TouchableOpacity
-          disabled={isFuture}
+          disabled={!isTodayOrTomorrowValue}
 
           key={index}
           style={styles.dayButton}
@@ -67,7 +68,7 @@ const TrackItem = ({
           {track.completionStatus[index] ? (
             <CheckIcon color={COLORS.primary.main} size={24} />
           ) : (
-            <CrossIcon color={COLORS.neutral.medium} size={24} />
+            <CrossIcon color={!isTodayOrTomorrowValue ? COLORS.neutral.dark : COLORS.neutral.medium} size={24} />
           )}
         </TouchableOpacity>
       );
@@ -98,30 +99,43 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     marginBottom: SPACING.md,
     paddingRight: SPACING.xs,
+    position: 'relative',
+    zIndex:0
   },
   title:{
-    flexShrink:2,
+    flexShrink:30,
+
     textAlign:'left',
+    paddingRight:SPACING.md,
     lineHeight: SPACING.md,
     paddingTop: SPACING.sm,
+    position: 'relative',
+    zIndex:0
   },
   header: {
     display:'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    position: 'relative',
+    zIndex:0
   },
   daysRow: {
+    width:'47%',
     flexShrink:1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginLeft: 'auto', // Выравниваем по правому краю
+    position: 'relative',
+    zIndex:0
   },
   dayButton: {
     width: 24,
     height: 24,
-    marginHorizontal: 4,
+    marginHorizontal: 3,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+    zIndex:0
   },
 
   statusIcon: {
@@ -157,6 +171,9 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 12,
     overflow: 'hidden',
+  },
+  disabled:{
+
   },
 
   progressCircleBackground: {

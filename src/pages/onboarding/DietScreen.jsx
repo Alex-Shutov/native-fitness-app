@@ -14,43 +14,43 @@ import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import {Typo}from '~/shared/ui/typo';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
+import { onboardingState } from './models/onboarding.atom';
 
 const DietSelectionScreen = () => {
   const navigation = useNavigation();
   const [auth, setAuth] = useRecoilState(authState);
+  const [onBoard, setonBoarding] = useRecoilState(onboardingState);
   const { showSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(false);
 
   const [selectedDiet, setSelectedDiet] = useState(auth.diet || null);
 
   const handleDietSelection = (dietId) => {
-    console.log(dietId);
     setSelectedDiet(dietId);
   };
 
   const handleContinue = async () => {
-    console.log(selectedDiet,'diet');
     if (selectedDiet===null) return;
     showSnackbar('Подождите...', 'info');
     setIsLoading(true);
-    console.log(123123123);
     try {
       // Подготавливаем данные для отправки
       const profileData = {
         age: auth.age,
         weight: auth.weight,
+        startWeight: auth.weight,
         height: auth.height,
         gender: auth.gender,
         targetWeight: auth.targetWeight,
         chestCircumference: auth.chestCircumference,
         waistCircumference: auth.waistCircumference,
         hipCircumference: auth.hipCircumference,
+        goal: onBoard.primaryGoal.id,
+        currentProgress: onBoard.currentProgress * 10,
         diet: selectedDiet,
       };
-      console.log(profileData,'data');
       // Отправляем данные на сервер
       const upgradedMe = await profileApi.updateProfile(profileData);
-      console.log(upgradedMe,'me');
       // Обновляем локальное состояние
       setAuth((prevState) => ({
         ...prevState,

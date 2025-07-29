@@ -2,27 +2,37 @@ import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS } from '~/core/styles/theme';
 
-export const GameOverModal = ({ visible, onRestart }) => (
-  <Modal visible={visible} transparent={true} animationType="slide">
+export const GameOverModal = ({ visible, onRestart, onClose }) => (
+  <Modal statusBarTranslucent={true} visible={visible} transparent={true} animationType="slide">
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
         <Text style={styles.modalText}>Вы проиграли!</Text>
+        <View style={styles.modalButtons}>
         <TouchableOpacity onPress={onRestart} style={styles.modalButton}>
           <Text style={styles.modalButtonText}>Начать заново</Text>
         </TouchableOpacity>
+          <TouchableOpacity onPress={onClose} style={styles.modalButton}>
+            <Text style={styles.modalButtonText}>Выйти</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   </Modal>
 );
 
-export const GameWonModal = ({ visible, onRestart }) => (
-  <Modal visible={visible} transparent={true} animationType="slide">
+export const GameWonModal = ({ visible, onRestart, onClose }) => (
+  <Modal statusBarTranslucent={true} visible={visible} transparent={true} animationType="slide">
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
         <Text style={styles.modalText}>Вы победили!</Text>
-        <TouchableOpacity onPress={onRestart} style={styles.modalButton}>
-          <Text style={styles.modalButtonText}>Начать заново</Text>
-        </TouchableOpacity>
+        <View style={styles.modalButtons}>
+          <TouchableOpacity onPress={onRestart} style={styles.modalButton}>
+            <Text style={styles.modalButtonText}>Начать заново</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onClose} style={styles.modalButton}>
+            <Text style={styles.modalButtonText}>Выйти</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   </Modal>
@@ -41,6 +51,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
+  },
+  modalButtons:{
+    display: 'flex',
+    flexDirection:'row',
+    gap:16
   },
   modalText: {
     fontSize: 24,

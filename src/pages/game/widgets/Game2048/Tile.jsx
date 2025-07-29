@@ -75,8 +75,8 @@ const Tile = ({ value, isNew, isCombined }) => {
 
 const styles = StyleSheet.create({
   tile: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 5,

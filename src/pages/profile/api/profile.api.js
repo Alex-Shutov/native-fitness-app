@@ -1,5 +1,5 @@
 import apiClient from '~/shared/api/client';
-import { mapBackendToAuthState } from '~/pages/auth/lib/auth.mapper';
+import { mapBackendToAuthState } from '../../auth/lib/auth.mapper';
 
 /**
  * Service for handling user-related API calls
@@ -43,14 +43,14 @@ class ProfileService {
       const formData = new FormData();
       formData.append('file', {
         uri: file.uri,
-        type: file.type,
-        name: file.fileName || 'avatar.jpg'
+        type: file.mimeType || 'image/jpeg', // используем mimeType из результата
+        name: file.fileName || `avatar-${Date.now()}.jpg`
       });
-
       const response = await apiClient.post('/api/users/me/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        transformRequest: () => formData
       });
 
       return response.data;

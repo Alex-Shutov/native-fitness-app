@@ -33,7 +33,16 @@ const SelectGoalsScreen = () => {
   };
 
   const handleContinue = () => {
-    if (selectedGoals.length > 0) {
+    if (selectedGoals.length === 1) {
+      setOnboarding((prev) => ({
+        ...prev,
+        currentStep: prev.currentStep + 1,
+        primaryGoal: goals.find(el=>el.id === selectedGoals[0]),
+
+      }));
+      navigation.navigate('DescribeGoalScreen');
+    }
+    else if (selectedGoals.length > 0) {
       setOnboarding((prev) => ({
         ...prev,
         currentStep: prev.currentStep + 1,

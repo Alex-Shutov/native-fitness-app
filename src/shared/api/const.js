@@ -1,0 +1,1 @@
+export const APP_API_URL = 'http://5.129.205.45:8080'

@@ -13,7 +13,12 @@
     },
     "preview": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "extra": {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       },
       "distribution": "internal"
     },

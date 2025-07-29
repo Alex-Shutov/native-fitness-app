@@ -71,8 +71,8 @@ export const createTrack = (title, startDate = getStartOfWeek()) => {
 // Функция для расчета процента выполнения трека
 
 export const getTrackCompletionPercentage = (track) => {
-  const completedDays = track.completionStatus.filter(status => status).length;
-  const totalDays = track.completionStatus.length;
+  const completedDays = track?.completionStatus?.filter(status => status)?.length;
+  const totalDays = track?.completionStatus?.length;
   return (completedDays / totalDays) * 100;
 };
 
@@ -96,4 +96,35 @@ export const getCurrentWeekdayIndex = () => {
 
 export const isFutureDay = (dayIndex, currentDayIndex) => {
   return dayIndex > currentDayIndex;
+};
+
+export const isTodayOrTomorrow = (dayIndex, currentDayIndex) => {
+  return dayIndex === currentDayIndex || currentDayIndex+1 === dayIndex
+}
+
+// src/pages/tracker/lib/utils.js
+
+// ...
+
+export const isFriday = () => {
+  const today = new Date();
+  return today.getDay() === 5; // 5 соответствует пятнице
+};
+
+export const getWeekDates = (startDate, weekOffset = 0) => {
+  const date = new Date(startDate);
+  // Переходим к началу недели (понедельник)
+  const dayOfWeek = date.getDay();
+  const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Корректировка для воскресенья
+  date.setDate(diff);
+
+  // Применяем смещение недели
+  date.setDate(date.getDate() + (weekOffset * 7));
+
+  // Возвращаем массив дат рабочей недели (пн-пт)
+  return Array.from({ length: 5 }).map((_, i) => {
+    const newDate = new Date(date);
+    newDate.setDate(date.getDate() + i);
+    return newDate;
+  });
 };

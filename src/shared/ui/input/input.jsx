@@ -100,7 +100,7 @@ const Input = ({
     if (typeof rightIcon === 'string') {
       return (
         <TouchableOpacity style={styles.rightIconContainer} onPress={onRightIconPress}>
-          <MaterialIcons name={rightIcon} size={24} color={COLORS.neutral.medium} />
+          <MaterialIcons name={rightIcon} size={28} color={COLORS.neutral.medium} />
         </TouchableOpacity>
       );
     }
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.neutral.white,
     borderRadius: Theme.borderRadius.sm,
-    // paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.md,
     width: '100%',
     borderWidth: 1,

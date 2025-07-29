@@ -1,16 +1,18 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { COLORS, SPACING } from '~/core/styles/theme';
+import { useRecoilValue } from 'recoil';
+
 import { MEAL_TYPES, getMealTypeById } from '../lib/utils';
+
+import { useSnackbar } from '~/core/hooks/useSnackbar';
+import { COLORS, SPACING } from '~/core/styles/theme';
+import { authState } from '~/pages/auth/models/auth.atom';
+import MealService from '~/pages/nutritions/api/meals.service';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import {Typo}from '~/shared/ui/typo';
-import { useRecoilValue } from 'recoil';
-import { authState } from '~/pages/auth/models/auth.atom';
+import { Typo } from '~/shared/ui/typo';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
-import { useSnackbar } from '~/core/hooks/useSnackbar';
-import MealService from '~/pages/nutritions/api/meals.service';
 
 const MealCategoriesScreen = () => {
   const navigation = useNavigation();
@@ -38,7 +40,7 @@ const MealCategoriesScreen = () => {
   }, []);
 
   const handleMealTypeSelection = (mealTypeId) => {
-    const mealType = mealTypes.find(type => type.id === mealTypeId);
+    const mealType = mealTypes.find((type) => type.id === mealTypeId);
     navigation.navigate('MealDaysScreen', {
       mealTypeId,
       dietId: auth.diet ?? 1,
@@ -48,14 +50,18 @@ const MealCategoriesScreen = () => {
 
   return (
     <ScreenTransition>
-      <ScreenBackground>
+      <ScreenBackground
+        showHeader={false}
+        hasBackButton={false}>
+        <View style={styles.headerContainer}>
+          <Typo variant="hSub" style={[styles.header, styles.firstRow]}>
+            Питание{' '}
+          </Typo>
+          <Typo variant="hSub" style={styles.header}>
+            на 14 дней
+          </Typo>
+        </View>
         <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <Typo variant="hSub" style={styles.header}>
-              Питание на 14 дней
-            </Typo>
-          </View>
-
           {loading ? (
             <View style={styles.loadingContainer}>
               <Typo variant="body1">Загрузка...</Typo>
@@ -64,13 +70,15 @@ const MealCategoriesScreen = () => {
             <ScrollView
               style={styles.scrollView}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-            >
+              contentContainerStyle={styles.scrollContent}>
               {mealTypes.map((mealType) => (
                 <DietOptionCard
                   key={mealType.id}
                   title={mealType.title}
                   // subtitle={mealType.description}
+                  transformY={mealType.transformY ?? 0}
+                  transformX={mealType.transformX ?? 0}
+                  imageFocus={mealType.imageFocus}
                   image={mealType.image}
                   isSelected={false}
                   onPress={() => handleMealTypeSelection(mealType.id)}
@@ -91,14 +99,22 @@ const styles = StyleSheet.create({
     paddingBottom: 80, // Отступ для нижней навигации
   },
   headerContainer: {
-    marginBottom: SPACING.xl,
+    paddingVertical: SPACING.lg,
+    width: '100%',
   },
   header: {
-    fontSize: SPACING.xl * 1.5,
-    lineHeight: SPACING.xl * 1.8,
+    // textAlign: 'left', // или 'center' если нужно
+    // flexWrap: 'wrap', // разрешаем перенос текста
+    // // если нужно ограничить ширину текста:
+    // maxWidth: '80%',
   },
   scrollView: {
     flex: 1,
+  },
+  firstRow: {
+    width: '100%',
+    flexDirection: 'row',
+    flexGrow: 1,
   },
   loadingContainer: {
     flex: 1,

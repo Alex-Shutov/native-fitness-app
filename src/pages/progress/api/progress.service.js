@@ -8,7 +8,6 @@ const ProgressService = {
   async getProgressData() {
     try {
       const response = await apiClient.get('/api/progress');
-      console.log(response,'response123');
       // Преобразуем данные в нужный формат
       return {
         goalProgress: response.data?.goalProgress,

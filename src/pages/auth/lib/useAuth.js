@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
-import AuthService from '~/pages/auth/api/auth.service';
+import { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authState } from '~/pages/auth/models/auth.atom';
 import StorageService from '@react-native-async-storage/async-storage/src';
 import { useNavigation } from '@react-navigation/native';
-import { progressState } from '~/pages/progress/models/progress.model';
+import { progressState } from '../../progress/models/progress.model';
+import AuthService from '../api/auth.service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 /**
@@ -20,26 +21,40 @@ const useAuth = () => {
   const [error, setError] = useState(null);
 
   // Check authentication status on mount
-  useEffect(() => {
+  useLayoutEffect(() => {
     const checkAuth = async () => {
       try {
         setLoading(true);
         const authStatus = await AuthService.isAuthenticated();
         setIsAuthenticated(authStatus);
         if (authStatus) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "MainScreen" }],
-          })
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [{ name: "MainScreen" }],
+          // })
           const { user: userData, progress: progressData } = await AuthService.getCurrentUser();
-          console.log(userData, progressData, 'data');
 
           setAuthState(userData);
           setRecoilProgress(progressData);
 
         }
+        else {
+          const credentials = await AsyncStorage.getItem('user_credentials');
+          console.log(credentials);
+          if (credentials) {
+            await login(JSON.parse(credentials))
+
+          }
+        }
       } catch (err) {
+        const credentials = await AsyncStorage.getItem('user_credentials');
+        console.log(credentials);
+        if (credentials) {
+          await login(JSON.parse(credentials))
+          return;
+        }
         setError(err.message);
+        await logout()
       } finally {
         setLoading(false);
       }
@@ -48,9 +63,10 @@ const useAuth = () => {
     checkAuth();
   }, []);
 
-  // Login function
+  // Login functionr
   const login = useCallback(async (credentials) => {
     try {
+      console.log(credentials);
       setLoading(true);
       setError(null);
 
@@ -67,7 +83,7 @@ const useAuth = () => {
 
       return true;
     } catch (err) {
-      setError(err.response?.data || err.message);
+      setError(err?.response?.data || err?.message || err.error);
       throw err;
       return false;
     } finally {
@@ -83,13 +99,13 @@ const useAuth = () => {
         setError(null);
 
         await AuthService.register(userData);
-        // After registration, we automatically log in
         return await login({
           username: userData.username,
           password: userData.password,
         });
       } catch (err) {
-        setError(err.response?.data || err.message);
+        setError(err?.response?.data?.error ?? err.message);
+        throw err
         return false;
       } finally {
         setLoading(false);
@@ -98,8 +114,7 @@ const useAuth = () => {
     [login]
   );
 
-  // Logout function
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (test) => {
     try {
       setLoading(true);
       await AuthService.logout();
@@ -117,11 +132,13 @@ const useAuth = () => {
   return {
     isAuthenticated,
     user:authUserState,
-    loading,
+    loading: loading,
     error,
     login,
     register,
     logout,
+    setUser: setAuthState,
+    setError
   };
 };
 

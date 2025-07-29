@@ -1,5 +1,8 @@
+import { APP_API_URL } from '../../../shared/api/const';
+
 export const mapBackendToAuthState = (backendData) => {
   return {
+    avatar: backendData?.avatarPath ? `${APP_API_URL}/uploads/${backendData?.avatarPath}` : null,
     isAuthenticated: true, // если пришли данные пользователя, значит он аутентифицирован
     user: {
       id: backendData.id,
@@ -8,6 +11,7 @@ export const mapBackendToAuthState = (backendData) => {
       roles: backendData.roles,
       points: backendData.points
     },
+    points: backendData.points,
     error: null,
     loading: false,
     gender: backendData.gender, // по умолчанию, так как в бекенде нет поля gender
@@ -16,12 +20,12 @@ export const mapBackendToAuthState = (backendData) => {
     weight: backendData.weight,
     startWeight: backendData.startWeight, // начальный вес = текущему весу
     targetWeight: backendData.targetWeight, // нет в бекенде, оставляем дефолт
-    diet: backendData.dietId,
+    diet: backendData.dietId ?? backendData.diet,
     goal: backendData.goal,
     bodyMassIndex: calculateBMI(backendData.height, backendData.weight),
-    chestCircumference: backendData.chestCircumference ?? '--', // дефолтные значения
-    waistCircumference: backendData.waistCircumference ?? '--',
-    hipCircumference: backendData.hipCircumference ?? '--',
+    chestCircumference: backendData.chestCircumference ?? '', // дефолтные значения
+    waistCircumference: backendData.waistCircumference ?? '',
+    hipCircumference: backendData.hipCircumference ?? '',
   };
 };
 

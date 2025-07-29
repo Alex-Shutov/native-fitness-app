@@ -21,7 +21,8 @@ const ParamInput = ({
                       isSelect = false,
                       options = [],
                       selectedElement = null,
-                      keyboardType = "default"
+                      keyboardType = "default",
+                      maxLength=3
                     }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -44,7 +45,6 @@ const ParamInput = ({
     if (isSelect) {
       // For select mode, render a touchable area that opens the modal
       const selectedOption = options.find(option => option.value === value);
-
       return (
         <TouchableOpacity
           onBlur={onBlur}
@@ -61,7 +61,7 @@ const ParamInput = ({
                 !selectedOption && styles.placeholderText
               ]}
               numberOfLines={1}
-              ellipsizeMode="tail"
+              // ellipsizeMode="tail"
             >
               {selectedOption ? selectedOption.label : placeholder}
             </Typo>
@@ -80,6 +80,7 @@ const ParamInput = ({
             keyboardType={keyboardType}
             placeholder={placeholder}
             placeholderTextColor={COLORS.neutral.medium}
+            maxLength={maxLength}
           />
         </View>
       );

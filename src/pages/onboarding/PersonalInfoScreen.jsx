@@ -7,17 +7,21 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  TextInput, TouchableWithoutFeedback,
+  TextInput,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { useRecoilState } from 'recoil';
+
+import SliderInputV2 from '../../shared/ui/slider';
+import InfoModal from '../../widgets/modal/InfoModal';
+import { trackerVersion } from '../tracker/state/tracker.state';
 
 import { COLORS, SPACING, BORDER_RADIUS, FONT_FAMILY, FONT_SIZES } from '~/core/styles/theme';
 import { authState } from '~/pages/auth/models/auth.atom';
 import Button from '~/shared/ui/button';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import {Typo}from '~/shared/ui/typo';
-import SliderInputV2 from '../../shared/ui/slider';
+import { Typo } from '~/shared/ui/typo';
 
 const { width } = Dimensions.get('window');
 
@@ -28,20 +32,46 @@ const PersonalInfoScreen = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // Состояния для полей формы
-  const [gender, setGender] = useState(auth.gender || 'male');
-  const [age, setAge] = useState(auth.age || 24);
-  const [height, setHeight] = useState(auth.height || 175);
-  const [weight, setWeight] = useState(auth.weight || 60);
-  const [targetWeight, setTargetWeight] = useState(auth.targetWeight || 55);
-  const [chestCircumference, setChestCircumference] = useState(auth.chestCircumference || '');
-  const [waistCircumference, setWaistCircumference] = useState(auth.waistCircumference || '');
-  const [hipCircumference, setHipCircumference] = useState(auth.hipCircumference || '');
-
+  const [gender, setGender] = useState(auth?.gender || 'male');
+  const [age, setAge] = useState(auth?.age || 24);
+  const [height, setHeight] = useState(auth?.height || 175);
+  const [weight, setWeight] = useState(auth?.weight || 60);
+  const [targetWeight, setTargetWeight] = useState(auth?.targetWeight || 55);
+  const [chestCircumference, setChestCircumference] = useState(auth?.chestCircumference || '');
+  const [waistCircumference, setWaistCircumference] = useState(auth?.waistCircumference || '');
+  const [hipCircumference, setHipCircumference] = useState(auth?.hipCircumference || '');
+  const [visibleChest, setVisibleChest] = useState(false);
+  const [visibleWaist, setVisibleWaist] = useState(false);
+  const [visibleHips, setVisibleHips] = useState(false);
   const calculateBodyMassIndex = () => {
     if (!height || !weight) return '--';
     const heightInMeters = height / 100;
     const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
     return bmi;
+  };
+
+  const handleOpenChest = () => {
+    setTimeout(() => setVisibleChest(true), 50);
+  };
+
+  const handleCloseChest = () => {
+    setTimeout(() => setVisibleChest(false), 50);
+  };
+
+  const handleOpenWaist = () => {
+    setTimeout(() => setVisibleWaist(true), 50);
+  };
+
+  const handleCloseWaist = () => {
+    setTimeout(() => setVisibleWaist(false), 50);
+  };
+
+  const handleOpenHips = () => {
+    setTimeout(() => setVisibleHips(true), 50);
+  };
+
+  const handleCloseHips = () => {
+    setTimeout(() => setVisibleHips(false), 50);
   };
 
   const [bmi, setBmi] = useState(auth.bodyMassIndex);
@@ -180,17 +210,19 @@ const PersonalInfoScreen = () => {
             </SectionContainer>
 
             {/* Ввод параметров */}
-            <SectionContainer label="Параметры">
+            <SectionContainer label="Объем груди" onOpen={handleOpenChest}>
               <View style={styles.parametersInputContainer}>
                 <View style={styles.parameterInputWrapper}>
-                  <Typo
-                    variant="caption"
-                    color={COLORS.neutral.medium}
-                    style={styles.parameterLabel}>
-                    Объем груди
-                  </Typo>
+                  {/*<Typo*/}
+
+                  {/*  variant="caption"*/}
+                  {/*  color={COLORS.neutral.medium}*/}
+                  {/*  style={styles.parameterLabel}>*/}
+                  {/*  Объем груди*/}
+                  {/*</Typo>*/}
                   <View style={styles.inputContainer}>
                     <TextInput
+                      maxLength={3}
                       style={styles.parameterInput}
                       value={chestCircumference}
                       onChangeText={setChestCircumference}
@@ -202,44 +234,81 @@ const PersonalInfoScreen = () => {
                   </View>
                 </View>
 
-                <View style={styles.parameterInputWrapper}>
-                  <Typo
-                    variant="caption"
-                    color={COLORS.neutral.medium}
-                    style={styles.parameterLabel}>
-                    Объем талии
-                  </Typo>
-                  <View style={styles.inputContainer}>
-                    <TextInput
-                      style={styles.parameterInput}
-                      value={waistCircumference}
-                      onChangeText={setWaistCircumference}
-                      keyboardType="numeric"
-                      placeholder="--"
-                      placeholderTextColor={COLORS.neutral.medium}
-                    />
-                    {/*<Typo variant="body1" style={styles.inputUnit}>см</Typo>*/}
-                  </View>
-                </View>
+                {/*<View style={styles.parameterInputWrapper}>*/}
+                {/*  <Typo*/}
+                {/*    variant="caption"*/}
+                {/*    color={COLORS.neutral.medium}*/}
+                {/*    style={styles.parameterLabel}>*/}
+                {/*    Объем талии*/}
+                {/*  </Typo>*/}
+                {/*  <View style={styles.inputContainer}>*/}
+                {/*    <TextInput*/}
+                {/*      maxLength={3}*/}
+                {/*      style={styles.parameterInput}*/}
+                {/*      value={waistCircumference}*/}
+                {/*      onChangeText={setWaistCircumference}*/}
+                {/*      keyboardType="numeric"*/}
+                {/*      placeholder="--"*/}
+                {/*      placeholderTextColor={COLORS.neutral.medium}*/}
+                {/*    />*/}
+                {/*    /!*<Typo variant="body1" style={styles.inputUnit}>см</Typo>*!/*/}
+                {/*  </View>*/}
+                {/*</View>*/}
 
-                <View style={styles.parameterInputWrapper}>
-                  <Typo
-                    variant="caption"
-                    color={COLORS.neutral.medium}
-                    style={styles.parameterLabel}>
-                    Объем бедер
-                  </Typo>
-                  <View style={styles.inputContainer}>
-                    <TextInput
-                      style={styles.parameterInput}
-                      value={hipCircumference}
-                      onChangeText={setHipCircumference}
-                      keyboardType="numeric"
-                      placeholder="--"
-                      placeholderTextColor={COLORS.neutral.medium}
-                    />
-                    {/*<Typo variant="body1" style={styles.inputUnit}>см</Typo>*/}
-                  </View>
+                {/*<View style={styles.parameterInputWrapper}>*/}
+                {/*  <Typo*/}
+                {/*    variant="caption"*/}
+                {/*    color={COLORS.neutral.medium}*/}
+                {/*    style={styles.parameterLabel}>*/}
+                {/*    Объем бедер*/}
+                {/*  </Typo>*/}
+                {/*  <View style={styles.inputContainer}>*/}
+                {/*    <TextInput*/}
+                {/*      maxLength={3}*/}
+                {/*      style={styles.parameterInput}*/}
+                {/*      value={hipCircumference}*/}
+                {/*      onChangeText={setHipCircumference}*/}
+                {/*      keyboardType="numeric"*/}
+                {/*      placeholder="--"*/}
+                {/*      placeholderTextColor={COLORS.neutral.medium}*/}
+                {/*    />*/}
+                {/*    /!*<Typo variant="body1" style={styles.inputUnit}>см</Typo>*!/*/}
+                {/*  </View>*/}
+                {/*</View>*/}
+              </View>
+            </SectionContainer>
+
+            <SectionContainer label="Объем талии" onOpen={handleOpenWaist}>
+              {/**/}
+
+              <View style={styles.parameterInputWrapper}>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    maxLength={3}
+                    style={styles.parameterInput}
+                    value={waistCircumference}
+                    onChangeText={setWaistCircumference}
+                    keyboardType="numeric"
+                    placeholder="--"
+                    placeholderTextColor={COLORS.neutral.medium}
+                  />
+                </View>
+              </View>
+            </SectionContainer>
+
+            <SectionContainer label="Объем ягодиц" onOpen={handleOpenHips}>
+              <View style={styles.parameterInputWrapper}>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    maxLength={3}
+                    style={styles.parameterInput}
+                    value={hipCircumference}
+                    onChangeText={setHipCircumference}
+                    keyboardType="numeric"
+                    placeholder="--"
+                    placeholderTextColor={COLORS.neutral.medium}
+                  />
+                  {/*<Typo variant="body1" style={styles.inputUnit}>см</Typo>*/}
                 </View>
               </View>
             </SectionContainer>
@@ -283,9 +352,8 @@ const PersonalInfoScreen = () => {
             {/* Индекс массы тела */}
             <SectionContainer label="Индекс массы тела">
               <View style={styles.bmiValueContainer}>
-                G
                 <Typo variant="h3" weight="bold" color={COLORS.primary.main}>
-                  {bmi}
+                  {calculateBodyMassIndex()}
                 </Typo>
               </View>
             </SectionContainer>
@@ -302,25 +370,15 @@ const PersonalInfoScreen = () => {
             </SectionContainer>
 
             {/* Информационные секции */}
-            <AccordionSection
-              title="О программе"
-              isExpanded={expandedSections.program}
-              onToggle={() => toggleSection('program')}
-              content="Текст предупреждение Текст предупреждение Текст предупреждение"
-            />
 
-            <AccordionSection
-              title="О программе"
-              isExpanded={expandedSections.nutrition}
-              onToggle={() => toggleSection('nutrition')}
-              content="Текст предупреждение Текст предупреждение Текст предупреждение"
-            />
+
+
 
             <AccordionSection
               title="О программе"
               isExpanded={expandedSections.results}
               onToggle={() => toggleSection('results')}
-              content="Текст предупреждение Текст предупреждение Текст предупреждение"
+              content="Программа нацелена на достижение желаемого веса через вырабатывание полезных привычек, которые помогают держать жизненный темп в тонусе. Программа прекрасно сочетается с занятиями спортом, не мешает рабочим процессам и не занимает много времени каждый день."
             />
 
             <View style={styles.buttonContainer}>
@@ -333,19 +391,49 @@ const PersonalInfoScreen = () => {
             </View>
           </View>
         </ScrollView>
+        <View style={styles.container}>
+          <InfoModal
+            image={require('../../shared/assets/images/chest.jpg')}
+            text="Измеряйте объем груди а уровне подмышек и над грудью."
+            visible={visibleChest}
+            onClose={handleCloseChest}
+            title="Как измерять?"
+          />
+          <InfoModal
+            image={require('../../shared/assets/images/waist.jpg')}
+            text="Объем талии - наиболее узкая часть."
+            visible={visibleWaist}
+            onClose={handleCloseWaist}
+            title="Как измерять?"
+          />
+          <InfoModal
+            image={require('../../shared/assets/images/hips.jpg')}
+            text="Измеряйте объем ягодиц следующим образом: нужно стоять ровно. Ленту на более выступающие места."
+            visible={visibleHips}
+            onClose={handleCloseHips}
+            title="Как измерять?"
+          />
+        </View>
       </ScreenBackground>
     </ScreenTransition>
   );
 };
 
 // Компонент для секции с белым фоном и лейблом в левом верхнем углу
-const SectionContainer = ({ label, children }) => {
+const SectionContainer = ({ label, children, onOpen }) => {
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.sectionContent}>
-        <Typo variant="body0" weight="bold" style={styles.sectionLabel}>
-          {label}
-        </Typo>
+        <View style={styles.sectionHeader}>
+          <Typo variant="body0" weight="bold" style={styles.sectionLabel}>
+            {label}
+          </Typo>
+          {onOpen && (
+            <TouchableWithoutFeedback style={styles.sectionButton} onPress={onOpen}>
+              <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />
+            </TouchableWithoutFeedback>
+          )}
+        </View>
         {children}
       </View>
     </View>
@@ -396,8 +484,6 @@ const AccordionSection = ({ title, isExpanded, onToggle, content }) => {
   );
 };
 
-
-
 const styles = StyleSheet.create({
   page: {
     flex: 1,
@@ -417,21 +503,31 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginBottom: SPACING.md,
   },
+
   sectionContent: {
+    width: '100%',
+
     backgroundColor: COLORS.neutral.white,
     borderRadius: BORDER_RADIUS.md,
     padding: SPACING.md,
-    paddingTop: SPACING.lg,
+    paddingTop: SPACING.sm,
     position: 'relative',
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   sectionLabel: {
-    position: 'absolute',
-    paddingTop: SPACING.xs - 8,
-    paddingLeft: SPACING.md,
-    // top: SPACING.xs,
-    // left: SPACING.sm,
+    minWidth: '90%',
+    textAlign: 'left',
     color: COLORS.primary.extraDark,
     fontSize: SPACING.md,
+    flex: 1,
+  },
+  helpButton: {
+    marginLeft: SPACING.sm,
+    padding: SPACING.xs,
   },
   genderContainer: {
     flexDirection: 'row',
@@ -488,6 +584,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary.main,
     borderRadius: BORDER_RADIUS.full,
   },
+
   sliderTriangle: {
     position: 'absolute',
     bottom: -16,

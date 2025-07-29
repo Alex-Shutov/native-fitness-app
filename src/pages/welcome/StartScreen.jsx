@@ -96,8 +96,8 @@ const StartScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingBottom: SPACING.xxl,
+    flex: 1.1,
+    // paddingBottom: SPACING.xxl,
   },
   logoContainer: {
     flex: 4,

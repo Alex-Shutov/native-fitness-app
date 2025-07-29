@@ -22,7 +22,7 @@ const GoalsGrid = ({
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
+      showsVerticalScrollIndicator={true}
     >
       <View style={styles.grid}>
         {goals.map((goal) => (

@@ -1,18 +1,21 @@
 import React from 'react';
 import { Dimensions, View, StyleSheet } from 'react-native';
-import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 import Theme from '../../../core/styles/theme';
 import Fog from '~/shared/ui/other/fog';
+import { SvgUri } from 'react-native-svg';
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import SvgRoad from '../svgs/SvgRoad';
 
 const { width, height } = Dimensions.get('window');
-
+const svg = require('../../assets/images/svg_road.svg')
 const GradientBackground = ({
                               children,
                               style,
                               colors = [Theme.colors.gradient.start, Theme.colors.gradient.end],
                               padding = 50, // Отступ для синусоид
                             }) => {
+  const svgJsx = resolveAssetSource(svg)
   const generateSinePath = () => {
     // Параметры синусоиды
     const amplitude = width * 0.05; // Амплитуда волны
@@ -44,27 +47,34 @@ const GradientBackground = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.backgroundBase}>
-        <Svg width={width} height={height} style={styles.svg}>
-          <Defs>
-            {/* Основной градиент */}
-            <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor={colors[0]} />
-              <Stop offset="100%" stopColor={colors[1]} />
-            </LinearGradient>
+        {/*<Svg width={width} height={height} style={styles.svg}>*/}
+        {/*  <Defs>*/}
+        {/*    /!* Основной градиент *!/*/}
+        {/*    <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">*/}
+        {/*      <Stop offset="0%" stopColor={colors[0]} />*/}
+        {/*      <Stop offset="100%" stopColor={colors[1]} />*/}
+        {/*    </LinearGradient>*/}
 
-            {/* Градиент для "дымки" снизу (от белого до прозрачного) */}
-            <LinearGradient id="fog" x1="0%" y1="100%" x2="0%" y2="70%">
-              <Stop offset="0%" stopColor="white" stopOpacity="1" />
-              <Stop offset="100%" stopColor="white" stopOpacity="0" />
-            </LinearGradient>
-          </Defs>
+        {/*    /!* Градиент для "дымки" снизу (от белого до прозрачного) *!/*/}
+        {/*    <LinearGradient id="fog" x1="0%" y1="100%" x2="0%" y2="70%">*/}
+        {/*      <Stop offset="0%" stopColor="white" stopOpacity="1" />*/}
+        {/*      <Stop offset="100%" stopColor="white" stopOpacity="0" />*/}
+        {/*    </LinearGradient>*/}
+        {/*  </Defs>*/}
 
-          {/* Центральная область с градиентом */}
-          <Path d={generateSinePath()} fill="url(#grad)" />
+        {/*  /!* Центральная область с градиентом *!/*/}
+        {/*  <Path d={generateSinePath()} fill="url(#grad)" />*/}
 
-          {/* Дымка снизу */}
-        <Fog/>
-        </Svg>
+        {/*  /!* Дымка снизу *!/*/}
+        {/*<Fog/>*/}
+        {/*</Svg>*/}
+        <SvgRoad
+          width={width}
+          height={height}
+          style={styles.svg}
+          preserveAspectRatio="xMidYMid slice"
+        />
+
         <View style={styles.content}>{children}</View>
       </View>
     </View>

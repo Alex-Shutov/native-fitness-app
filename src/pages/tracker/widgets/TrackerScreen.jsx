@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
 import AddTrackModal from './AddTrackModal';
@@ -12,34 +12,46 @@ import {
   isFutureDay,
   updateTrackStatus,
 } from '~/pages/tracker/lib/utils';
-import { mapApiTrackToFrontend, trackerQuery, trackerState } from '~/pages/tracker/state/tracker.state';
-import TrackItem from '~/pages/tracker/widgets/TrackItem';
-import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
-import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import {Typo}from '~/shared/ui/typo';
+import ScreenBackground from '../../../shared/ui/layout/ScreenBackground';
+import ScreenTransition from '../../../shared/ui/layout/ScreenTransition';
+import { trackerQuery, trackerState, trackerVersion } from '../state/tracker.state';
+import { Tooltip } from '../../../shared/ui/tooltip/Tooltip';
+import { MaterialIcons } from '@expo/vector-icons';
+import TrackItem from './TrackItem';
+import InfoModal from '../../../widgets/modal/InfoModal';
 
 const TrackerScreen = () => {
   const [tracker, setTracker] = useRecoilState(trackerState);
   const trackerLoadable = useRecoilValueLoadable(trackerQuery);
-  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+  const [trackerVs, setTrackerVersion] = useRecoilState(trackerVersion);
+  const [visible, setVisible] = useState(false);
 
+  const handleOpen = () => {
+    setTimeout(()=>setVisible(true),50);
+  };
+
+  const handleClose = () => {
+    setTimeout(()=>setVisible(false),50);
+
+  };
+  useEffect(() => {
+    return ()=>{
+      setTrackerVersion((prev)=>prev+1)
+    }
+  }, []);
   useEffect(() => {
     if (trackerLoadable.state === 'hasValue') {
       setTracker(trackerLoadable.contents);
     }
   }, [trackerLoadable, setTracker]);
-
   const weekdays = getCurrentWeekdays();
   const currentDayIndex = getCurrentWeekdayIndex();
   const { tracks } = tracker;
 
-  const handlePlusPress = () => {
-    setIsAddModalVisible(true);
-  };
 
-  const handleCloseModal = () => {
-    setIsAddModalVisible(false);
-  };
+
+
 
   const handleAddTrack = async (newTrack) => {
     try {
@@ -64,38 +76,39 @@ const TrackerScreen = () => {
     }
   };
 
-  const handleTrackStatusChange = async (trackId, dayIndex, status) => {
+  const handleTrackStatusChange = async (frontendTrackId, dayIndex, status) => {
     try {
-      // Обновляем локальное состояние сразу для быстрого отклика UI
-      setTracker((prev) => {
-        const updatedTracks = prev.tracks.map((track) => {
-          if (track.id === trackId) {
+      setTracker(prev => {
+        const updatedTracks = prev.tracks.map(track => {
+          if (track.id === frontendTrackId) {
             const newStatus = [...track.completionStatus];
             newStatus[dayIndex] = status ? 1 : 0;
             return { ...track, completionStatus: newStatus };
           }
           return track;
         });
+
+        // 2. Формируем полный habitsStatus (25 символов)
+        let fullHabitsStatus = '';
+        updatedTracks.forEach(track => {
+          fullHabitsStatus += track.completionStatus.join('');
+        });
+
+        // 3. Отправляем обновление на сервер
+        TrackerService.updateTrackStatus(
+          prev.trackerId,
+          fullHabitsStatus.toString().split('').map(Number),
+        ).catch(error => {
+          console.error('Error updating tracker status:', error);
+        });
         return { ...prev, tracks: updatedTracks };
       });
-      // Отправляем обновление на сервер
-      const track = tracker.tracks
-        .map((track) => {
-          if (track.id === trackId) {
-            const newStatus = [...track.completionStatus];
-            newStatus[dayIndex] = status ? 1 : 0;
-            return { ...track, completionStatus: newStatus };
-          }
-          return track;
-        })
-        .find((track) => track.id === trackId);
-      await TrackerService.updateTrackStatus(trackId, track.completionStatus);
     } catch (error) {
-      // Откатываем изменения в случае ошибки
+      console.error('Error updating track status:', error);
       setTracker((prev) => ({
         ...prev,
-        error: error.message,
-      }));
+        error,
+      }))
     }
   };
 
@@ -141,17 +154,27 @@ const TrackerScreen = () => {
   return (
     <ScreenTransition>
       <ScreenBackground
+        headerRight={
+          <TouchableWithoutFeedback onPress={handleOpen}>
+
+            <MaterialIcons
+              name="help-outline"
+              size={24}
+              color={COLORS.neutral.dark}
+            />
+          </TouchableWithoutFeedback>
+
+        }
         title={
           <View style={styles.headerContainer}>
             <Typo variant="hSub" style={styles.header}>
               Трекер
             </Typo>
+
           </View>
         }
-        onPlusPress={handlePlusPress}
         hasBackButton={false}
         contentStyle={styles.contentContainer}>
-        {/* Заголовки дней недели */}
         {renderDayLabels()}
 
         <FlatList
@@ -163,11 +186,15 @@ const TrackerScreen = () => {
           showsVerticalScrollIndicator={false}
         />
 
-        <AddTrackModal
-          visible={isAddModalVisible}
-          onClose={handleCloseModal}
-          onAddTrack={handleAddTrack}
-        />
+        <View style={styles.container}>
+          <InfoModal
+            text={'Здесь вы можете отслеживать свои привычки по будням, ведь по выходным нужно дать себе отдохнуть! '}
+            visible={visible}
+            onClose={handleClose}
+            title={'Что это такое?'}
+          />
+        </View>
+
       </ScreenBackground>
     </ScreenTransition>
   );
@@ -178,16 +205,23 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.md,
     paddingBottom: 80,
   },
+  helpIcon: {
+    marginLeft: SPACING.sm,
+  },
   headerContainer: {
     display: 'flex',
     width: '100%',
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   subtitle: {
     marginBottom: SPACING.lg,
     color: COLORS.neutral.dark,
   },
   listContainer: {
+    position:"relative",
+    zIndex: 1,
     flexGrow: 1,
   },
   emptyContainer: {

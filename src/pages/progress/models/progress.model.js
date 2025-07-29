@@ -17,7 +17,7 @@ export const progressState = atom({
 
 export const progressQuery = selector({
   key: 'progressQuery',
-  get: async () => {
-    return await ProgressService.getProgressData();
+  get:  () => {
+    return  ProgressService.getProgressData();
   }
 });

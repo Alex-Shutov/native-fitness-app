@@ -9,19 +9,19 @@ import { View,StyleSheet } from 'react-native';
 import Button from '~/shared/ui/button';
 import Input from '~/shared/ui/input/input';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import Container from '~/shared/ui/layout/Container';
 import Toggle from '~/shared/ui/toogle';
 import { getUserValue } from '~/pages/auth/lib/auth';
 import AuthService from '~/pages/auth/api/auth.service';
 import useAuth from '~/pages/auth/lib/useAuth';
 import { Typo } from '../../shared/ui/typo';
+import ScreenBackground from '../../shared/ui/layout/ScreenBackground';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const setAuthState = useSetRecoilState(authState);
   const [loginMethod, setLoginMethod] = useState(0);
-
+  const [loginError,setLoginError] = useState(null);
   const emailForm = useZodForm(usernameSchema, {
     username: '',
     password: '',
@@ -61,7 +61,11 @@ const LoginScreen = () => {
         })
       } catch (error) {
         console.error('Login error:', error);
-
+        if(error.status === 401) {
+          setLoginError('Неверный логин или пароль!')
+        } else {
+          setLoginError('Попробуйте еще раз');
+        }
         setAuthState((prev) => ({
           ...prev,
           error: 'Login failed: ' + error.message,
@@ -77,16 +81,16 @@ const LoginScreen = () => {
 
   return (
     <ScreenTransition>
-      <ScreenBackground title="Войти в аккаунт" backIcon="close">
-        <Container safeArea>
+      <ScreenBackground onBackPress={()=>navigation.navigate('Register')} title="Войти в аккаунт" backIcon="close">
+        <Container safeArea fullScreen={true}>
           <View style={styles.mainContent}>
             {/* Login method toggle */}
-            <Toggle
-              options={['Имя пользователя', 'Телефон']}
-              selectedIndex={loginMethod}
-              onSelect={setLoginMethod}
-              style={styles.toggle}
-            />
+            {/*<Toggle*/}
+            {/*  options={['Имя пользователя']}*/}
+            {/*  selectedIndex={loginMethod}*/}
+            {/*  onSelect={setLoginMethod}*/}
+            {/*  style={styles.toggle}*/}
+            {/*/>*/}
 
             {/* Login form */}
             <View style={styles.formContainer}>
@@ -96,7 +100,10 @@ const LoginScreen = () => {
                   icon="person"
                   placeholder="Имя пользователя"
                   value={emailForm.values.username}
-                  onChangeText={(text) => emailForm.handleChange('username', text)}
+                  onChangeText={(text) => {
+                    if (loginError) setLoginError(null);
+                    return emailForm.handleChange('username', text);
+                  }}
                   onBlur={() => emailForm.handleBlur('username')}
                   // keyboardType=""
                   autoCapitalize="none"
@@ -107,7 +114,10 @@ const LoginScreen = () => {
                   icon="phone"
                   placeholder="Номер телефона"
                   value={phoneForm.values.phone}
-                  onChangeText={(text) => phoneForm.handleChange('phone', text)}
+                  onChangeText={(text) => {
+                    if(loginError) setLoginError(null);
+                    return phoneForm.handleChange('phone', text);
+                  }}
                   onBlur={() => phoneForm.handleBlur('phone')}
                   keyboardType="phone-pad"
                   error={phoneForm.errors.phone}
@@ -120,6 +130,7 @@ const LoginScreen = () => {
                 placeholder="Пароль"
                 value={loginMethod === 0 ? emailForm.values.password : phoneForm.values.password}
                 onChangeText={(text) => {
+                  if(loginError) setLoginError(null);
                   loginMethod === 0
                     ? emailForm.handleChange('password', text)
                     : phoneForm.handleChange('password', text);
@@ -130,15 +141,16 @@ const LoginScreen = () => {
                     : phoneForm.handleBlur('password');
                 }}
                 secureTextEntry={!passwordVisible}
-                rightIcon="eye"
+                rightIcon="abc"
                 onRightIconPress={togglePasswordVisibility}
-                error={
-                  loginMethod === 0
-                    ? emailForm.errors.password
-                    : phoneForm.errors.password
-                }
+                error={loginMethod === 0 ? emailForm.errors.password : phoneForm.errors.password}
                 style={styles.passwordInput}
               />
+              {loginError && (
+                <Typo variant={'body1'} style={{ color: 'red' }}>
+                  {loginError}
+                </Typo>
+              )}
             </View>
 
             {/*<Typo*/}

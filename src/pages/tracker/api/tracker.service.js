@@ -7,15 +7,20 @@ const TrackerService = {
   async getTracks() {
     try {
       const response = await apiClient.get('/api/trackers');
-      return response.data;
+      const currentTracker = response.data[response.data.length - 1];
+      return currentTracker;
     } catch (error) {
-      console.error('Error fetching tracks:', error);
+      if (error.response?.status === 404 || error.response.status === 405) {
+        return null;
+      }
+      console.error('Error fetching tracker:', error);
       throw error;
     }
   },
 
   async updateTrackStatus(trackId, daysStatus) {
     try {
+
       const response = await apiClient.put(`/api/trackers/${trackId}`, daysStatus);
       return response.data;
     } catch (error) {
@@ -24,23 +29,15 @@ const TrackerService = {
     }
   },
 
-  async createTrack(title, daysStatus) {
+  async createTrack() {
     try {
-      const createResponse = await apiClient.post(`/api/trackers`, null, {
-        params: {
-          description: title,
-        },
-      });
-      const trackId = createResponse.data.id;
-
-      const updatedResponse = await this.updateTrackStatus(trackId, daysStatus);
-
-      return mapApiTrackToFrontend(updatedResponse);
+      const response = await apiClient.post('/api/trackers');
+      return response.data;
     } catch (error) {
-      console.error('Error creating track:', error);
+      console.error('Error creating tracker:', error);
       throw error;
     }
-  },
-};
+  }
+}
 
 export default TrackerService;

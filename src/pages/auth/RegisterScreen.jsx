@@ -35,27 +35,22 @@ const RegisterScreen = () => {
     password: '',
     agreementAccepted: false,
   });
-  const { register, loading } = useAuth();
+  const { register, loading,error,setError } = useAuth();
   const { showSnackbar } = useSnackbar();
 
   const handleRegister = async () => {
     await form.handleSubmit(async (values) => {
       try {
-        await register({
+        const x= await register({
           username: values.name,
           ...values,
         });
-
         navigation.reset({
           index: 0,
           routes: [{ name: 'SelectGoals' }],
         });
       } catch (err) {
-        if (err.response?.status === 409) {
-          showSnackbar('Username or email already exists', 'error');
-        } else {
-          showSnackbar(err.response?.data || 'Registration failed. Please try again.', 'error');
-        }
+
       }
     });
   };
@@ -70,10 +65,10 @@ const RegisterScreen = () => {
         <ScreenBackground title="Создать аккаунт" backIcon="close">
           <Container fullScreen={true} safeArea>
             <View style={styles.mainContent}>
-              <RegisterForm form={form} />
+              <RegisterForm setError={setError} form={form} />
 
               <Button
-                title="Зарегестрироваться"
+                title="Зарегистрироваться"
                 // variant="primary"
                 // size="medium"
                 loading={form.isSubmitting}
@@ -82,6 +77,7 @@ const RegisterScreen = () => {
                 // fullWidth
                 style={styles.registerButton}
               />
+              {error && <Typo variant={'body1'} style={{color:'red',marginTop:SPACING.lg}}>{error}</Typo>}
             </View>
 
             <View style={styles.loginLinkContainer}>
