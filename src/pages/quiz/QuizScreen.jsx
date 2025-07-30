@@ -54,6 +54,7 @@ const QuizScreen = () => {
       if (quizLoadable.contents.length === 0) {
         setNoQuestionsModalVisible(true);
       } else {
+        console.log(quizLoadable.contents,'content');
         setQuiz((prev) => ({
           ...prev,
           questions: quizLoadable.contents,
@@ -196,9 +197,9 @@ const QuizScreen = () => {
 
   const renderQuestion = () => {
     const currentQuestion = quiz.questions[quiz.currentQuestionIndex];
-    const rightAnswer = currentQuestion.rightAnswer
-    console.log(currentQuestion);
     if (!currentQuestion) return null;
+    const rightAnswer = currentQuestion.rightAnswer
+
     return (
       <ScreenTransition>
         <ScreenBackground
@@ -377,7 +378,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scrollContent:{
-    paddingRight:SPACING.md
+    paddingRight:SPACING.xl*1.2,
+    textAlign:'left'
   },
   questionHeader:{
     fontSize: SPACING.xl,

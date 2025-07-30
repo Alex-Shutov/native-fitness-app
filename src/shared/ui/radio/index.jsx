@@ -42,7 +42,7 @@ const RadioButtonGroup = ({ options, onValueChange, answerChecked,rightAnswer })
           />
           <Typo
             variant="body1"
-            style={[
+            style={[styles.text,
               answerChecked && value === rightAnswer && styles.correctAnswer,
               answerChecked && value === selectedValue && value !== rightAnswer && styles.wrongAnswer
             ]}
@@ -63,6 +63,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: SPACING.sm,
+  },
+  text:{
+    textAlign: 'left',
   },
   correctAnswer: {
     color: COLORS.functional.success,

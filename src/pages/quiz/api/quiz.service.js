@@ -32,7 +32,7 @@ const QuizService = {
           'Cache-Control': 'no-cache'
         }
       });
-      return response.data.map(el=>({...el,rightAnswer:el.answers[0]}));
+      return response.data.map(el=>({...el,rightAnswer:el.correctAnswerId}));
     } catch (error) {
       console.error('Error fetching  quizes:', error);
       throw error;

@@ -3,13 +3,8 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
-      // Reanimated plugin должен быть последним (важно!)
-      [
-        'react-native-reanimated/plugin',
-        {
-          relativeSourceLocation: true, // для лучшей отладки
-        }
-      ],
+      'react-native-reanimated/plugin',
+
       [
         'module-resolver',
         {
@@ -17,16 +12,8 @@ module.exports = function (api) {
           alias: {
             '~': './src',
           },
-          extensions: ['.js', '.jsx', '.ts', '.tsx'], // добавляем поддержку расширений
         },
       ],
     ],
-    env: {
-      production: {
-        plugins: [
-          'transform-remove-console', // удаляем console.log в production
-        ],
-      },
-    },
   };
 };

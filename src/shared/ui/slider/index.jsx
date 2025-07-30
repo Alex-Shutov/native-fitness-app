@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import Slider from '@react-native-assets/slider';
+import { MaterialIcons } from '@expo/vector-icons';
+import { COLORS, BORDER_RADIUS, SPACING } from '~/core/styles/theme';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  Easing
+  Easing,
+  useAnimatedGestureHandler,
+  runOnJS
 } from 'react-native-reanimated';
-import { COLORS, BORDER_RADIUS, SPACING } from '~/core/styles/theme';
-import { MaterialIcons } from '@expo/vector-icons';
+import { PanGestureHandler } from 'react-native-gesture-handler';
 
-const AnimatedSlider = Animated.createAnimatedComponent(Slider);
-const THUMB_WIDTH = 18
+const THUMB_WIDTH = 18;
+
 const SliderInputV2 = ({
                          value,
                          onValueChange,
@@ -19,58 +21,63 @@ const SliderInputV2 = ({
                          maximumValue = 100,
                          step = 1,
                        }) => {
-  const [sliderValue, setSliderValue] = useState(value);
-  const [isLayoutReady, setIsLayoutReady] = useState(false);
-  const thumbPosition = useSharedValue(
-    ((value - minimumValue) / (maximumValue - minimumValue)) * 300 // 300 - примерная начальная ширина
-  );
-  const sliderWidth = useSharedValue(0);
-
-  // Инициализация и обновление при изменении пропсов
+  const [sliderWidth, setSliderWidth] = useState(0);
+  const thumbPosition = useSharedValue(0);
+  const isSliding = useSharedValue(false);
+  const [tempValue,setTempValue] = useState(value);
+  // Инициализация позиции
   useEffect(() => {
-    setSliderValue(value);
-    if (isLayoutReady) {
-      updateThumbPosition(value);
+    if (sliderWidth > 0) {
+      const initialPosition = ((value - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
+      thumbPosition.value = initialPosition;
     }
-  }, [value, isLayoutReady]);
+  }, [sliderWidth, value]);
 
-  const updateThumbPosition = (val) => {
-    if (sliderWidth.value === 0) return;
+  const updateValue = (position) => {
+    const newValue = Math.round(minimumValue + (position / sliderWidth) * (maximumValue - minimumValue));
+    const steppedValue = Math.max(minimumValue,Math.min(maximumValue,newValue))
+    onValueChange(steppedValue);
+    return steppedValue;
+  };
 
-    const position = ((val - minimumValue) / (maximumValue - minimumValue)) * sliderWidth.value;
-    thumbPosition.value = withTiming(position, {
+  const gestureHandler = useAnimatedGestureHandler({
+    onStart: () => {
+      isSliding.value = true;
+    },
+    onActive: (event) => {
+      const newPosition = Math.max(0, Math.min(sliderWidth, event.absoluteX - 30)); // 30 - примерное смещение
+      thumbPosition.value = newPosition;
+      runOnJS(updateValue)(newPosition);
+    },
+    onEnd: () => {
+      const finalValue = Math.round(minimumValue + (thumbPosition.value / sliderWidth) * (maximumValue - minimumValue));
+      const finalPosition = ((finalValue - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
+      thumbPosition.value = withTiming(finalPosition, {
+        duration: 200,
+        easing: Easing.out(Easing.ease),
+      });
+      runOnJS(onValueChange)(finalValue);
+    }
+  });
+
+  const handleDecrease = () => {
+    const newValue = Math.max(minimumValue, value - step);
+    const newPosition = ((newValue - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
+    thumbPosition.value = withTiming(newPosition, {
       duration: 200,
       easing: Easing.out(Easing.ease),
     });
-  };
-
-  const handleValueChange = (val) => {
-    const steppedValue = step > 1 ? Math.round(val / step) * step : val;
-    setSliderValue(steppedValue);
-    updateThumbPosition(steppedValue);
-    onValueChange(steppedValue);
-  };
-
-  const handleDecrease = () => {
-    const newValue = Math.max(minimumValue, sliderValue - step);
-    handleValueChange(newValue);
+    onValueChange(newValue);
   };
 
   const handleIncrease = () => {
-    const newValue = Math.min(maximumValue, sliderValue + step);
-    handleValueChange(newValue);
-  };
-
-  const handleLayout = (event) => {
-    const newWidth = event.nativeEvent.layout.width;
-    if (sliderWidth.value !== newWidth) {
-      sliderWidth.value = newWidth;
-      setIsLayoutReady(true);
-
-      // Пересчитываем позицию при первом измерении ширины
-      const newPosition = ((sliderValue - minimumValue) / (maximumValue - minimumValue)) * newWidth;
-      thumbPosition.value = newPosition;
-    }
+    const newValue = Math.min(maximumValue, value + step);
+    const newPosition = ((newValue - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
+    thumbPosition.value = withTiming(newPosition, {
+      duration: 200,
+      easing: Easing.out(Easing.ease),
+    });
+    onValueChange(newValue);
   };
 
   const thumbStyle = useAnimatedStyle(() => ({
@@ -86,60 +93,45 @@ const SliderInputV2 = ({
       <TouchableOpacity
         style={styles.arrowButton}
         onPress={handleDecrease}
-        disabled={sliderValue <= minimumValue}
+        disabled={value <= minimumValue}
       >
         <MaterialIcons
           name="chevron-left"
           size={24}
-          color={sliderValue <= minimumValue ? COLORS.neutral.medium : COLORS.primary.main}
+          color={value <= minimumValue ? COLORS.neutral.medium : COLORS.primary.main}
         />
       </TouchableOpacity>
 
-      <View
-        style={styles.sliderWrapper}
-        onLayout={handleLayout}
-      >
+      <View style={styles.sliderWrapper} onLayout={(e) => setSliderWidth(e.nativeEvent.layout.width)}>
         <View style={styles.trackBackground}>
           <Animated.View style={[styles.trackFill, fillStyle]} />
         </View>
 
-        <Animated.View style={[styles.thumb, thumbStyle]}>
-          <View style={styles.triangle} />
-        </Animated.View>
+        <PanGestureHandler onGestureEvent={gestureHandler}>
+          <Animated.View style={[styles.thumb, thumbStyle]}>
+            <View style={styles.triangle} />
+          </Animated.View>
+        </PanGestureHandler>
 
         <Animated.View style={[styles.staticValue, thumbStyle]}>
-          <Text style={styles.staticValueText}>{sliderValue}</Text>
+          <Text style={styles.staticValueText}>{value}</Text>
         </Animated.View>
-
-        <Slider
-          style={styles.hiddenSlider}
-          minimumValue={minimumValue}
-          maximumValue={maximumValue}
-          step={step}
-          value={sliderValue}
-          onValueChange={handleValueChange}
-          minimumTrackTintColor="transparent"
-          maximumTrackTintColor="transparent"
-          thumbTintColor="transparent"
-          thumbStyle={styles.hiddenThumb}
-        />
       </View>
 
       <TouchableOpacity
         style={styles.arrowButton}
         onPress={handleIncrease}
-        disabled={sliderValue >= maximumValue}
+        disabled={value >= maximumValue}
       >
         <MaterialIcons
           name="chevron-right"
           size={24}
-          color={sliderValue >= maximumValue ? COLORS.neutral.medium : COLORS.primary.main}
+          color={value >= maximumValue ? COLORS.neutral.medium : COLORS.primary.main}
         />
       </TouchableOpacity>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     height: 50,
