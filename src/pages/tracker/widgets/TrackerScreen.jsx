@@ -5,7 +5,6 @@ import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 import AddTrackModal from './AddTrackModal';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import TrackerService from '~/pages/tracker/api/tracker.service';
 import {
   getCurrentWeekdayIndex,
   getCurrentWeekdays,
@@ -20,12 +19,35 @@ import { Tooltip } from '../../../shared/ui/tooltip/Tooltip';
 import { MaterialIcons } from '@expo/vector-icons';
 import TrackItem from './TrackItem';
 import InfoModal from '../../../widgets/modal/InfoModal';
+import TrackerService from '../api/tracker.service';
 
 const TrackerScreen = () => {
   const [tracker, setTracker] = useRecoilState(trackerState);
   const trackerLoadable = useRecoilValueLoadable(trackerQuery);
   const [trackerVs, setTrackerVersion] = useRecoilState(trackerVersion);
   const [visible, setVisible] = useState(false);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [stats, setStats] = useState(null);
+
+
+  const handleOpenStats = async () => {
+    try {
+      setStats(null); // чтобы показать "Загрузка..."
+      const res = await TrackerService.getStats();
+      console.log(res);
+      setStats(res);
+      setStatsVisible(true);
+    } catch (err) {
+      console.error('Ошибка загрузки статистики', err);
+      setStats({ position: '-', totalPoints: '-', totalUsers: '-' });
+      setStatsVisible(true);
+    }
+  };
+
+  const handleCloseStats = () => {
+    setStatsVisible(false);
+  };
+
 
   const handleOpen = () => {
     setTimeout(()=>setVisible(true),50);
@@ -132,6 +154,13 @@ const TrackerScreen = () => {
   const renderDayLabels = () => {
     return (
       <View style={styles.dayLabelRow}>
+        <View style={{flexGrow:3,alignSelf: 'center',marginLeft:6}}>
+
+        <TouchableWithoutFeedback onPress={handleOpenStats}>
+          <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
+        </TouchableWithoutFeedback>
+        </View>
+
         {weekdays.map((day, index) => {
           const isFuture = isFutureDay(index, currentDayIndex);
           return (
@@ -155,20 +184,19 @@ const TrackerScreen = () => {
     <ScreenTransition>
       <ScreenBackground
         headerRight={
-          <TouchableWithoutFeedback onPress={handleOpen}>
-
-            <MaterialIcons
-              name="help-outline"
-              size={24}
-              color={COLORS.neutral.dark}
-            />
-          </TouchableWithoutFeedback>
-
+            <TouchableWithoutFeedback  onPress={handleOpen}>
+              <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />
+            </TouchableWithoutFeedback>
         }
         title={
           <View style={styles.headerContainer}>
             <Typo variant="hSub" style={styles.header}>
               Трекер
+              {/*<View style={{flexGrow:3,alignSelf: 'center',marginLeft:6}}>*/}
+              {/*  <TouchableWithoutFeedback  onPress={handleOpen}>*/}
+              {/*    <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />*/}
+              {/*  </TouchableWithoutFeedback>*/}
+              {/*</View>*/}
             </Typo>
 
           </View>
@@ -192,6 +220,16 @@ const TrackerScreen = () => {
             visible={visible}
             onClose={handleClose}
             title={'Что это такое?'}
+          />
+          <InfoModal
+            visible={statsVisible}
+            title="Ваша статистика"
+            text={
+              stats
+                ? `Общий рейтинг: ${stats.position} из ${stats.totalUsers}\nОбщее количество баллов: ${stats.totalPoints}`
+                : 'Загрузка...'
+            }
+            onClose={handleCloseStats}
           />
         </View>
 

@@ -17,6 +17,10 @@ const TrackerService = {
       throw error;
     }
   },
+  async getStats(){
+    const response = await apiClient.get('/api/stat');
+    return response.data;
+  },
 
   async updateTrackStatus(trackId, daysStatus) {
     try {

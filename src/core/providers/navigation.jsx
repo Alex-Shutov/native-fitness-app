@@ -89,7 +89,7 @@ const Navigation = () => {
       <Stack.Screen name="QuizScreen" component={QuizScreen} />
       <Stack.Screen
         name="MainScreen"
-        component={PersonalInfoScreen}
+        component={TabNavigator}
         options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>

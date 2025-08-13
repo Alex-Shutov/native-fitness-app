@@ -24,14 +24,22 @@ const SliderInputV2 = ({
   const [sliderWidth, setSliderWidth] = useState(0);
   const thumbPosition = useSharedValue(0);
   const isSliding = useSharedValue(false);
-  const [tempValue,setTempValue] = useState(value);
+  const [displayValue, setDisplayValue] = useState(value);
   // Инициализация позиции
   useEffect(() => {
     if (sliderWidth > 0) {
       const initialPosition = ((value - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
       thumbPosition.value = initialPosition;
+      setDisplayValue(value);
     }
   }, [sliderWidth, value]);
+
+  const updateDisplayValue = (position) => {
+    const newValue = Math.round(minimumValue + (position / sliderWidth) * (maximumValue - minimumValue));
+    const clampedValue = Math.max(minimumValue, Math.min(maximumValue, newValue));
+    setDisplayValue(clampedValue); // Обновляем только отображаемое значение
+    return clampedValue;
+  };
 
   const updateValue = (position) => {
     const newValue = Math.round(minimumValue + (position / sliderWidth) * (maximumValue - minimumValue));
@@ -47,17 +55,26 @@ const SliderInputV2 = ({
     onActive: (event) => {
       const newPosition = Math.max(0, Math.min(sliderWidth, event.absoluteX - 30)); // 30 - примерное смещение
       thumbPosition.value = newPosition;
-      runOnJS(updateValue)(newPosition);
+      runOnJS(updateDisplayValue)(newPosition);
     },
-    onEnd: () => {
-      const finalValue = Math.round(minimumValue + (thumbPosition.value / sliderWidth) * (maximumValue - minimumValue));
-      const finalPosition = ((finalValue - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
-      thumbPosition.value = withTiming(finalPosition, {
+    onEnd: (event) => {
+      const finalPosition = Math.max(0, Math.min(sliderWidth, event.absoluteX - 30));
+      const finalValue = Math.round(minimumValue + (finalPosition / sliderWidth) * (maximumValue - minimumValue));
+      const clampedValue = Math.max(minimumValue, Math.min(maximumValue, finalValue));
+
+      // Анимируем к финальной позиции
+      const finalPos = ((clampedValue - minimumValue) / (maximumValue - minimumValue)) * sliderWidth;
+      thumbPosition.value = withTiming(finalPos, {
         duration: 200,
         easing: Easing.out(Easing.ease),
+      }, () => {
+        // После завершения анимации обновляем внешнее состояние
+        runOnJS(onValueChange)(clampedValue);
       });
-      runOnJS(onValueChange)(finalValue);
-    }
+
+      // Обновляем отображаемое значение
+      runOnJS(setDisplayValue)(clampedValue);
+    },
   });
 
   const handleDecrease = () => {
@@ -68,6 +85,7 @@ const SliderInputV2 = ({
       easing: Easing.out(Easing.ease),
     });
     onValueChange(newValue);
+    setDisplayValue(newValue);
   };
 
   const handleIncrease = () => {
@@ -78,6 +96,7 @@ const SliderInputV2 = ({
       easing: Easing.out(Easing.ease),
     });
     onValueChange(newValue);
+    setDisplayValue(newValue);
   };
 
   const thumbStyle = useAnimatedStyle(() => ({
@@ -114,7 +133,7 @@ const SliderInputV2 = ({
         </PanGestureHandler>
 
         <Animated.View style={[styles.staticValue, thumbStyle]}>
-          <Text style={styles.staticValueText}>{value}</Text>
+          <Text style={styles.staticValueText}>{displayValue}</Text>
         </Animated.View>
       </View>
 
