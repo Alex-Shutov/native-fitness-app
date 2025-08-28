@@ -102,6 +102,10 @@ export const isTodayOrTomorrow = (dayIndex, currentDayIndex) => {
   return dayIndex === currentDayIndex || currentDayIndex+1 === dayIndex
 }
 
+export const isTodayOrYesterday = (dayIndex, currentDayIndex) => {
+  return dayIndex === currentDayIndex || currentDayIndex-1 === dayIndex
+}
+
 // src/pages/tracker/lib/utils.js
 
 // ...

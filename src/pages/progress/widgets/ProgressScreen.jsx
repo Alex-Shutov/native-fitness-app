@@ -16,13 +16,14 @@ import { useNavigation } from '@react-navigation/native';
 import { useGoals } from '../../onboarding/lib/useGoals';
 import { progressQuery, progressState } from '../models/progress.model';
 import ProgressService from '../api/progress.service';
+import { trackerVersion } from '../../tracker/state/tracker.state';
 
 const ProgressScreen = () => {
   const auth = useRecoilValue(authState);
   const onboarding = useRecoilValue(onboardingState);
 
   const [progress,setProgress] = useRecoilState(progressState);
-
+  const trackerVs = useRecoilValue(trackerVersion)
   const [progressData, setProgressData] = useState(null);
 
   const navigation = useNavigation();
@@ -44,10 +45,10 @@ const ProgressScreen = () => {
     };
 
     loadProgressData();
-  }, [auth?.startWeight,auth?.weight,auth?.targetWeight]);
+  }, [auth?.startWeight,auth?.weight,auth?.targetWeight,trackerVs]);
 
   const handleStartQuiz = () => {
-    navigation.navigate('QuizScreen');
+    navigation.navigate('QuizScreen', { fromStartButton: true });
   }
 
   // Weight progress calculations

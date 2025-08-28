@@ -6,7 +6,7 @@ import { getCurrentWeekdayIndex, getTrackCompletionPercentage, isFutureDay } fro
 import Svg, { Circle } from 'react-native-svg';
 import CheckIcon from '~/shared/ui/icons/CheckIcon';
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
-import { isTodayOrTomorrow } from '../lib/utils';
+import { isTodayOrTomorrow, isTodayOrYesterday } from '../lib/utils';
 
 const TrackItem = ({
                      track,
@@ -57,10 +57,10 @@ const TrackItem = ({
   const renderDayButtons = () => {
     return weekdays.map((day, index) => {
       // const isFuture = isFutureDay(index, currentDayIndex);
-      const isTodayOrTomorrowValue = isTodayOrTomorrow(index, currentDayIndex);
+      const isTodayOrYesterdayValue = isTodayOrYesterday(index, currentDayIndex);
       return (
         <TouchableOpacity
-          disabled={!isTodayOrTomorrowValue}
+          disabled={!isTodayOrYesterdayValue}
 
           key={index}
           style={styles.dayButton}
@@ -68,7 +68,7 @@ const TrackItem = ({
           {track.completionStatus[index] ? (
             <CheckIcon color={COLORS.primary.main} size={24} />
           ) : (
-            <CrossIcon color={!isTodayOrTomorrowValue ? COLORS.neutral.dark : COLORS.neutral.medium} size={24} />
+            <CrossIcon color={!isTodayOrYesterdayValue ? COLORS.neutral.dark : COLORS.neutral.medium} size={24} />
           )}
         </TouchableOpacity>
       );

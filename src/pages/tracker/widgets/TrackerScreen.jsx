@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
@@ -32,9 +32,8 @@ const TrackerScreen = () => {
 
   const handleOpenStats = async () => {
     try {
-      setStats(null); // чтобы показать "Загрузка..."
+      setStats(null);
       const res = await TrackerService.getStats();
-      console.log(res);
       setStats(res);
       setStatsVisible(true);
     } catch (err) {
@@ -64,12 +63,17 @@ const TrackerScreen = () => {
   }, []);
   useEffect(() => {
     if (trackerLoadable.state === 'hasValue') {
-      setTracker(trackerLoadable.contents);
+      setTracker(prev => {
+        if (prev.tracks?.length > 0) return prev;
+        return trackerLoadable.contents;
+      });
     }
-  }, [trackerLoadable, setTracker]);
+  }, [trackerLoadable]);
   const weekdays = getCurrentWeekdays();
   const currentDayIndex = getCurrentWeekdayIndex();
-  const { tracks } = tracker;
+  const { tracks } = useMemo(()=>{
+    return tracker;
+  },[trackerLoadable,tracker]);
 
 
 
@@ -100,6 +104,7 @@ const TrackerScreen = () => {
 
   const handleTrackStatusChange = async (frontendTrackId, dayIndex, status) => {
     try {
+
       setTracker(prev => {
         const updatedTracks = prev.tracks.map(track => {
           if (track.id === frontendTrackId) {
@@ -110,17 +115,15 @@ const TrackerScreen = () => {
           return track;
         });
 
-        // 2. Формируем полный habitsStatus (25 символов)
         let fullHabitsStatus = '';
         updatedTracks.forEach(track => {
           fullHabitsStatus += track.completionStatus.join('');
         });
 
-        // 3. Отправляем обновление на сервер
         TrackerService.updateTrackStatus(
           prev.trackerId,
           fullHabitsStatus.toString().split('').map(Number),
-        ).catch(error => {
+        ).then(()=>setTrackerVersion((prev)=>prev+1)).catch(error => {
           console.error('Error updating tracker status:', error);
         });
         return { ...prev, tracks: updatedTracks };
@@ -133,7 +136,6 @@ const TrackerScreen = () => {
       }))
     }
   };
-
   const renderItem = ({ item }) => (
     <TrackItem
       track={item}
@@ -226,7 +228,16 @@ const TrackerScreen = () => {
             title="Ваша статистика"
             text={
               stats
-                ? `Общий рейтинг: ${stats.position} из ${stats.totalUsers}\nОбщее количество баллов: ${stats.totalPoints}`
+                ? `Общий рейтинг: ${stats.position} из ${stats.totalUsers}\nОбщее количество баллов: ${stats.totalPoints}\nСистема начисления баллов
+
+За каждое выполненное действие вы получаете 10 баллов.
+Дополнительно предусмотрены двойные баллы по неделям:
+
+1-я неделя: ужин не позднее чем за 3–4 часа до сна
+2-я неделя: тщательное пережёвывание пищи
+3-я неделя: полный отказ от промышленного сахара
+Важно: счётчик баллов обнуляется в начале каждого месяца.`
+
                 : 'Загрузка...'
             }
             onClose={handleCloseStats}

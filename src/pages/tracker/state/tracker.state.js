@@ -67,10 +67,9 @@ export const trackerVersion = atom({
 
 export const trackerQuery = selector({
   key: 'trackerQuery',
-  get: async () => {
+  get: async ({ get }) => {
     try {
       let apiTracker = await TrackerService.getTracks();
-
       if (!apiTracker) {
         apiTracker = await TrackerService.createTrack();
       }
@@ -84,9 +83,11 @@ export const trackerQuery = selector({
         weekInMonth: 1,
         isCompleted: false,
         isLoading: false,
-        error: error.message
+        error: error.message,
       };
     }
   },
-  set: ({ set }, newValue) => set(trackerState, newValue)
+  set: ({ set,get }, newValue) => {
+    set(trackerState, newValue);
+  },
 });

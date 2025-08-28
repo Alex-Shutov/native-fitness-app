@@ -1,4 +1,4 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, Modal, ActivityIndicator, Image, BackHandler, ScrollView } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
@@ -15,9 +15,11 @@ import { Typo } from '../../shared/ui/typo';
 import { authState } from '../auth/models/auth.atom';
 import InfoModal from '../../widgets/modal/InfoModal';
 
-const QuizScreen = () => {
+const QuizScreen = ({route}) => {
   const [quiz, setQuiz] = useRecoilState(quizState);
   const quizLoadable = useRecoilValueLoadable(quizQuery);
+  const { fromStartButton} = route.params || {};
+
   const [showExitConfirm, setShowExitConfirm] = React.useState(false);
   const [showResultsModal, setShowResultsModal] = React.useState(false);
   const [quizVersion, setQuizVersion] = useRecoilState(quizVersionState);
@@ -31,6 +33,8 @@ const QuizScreen = () => {
     setShowExitConfirm(true);
     return true; // Предотвращаем действие по умолчанию
   }, []);
+
+
   useFocusEffect(
     useCallback(() => {
       const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -65,7 +69,8 @@ const QuizScreen = () => {
 
   const handleCloseNoQuestionsModal = () => {
     setNoQuestionsModalVisible(false);
-    navigation.navigate('MainScreen');
+    navigation.navigate('MainScreen', );
+    navigation.setParams({fromStartButton:false})
   };
 
   const handleAnswerSelect = (answerId) => {
@@ -278,7 +283,7 @@ const QuizScreen = () => {
     );
   };
 
-  if (quizLoadable.state === 'hasValue' && quizLoadable.contents.length === 0) {
+  if (quizLoadable.state === 'hasValue' && quizLoadable.contents.length === 0 && fromStartButton) {
     return (
       <InfoModal
         text="На данный момент все вопросы кончились. Вы можете попробовать позднее, когда для вас появятся новые вопросы"
