@@ -23,7 +23,7 @@ const VIDEO_STORAGE_KEY = '@has_watched_intro_video';
 Sentry.init({
   dsn: SENTRY_DSN,
 
-  debug: __DEV__,
+  // debug: __DEV__,
   sendDefaultPii: true,
 });
 
@@ -65,6 +65,7 @@ const App = () => {
   if (!appReady && !fontsLoaded) {
     return null;
   }
+  Sentry.captureMessage('123????')
   throw new Error('My first Sentry error!');
 
   return (
