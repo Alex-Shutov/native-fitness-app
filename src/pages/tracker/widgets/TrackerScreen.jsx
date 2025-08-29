@@ -1,8 +1,17 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import * as Sentry from '@sentry/react-native';
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
 import AddTrackModal from './AddTrackModal';
+import TrackItem from './TrackItem';
+import ScreenBackground from '../../../shared/ui/layout/ScreenBackground';
+import ScreenTransition from '../../../shared/ui/layout/ScreenTransition';
+import { Tooltip } from '../../../shared/ui/tooltip/Tooltip';
+import InfoModal from '../../../widgets/modal/InfoModal';
+import TrackerService from '../api/tracker.service';
+import { trackerQuery, trackerState, trackerVersion } from '../state/tracker.state';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import {
@@ -11,15 +20,8 @@ import {
   isFutureDay,
   updateTrackStatus,
 } from '~/pages/tracker/lib/utils';
-import {Typo}from '~/shared/ui/typo';
-import ScreenBackground from '../../../shared/ui/layout/ScreenBackground';
-import ScreenTransition from '../../../shared/ui/layout/ScreenTransition';
-import { trackerQuery, trackerState, trackerVersion } from '../state/tracker.state';
-import { Tooltip } from '../../../shared/ui/tooltip/Tooltip';
-import { MaterialIcons } from '@expo/vector-icons';
-import TrackItem from './TrackItem';
-import InfoModal from '../../../widgets/modal/InfoModal';
-import TrackerService from '../api/tracker.service';
+import { Typo } from '~/shared/ui/typo';
+
 
 const TrackerScreen = () => {
   const [tracker, setTracker] = useRecoilState(trackerState);
@@ -28,7 +30,6 @@ const TrackerScreen = () => {
   const [visible, setVisible] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [stats, setStats] = useState(null);
-
 
   const handleOpenStats = async () => {
     try {
@@ -47,23 +48,21 @@ const TrackerScreen = () => {
     setStatsVisible(false);
   };
 
-
   const handleOpen = () => {
-    setTimeout(()=>setVisible(true),50);
+    setTimeout(() => setVisible(true), 50);
   };
 
   const handleClose = () => {
-    setTimeout(()=>setVisible(false),50);
-
+    setTimeout(() => setVisible(false), 50);
   };
   useEffect(() => {
-    return ()=>{
-      setTrackerVersion((prev)=>prev+1)
-    }
+    return () => {
+      setTrackerVersion((prev) => prev + 1);
+    };
   }, []);
   useEffect(() => {
     if (trackerLoadable.state === 'hasValue') {
-      setTracker(prev => {
+      setTracker((prev) => {
         if (prev.tracks?.length > 0) return prev;
         return trackerLoadable.contents;
       });
@@ -71,13 +70,9 @@ const TrackerScreen = () => {
   }, [trackerLoadable]);
   const weekdays = getCurrentWeekdays();
   const currentDayIndex = getCurrentWeekdayIndex();
-  const { tracks } = useMemo(()=>{
+  const { tracks } = useMemo(() => {
     return tracker;
-  },[trackerLoadable,tracker]);
-
-
-
-
+  }, [trackerLoadable, tracker]);
 
   const handleAddTrack = async (newTrack) => {
     try {
@@ -85,17 +80,13 @@ const TrackerScreen = () => {
       const daysStatus = newTrack.completionStatus;
 
       // Отправляем запрос на создание трека
-      const createdTrack = await TrackerService.createTrack(
-        newTrack.title,
-        daysStatus
-      );
+      const createdTrack = await TrackerService.createTrack(newTrack.title, daysStatus);
 
       // Обновляем локальное состояние
-      setTracker(prev => ({
+      setTracker((prev) => ({
         ...prev,
-        tracks: [createdTrack, ...prev.tracks]
+        tracks: [createdTrack, ...prev.tracks],
       }));
-
     } catch (error) {
       console.error('Error adding track:', error);
       // Можно добавить обработку ошибки (например, показать уведомление)
@@ -104,9 +95,8 @@ const TrackerScreen = () => {
 
   const handleTrackStatusChange = async (frontendTrackId, dayIndex, status) => {
     try {
-
-      setTracker(prev => {
-        const updatedTracks = prev.tracks.map(track => {
+      setTracker((prev) => {
+        const updatedTracks = prev.tracks.map((track) => {
           if (track.id === frontendTrackId) {
             const newStatus = [...track.completionStatus];
             newStatus[dayIndex] = status ? 1 : 0;
@@ -116,16 +106,22 @@ const TrackerScreen = () => {
         });
 
         let fullHabitsStatus = '';
-        updatedTracks.forEach(track => {
+        updatedTracks.forEach((track) => {
           fullHabitsStatus += track.completionStatus.join('');
         });
 
         TrackerService.updateTrackStatus(
           prev.trackerId,
-          fullHabitsStatus.toString().split('').map(Number),
-        ).then(()=>setTrackerVersion((prev)=>prev+1)).catch(error => {
-          console.error('Error updating tracker status:', error);
-        });
+          fullHabitsStatus.toString().split('').map(Number)
+        )
+          .then(() => setTrackerVersion((prev) => prev + 1))
+          .catch((error) => {
+            console.error('Error updating tracker status:', error);
+            Sentry.captureException(error, {
+              tags: { type: 'tracker status' },
+              action: 'updating',
+            });
+          });
         return { ...prev, tracks: updatedTracks };
       });
     } catch (error) {
@@ -133,7 +129,7 @@ const TrackerScreen = () => {
       setTracker((prev) => ({
         ...prev,
         error,
-      }))
+      }));
     }
   };
   const renderItem = ({ item }) => (
@@ -156,11 +152,10 @@ const TrackerScreen = () => {
   const renderDayLabels = () => {
     return (
       <View style={styles.dayLabelRow}>
-        <View style={{flexGrow:3,alignSelf: 'center',marginLeft:6}}>
-
-        <TouchableWithoutFeedback onPress={handleOpenStats}>
-          <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
-        </TouchableWithoutFeedback>
+        <View style={{ flexGrow: 3, alignSelf: 'center', marginLeft: 6 }}>
+          <TouchableWithoutFeedback onPress={handleOpenStats}>
+            <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
+          </TouchableWithoutFeedback>
         </View>
 
         {weekdays.map((day, index) => {
@@ -186,9 +181,9 @@ const TrackerScreen = () => {
     <ScreenTransition>
       <ScreenBackground
         headerRight={
-            <TouchableWithoutFeedback  onPress={handleOpen}>
-              <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />
-            </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={handleOpen}>
+            <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />
+          </TouchableWithoutFeedback>
         }
         title={
           <View style={styles.headerContainer}>
@@ -200,7 +195,6 @@ const TrackerScreen = () => {
               {/*  </TouchableWithoutFeedback>*/}
               {/*</View>*/}
             </Typo>
-
           </View>
         }
         hasBackButton={false}
@@ -218,10 +212,10 @@ const TrackerScreen = () => {
 
         <View style={styles.container}>
           <InfoModal
-            text={'Здесь вы можете отслеживать свои привычки по будням, ведь по выходным нужно дать себе отдохнуть! '}
+            text="Здесь вы можете отслеживать свои привычки по будням, ведь по выходным нужно дать себе отдохнуть! "
             visible={visible}
             onClose={handleClose}
-            title={'Что это такое?'}
+            title="Что это такое?"
           />
           <InfoModal
             visible={statsVisible}
@@ -237,13 +231,11 @@ const TrackerScreen = () => {
 2-я неделя: тщательное пережёвывание пищи
 3-я неделя: полный отказ от промышленного сахара
 Важно: счётчик баллов обнуляется в начале каждого месяца.`
-
                 : 'Загрузка...'
             }
             onClose={handleCloseStats}
           />
         </View>
-
       </ScreenBackground>
     </ScreenTransition>
   );
@@ -269,7 +261,7 @@ const styles = StyleSheet.create({
     color: COLORS.neutral.dark,
   },
   listContainer: {
-    position:"relative",
+    position: 'relative',
     zIndex: 1,
     flexGrow: 1,
   },

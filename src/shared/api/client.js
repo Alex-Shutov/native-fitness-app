@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { APP_API_URL } from './const';
+import * as Sentry from '@sentry/react-native';
 
 
 const apiClient = axios.create({
@@ -44,6 +45,9 @@ async function handleUnauthorized() {
     }
   } catch (error) {
     console.error('Logout error:', error);
+    Sentry.captureException(error, {
+      tags: { type: 'auth', action: 'logout' },
+    });
   }
 }
 
@@ -91,7 +95,10 @@ apiClient.interceptors.request.use(
     request.headers.Authorization = `Bearer ${await AsyncStorage.getItem(TOKEN_KEY)}`;
     return request;
   },
-  function (error) {
+  (error) => {
+    Sentry.captureException(error, {
+      tags: { type: 'axios', stage: 'request' },
+    });
     return Promise.reject(error);
   }
 );
@@ -114,7 +121,16 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response) {
-      const { status } = error.response;
+      const { status, config, data } = error.response;
+      Sentry.captureException(error, {
+        tags: { type: 'axios', stage: 'response', status },
+        extra: {
+          url: config?.url,
+          method: config?.method,
+          status,
+          data,
+        },
+      });
 
       switch (status) {
         case 401:
@@ -124,6 +140,9 @@ apiClient.interceptors.response.use(
             console.warn('Authentication failed. Please log in again.');
           } catch (storageError) {
             console.error('Error clearing token:', storageError);
+            Sentry.captureException(storageError, {
+              tags: { type: 'auth', action: 'clear-token' },
+            });
           }
           break;
 
@@ -146,9 +165,16 @@ apiClient.interceptors.response.use(
     } else if (error.request) {
       // Request was made but no response received
       console.error('No response received from server. Please check your connection.');
+      Sentry.captureException(error, {
+        tags: { type: 'axios', stage: 'no-response' },
+        extra: { request: error.request },
+      });
     } else {
       // Error in setting up the request
       console.error('Error setting up request:', error.message);
+      Sentry.captureException(error, {
+        tags: { type: 'axios', stage: 'setup' },
+      });
     }
 
     return Promise.reject(error);

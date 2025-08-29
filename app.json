@@ -12,6 +12,15 @@
     },
     "plugins": [
       [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "note": "ntrys_eyJpYXQiOjE3NTY1MDUyOTUuMzE0OTc4LCJ1cmwiOiJodHRwczovL3NlbnRyeS5pbyIsInJlZ2lvbl91cmwiOiJodHRwczovL2RlLnNlbnRyeS5pbyIsIm9yZyI6ImxlYWQtYnJvIn0=_vpH1kmWhQshwxelY/AEeVmsGmJ00toQkLr6MaNMy8f8",
+          "project": "fitness-app-frontend",
+          "organization": "lead-bro"
+        }
+      ],
+      [
         "expo-font",
         {
           "fonts": [

@@ -9,15 +9,23 @@ import { useFonts } from '~/core/hooks/useFonts';
 import { SnackbarProvider } from '~/core/providers/snackbar';
 import { NavigationContainer } from '@react-navigation/native';
 import { setNavigationRef } from './shared/api/client';
-import { Asset as Font } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import VideoScreen from './pages/onboarding/VideoScreen';
 import { AuthProvider } from './core/providers/auth';
+import * as Sentry from '@sentry/react-native';
+import { SENTRY_DSN } from './shared/api/const';
 
 SplashScreen.preventAutoHideAsync();
 
 
 const VIDEO_STORAGE_KEY = '@has_watched_intro_video';
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+
+  debug: __DEV__,
+  sendDefaultPii: true,
+});
 
 const App = () => {
   const [appReady, setAppReady] = useState(false);
@@ -57,6 +65,7 @@ const App = () => {
   if (!appReady && !fontsLoaded) {
     return null;
   }
+  throw new Error('My first Sentry error!');
 
   return (
     <SafeAreaProvider>
@@ -81,4 +90,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Sentry.wrap(App);
