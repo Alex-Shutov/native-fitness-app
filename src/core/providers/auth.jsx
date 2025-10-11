@@ -79,6 +79,7 @@ export const AuthProvider = ({ children }) => {
 
       return true;
     } catch (err) {
+
       setError(err?.response?.data || err?.message || err.error);
       throw err;
       return false;

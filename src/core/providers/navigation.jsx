@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 
 import WelcomeScreen from '../../pages/welcome/WelcomeScreen';
 
@@ -29,7 +29,7 @@ const Navigation = () => {
   const [initialRoute, setInitialRoute] = useState('Welcome');
   const { checkAuth } = useAuth();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const determineInitialRoute = async () => {
       try {
         // Проверяем, есть ли токен
@@ -37,7 +37,6 @@ const Navigation = () => {
         const isRegistered = await AsyncStorage.getItem('isAlreadyRegistered');
 
         if (token) {
-          // Если есть токен, проверяем его валидность
           const isAuthenticated = await checkAuth();
           setInitialRoute(isAuthenticated ? 'MainScreen' : 'Login');
         } else if (isRegistered === 'true') {
@@ -49,7 +48,7 @@ const Navigation = () => {
         }
       } catch (error) {
         console.error('Error determining initial route:', error);
-        setInitialRoute('Welcome');
+        // setInitialRoute('Welcome');
       } finally {
         setIsLoading(false);
       }

@@ -117,7 +117,7 @@ const Game2048 = () => {
           <Typo variant={'body0'} style={styles.buttonText}>Перезапустить</Typo>
         </TouchableOpacity>
 
-        <GameOverModal visible={true} onRestart={restartGame} onClose={closeGame} />
+        <GameOverModal visible={gameOver} onRestart={restartGame} onClose={closeGame} />
         <GameWonModal visible={gameWon} onRestart={restartGame} onClose={closeGame} />
       </View>
     </PanGestureHandler>

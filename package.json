@@ -1,6 +1,6 @@
 {
   "name": "new-fitness-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios",

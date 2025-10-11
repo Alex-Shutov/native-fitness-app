@@ -5,6 +5,8 @@ import Theme, { COLORS, FONT_FAMILY, SPACING } from '../../../core/styles/theme'
 import AnimatedView from '../../../shared/ui/animation/AnimatedView';
 import {Typo}from '../../../shared/ui/typo/typo';
 import AdvantagesView from './AdvantagesView';
+import { BorderlessButton } from 'react-native-gesture-handler';
+import Button from '../../../shared/ui/button';
 
 const DescriptionSection = ({ duration, delay, children, handleAboutApp, hasWatchedVideo }) => {
   return (
@@ -26,20 +28,9 @@ const DescriptionSection = ({ duration, delay, children, handleAboutApp, hasWatc
           </Typo>
         </AnimatedView>
           <AdvantagesView delay={delay} duration={duration}></AdvantagesView>
-        {hasWatchedVideo && (
-          <AnimatedView animation="fade" duration={duration} delay={delay * 5}>
-          <TouchableOpacity onPress={handleAboutApp}>
-            <Typo
-              style={{
-                color: COLORS.primary,
-                textDecorationLine: 'underline',
-                marginBottom: SPACING.md,
-                marginTop: SPACING.md
-              }}
-            >
-              О чем это приложение?
-            </Typo>
-          </TouchableOpacity>
+        {(
+          <AnimatedView animation="fade" duration={duration} delay={delay * 4}>
+            <Button onPress={handleAboutApp} fullWidth={true} textStyle={{color:'gray'}} variant={'outlined'} title={'О чем это приложение ▶️'}>О чем</Button>
           </AnimatedView>
         )}
       </View>

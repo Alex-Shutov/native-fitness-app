@@ -7,9 +7,9 @@ import * as Sentry from '@sentry/react-native';
 const apiClient = axios.create({
   baseURL: APP_API_URL,
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // headers: {
+  //   'Content-Type': 'application/json',
+  // },
 });
 
 const TOKEN_KEY = 'auth_token';
@@ -61,9 +61,9 @@ apiClient.interceptors.request.use(
     }
 
     if (request.method === 'GET' || request.method === 'get') {
-      request.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
-      request.headers['Pragma'] = 'no-cache';
-      request.headers['Expires'] = '0';
+      // request.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      // request.headers['Pragma'] = 'no-cache';
+      // request.headers['Expires'] = '0';
 
       if (request.params) {
         const newParams = {};

@@ -40,7 +40,7 @@ const useAuth = () => {
         }
         else {
           const credentials = await AsyncStorage.getItem('user_credentials');
-          console.log(credentials);
+          console.log('!!!!!',credentials);
           if (credentials) {
             await login(JSON.parse(credentials))
 
@@ -63,14 +63,48 @@ const useAuth = () => {
     checkAuth();
   }, []);
 
+  const checkAuth = useCallback(async () => {
+    try {
+      setLoading(true);
+      const authStatus = await AuthService.isAuthenticated();
+      setIsAuthenticated(authStatus);
+      if (authStatus) {
+        const { user: userData, progress: progressData } = await AuthService.getCurrentUser();
+        setAuthState(userData);
+        setRecoilProgress(progressData);
+        return true;
+      }
+      else {
+        const credentials = await AsyncStorage.getItem('user_credentials');
+        if (credentials) {
+          await login(JSON.parse(credentials))
+          return true;
+        }
+      }
+    } catch (err) {
+      const credentials = await AsyncStorage.getItem('user_credentials');
+      console.log(credentials);
+      if (credentials) {
+        await login(JSON.parse(credentials))
+        return true;
+      }
+      setError(err.message);
+      await logout();
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  },[])
+
   // Login functionr
   const login = useCallback(async (credentials) => {
     try {
       console.log(credentials);
       setLoading(true);
       setError(null);
-
-      await AuthService.login(credentials);
+      console.log(123);
+      const res = await AuthService.login(credentials);
+      console.log(res);
       setIsAuthenticated(true);
 
       const { user: userData, progress: progressData }   = await AuthService.getCurrentUser();
@@ -83,7 +117,9 @@ const useAuth = () => {
 
       return true;
     } catch (err) {
-      setError(err?.response?.data || err?.message || err.error);
+      console.log('1234',err.response);
+
+      setError(err?.response?.data?.error || err?.message || err.error);
       throw err;
       return false;
     } finally {
@@ -104,6 +140,7 @@ const useAuth = () => {
           password: userData.password,
         });
       } catch (err) {
+        console.log('12345',err);
         setError(err?.response?.data?.error ?? err.message);
         throw err
         return false;
@@ -138,7 +175,8 @@ const useAuth = () => {
     register,
     logout,
     setUser: setAuthState,
-    setError
+    setError,
+    checkAuth
   };
 };
 

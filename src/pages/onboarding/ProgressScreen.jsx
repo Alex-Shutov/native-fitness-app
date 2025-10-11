@@ -43,7 +43,8 @@ const OnBoardProgressScreen = ({ route }) => {
         const updateData = {
           goal: goalId,
           goalDescription,
-          currentProgress: progress
+          currentProgress: 0,
+          personalProgress: progress,
         };
 
         const updated = await ProfileApi.updateProfile(updateData);

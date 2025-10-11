@@ -17,7 +17,6 @@ import AvatarSkeleton from '~/pages/profile/widgets/AvatarSkeleton';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import { Typo } from '~/shared/ui/typo';
-import { AuthContext } from '../../../core/providers/auth';
 import AuthService from '../../auth/api/auth.service';
 import ParamInput from '../../../widgets/paramInput/ParamInput';
 import { DIET_OPTIONS } from '../../onboarding/models/diet.model';
@@ -426,7 +425,8 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    marginVertical: SPACING.lg,
+    marginBottom: SPACING.md,
+    marginTop: SPACING.xl,
   },
   profileContainer: {
     position: 'relative',

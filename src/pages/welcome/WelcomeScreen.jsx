@@ -105,7 +105,7 @@ const WelcomeScreen = () => {
           <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />
           <DescriptionSection hasWatchedVideo={hasWatchedVideo} handleAboutApp={handleAboutApp} duration={FADE_IN_DURATION} delay={STAGGER_DELAY} />
 
-          <Button loading={false} title="Хочу стройнеть" onPress={handleGetStarted} />
+          <Button fullWidth={true} loading={false} title="Хочу стройнеть" onPress={handleGetStarted} />
           <View style={{ flex: 0.2 }} />
         </Container>
       </GradientBackground>

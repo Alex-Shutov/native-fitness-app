@@ -20,6 +20,10 @@ export const Typo = ({
         return styles.h2;
       case 'h3':
         return styles.h3;
+      case 'h4':
+        return styles.h4;
+      case 'h5':
+        return styles.h5;
       case 'hSub':
         return styles.hSub;
       case 'subtitle1':
@@ -106,6 +110,18 @@ const styles = StyleSheet.create({
   h3: {
     fontSize: Theme.fontSizes.xl,
     lineHeight: Theme.fontSizes.xl * 1.2,
+    fontFamily:Theme.fontFamily.header.bold
+
+  },
+  h4: {
+    fontSize: Theme.fontSizes.lg,
+    lineHeight: Theme.fontSizes.lg * 1.2,
+    fontFamily:Theme.fontFamily.header.bold
+
+  },
+  h5: {
+    fontSize: Theme.fontSizes.md,
+    lineHeight: Theme.fontSizes.md * 1.2,
     fontFamily:Theme.fontFamily.header.bold
 
   },

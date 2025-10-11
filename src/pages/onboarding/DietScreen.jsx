@@ -34,7 +34,6 @@ const DietSelectionScreen = () => {
     showSnackbar('Подождите...', 'info');
     setIsLoading(true);
     try {
-      // Подготавливаем данные для отправки
       const profileData = {
         age: auth.age,
         weight: auth.weight,
@@ -46,7 +45,8 @@ const DietSelectionScreen = () => {
         waistCircumference: auth.waistCircumference,
         hipCircumference: auth.hipCircumference,
         goal: onBoard.primaryGoal.id,
-        currentProgress: onBoard.currentProgress * 10,
+        currentProgress: 0,
+        personalProgress: onBoard.currentProgress,
         diet: selectedDiet,
       };
       // Отправляем данные на сервер

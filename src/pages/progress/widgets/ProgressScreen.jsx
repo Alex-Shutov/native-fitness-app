@@ -8,8 +8,6 @@ import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import { authState } from '~/pages/auth/models/auth.atom';
 import { onboardingState } from '~/pages/onboarding/models/onboarding.atom';
 import SemiCircleGauge from '~/pages/progress/widgets/SemiCircleGauge';
-import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
-import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import { Typo } from '~/shared/ui/typo';
 import Button from '../../../shared/ui/button';
 import { useNavigation } from '@react-navigation/native';
@@ -17,6 +15,8 @@ import { useGoals } from '../../onboarding/lib/useGoals';
 import { progressQuery, progressState } from '../models/progress.model';
 import ProgressService from '../api/progress.service';
 import { trackerVersion } from '../../tracker/state/tracker.state';
+import ScreenTransition from '../../../shared/ui/layout/ScreenTransition';
+import ScreenBackground from '../../../shared/ui/layout/ScreenBackground';
 
 const ProgressScreen = () => {
   const auth = useRecoilValue(authState);
@@ -47,9 +47,9 @@ const ProgressScreen = () => {
     loadProgressData();
   }, [auth?.startWeight,auth?.weight,auth?.targetWeight,trackerVs]);
 
-  const handleStartQuiz = () => {
-    navigation.navigate('QuizScreen', { fromStartButton: true });
-  }
+  // const handleStartQuiz = () => {
+  //   navigation.navigate('QuizScreen', { fromStartButton: true });
+  // }
 
   // Weight progress calculations
   const startWeight = Math.max(0, Number(progress?.weight?.startWeight || auth?.startWeight || 0));
@@ -78,12 +78,11 @@ const ProgressScreen = () => {
   const maxWeight = Math.max(startWeight, targetWeight);
 
   // Goal progress calculations
-  const goalProgress = (progressData?.goalProgress || onboarding.currentProgress) * 10;
+  const goalProgress = (progressData?.goalProgress) * 10;
   const goalRemaining = 100 - goalProgress;
-  const goalText = goalProgress >= 100 ? 'Цель достигнута!' : `Осталось ${goalRemaining}%`;
+  const goalText = goalProgress >= 100 ? 'Цель достигнута!' : `Осталось ${goalRemaining.toFixed(1)}%`;
 
   const { goals, loading: goalsLoading, updateGoal } = useGoals();
-
   // Get goal name
   const goalName = useMemo(
     () => goals.find((el) => el.id === Number(auth.goal))?.value,
@@ -155,7 +154,7 @@ const ProgressScreen = () => {
               unit='%'
             />
           </View>
-          <Button title="Начать викторину" onPress={handleStartQuiz} />
+          {/*<Button title="Начать викторину" onPress={handleStartQuiz} />*/}
         </ScrollView>
       </ScreenBackground>
     </ScreenTransition>

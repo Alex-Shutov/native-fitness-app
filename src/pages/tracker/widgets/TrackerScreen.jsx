@@ -154,7 +154,10 @@ const TrackerScreen = () => {
       <View style={styles.dayLabelRow}>
         <View style={{ flexGrow: 3, alignSelf: 'center', marginLeft: 6 }}>
           <TouchableWithoutFeedback onPress={handleOpenStats}>
+            <View style={{display:'flex', flexDirection: 'row', alignItems: 'flex-end', gap:4}}>
             <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
+            <Typo  variant={''}  align={""}>Статистика</Typo>
+            </View>
           </TouchableWithoutFeedback>
         </View>
 
@@ -222,8 +225,8 @@ const TrackerScreen = () => {
             title="Ваша статистика"
             text={
               stats
-                ? `Общий рейтинг: ${stats.position} из ${stats.totalUsers}\nОбщее количество баллов: ${stats.totalPoints}\nСистема начисления баллов
-
+                ? `Общий рейтинг: ${stats.position} из ${stats.totalUsers}\nОбщее количество баллов: ${stats.totalPoints}\n
+Система начисления баллов:
 За каждое выполненное действие вы получаете 10 баллов.
 Дополнительно предусмотрены двойные баллы по неделям:
 

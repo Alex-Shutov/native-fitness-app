@@ -39,23 +39,29 @@ const GameStore = ({ navigation, points, onPurchase }) => {
       </View>
 
       <View style={styles.storeItemsContainer}>
-        <StoreItem
-          title="200 баллов"
-          description="5% скидка в фитнес-зал"
-        image={gymImage}
-        points={200}
-        onPress={() => handlePurchase(200)}
-        canPurchase={points >= 200}
-        />
+        {/*<StoreItem*/}
+        {/*  title="200 баллов"*/}
+        {/*  description="5% скидка в фитнес-зал"*/}
+        {/*image={gymImage}*/}
+        {/*points={200}*/}
+        {/*onPress={() => handlePurchase(200)}*/}
+        {/*canPurchase={points >= 200}*/}
+        {/*/>*/}
 
-        <StoreItem
-          title="350 баллов"
-          description="15% скидка в сети ресторанов"
-        image={restaurantImage}
-        points={350}
-        onPress={() => handlePurchase(350)}
-        canPurchase={points >= 350}
-        />
+        {/*<StoreItem*/}
+        {/*  title="350 баллов"*/}
+        {/*  description="15% скидка в сети ресторанов"*/}
+        {/*image={restaurantImage}*/}
+        {/*points={350}*/}
+        {/*onPress={() => handlePurchase(350)}*/}
+        {/*canPurchase={points >= 350}*/}
+        {/*/>*/}
+
+      </View>
+      <View style={styles.comingSoonContainer}>
+        <Typo variant="subtitle1" color={COLORS.primary.main} style={styles.comingSoonText}>
+          Скоро добавим бонусы от партнеров!
+        </Typo>
       </View>
     </View>
     </ScreenBackground>
@@ -126,6 +132,12 @@ const styles = StyleSheet.create({
   },
   itemDescription: {
     color: COLORS.neutral.dark,
+  },
+  comingSoonContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: SPACING.xxl,
   },
   itemImage: {
     width: 100,

@@ -2,7 +2,7 @@
   "expo": {
     "name": "СтройнаЯ",
     "slug": "new-fitness-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "web": {
       "favicon": "./src/shared/assets/images/favicon.png"
     },
@@ -15,7 +15,6 @@
         "@sentry/react-native/expo",
         {
           "url": "https://sentry.io/",
-          "note": "ntrys_eyJpYXQiOjE3NTY1MDUyOTUuMzE0OTc4LCJ1cmwiOiJodHRwczovL3NlbnRyeS5pbyIsInJlZ2lvbl91cmwiOiJodHRwczovL2RlLnNlbnRyeS5pbyIsIm9yZyI6ImxlYWQtYnJvIn0=_vpH1kmWhQshwxelY/AEeVmsGmJ00toQkLr6MaNMy8f8",
           "project": "fitness-app-frontend",
           "organization": "lead-bro"
         }
@@ -36,11 +35,14 @@
           ]
         }
       ],
-      ["expo-build-properties", {
-        "android": {
-          "usesCleartextTraffic": true
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
-      }]
+      ]
     ],
     "orientation": "portrait",
     "icon": "./src/shared/assets/images/logo-1.png",
@@ -50,9 +52,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#c7f5ae"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {

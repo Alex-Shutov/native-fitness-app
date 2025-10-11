@@ -9,10 +9,12 @@ import { Typo } from '~/shared/ui/typo';
 import InfoCard from '~/widgets/InfoCard/InfoCard';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
 import InfoModal from '../../../widgets/modal/InfoModal';
+import Button from '../../../shared/ui/button';
 
 const GamesList = ({ navigation, points }) => {
   // Mock image for 2048 game card
   const game2048Image = require('~/shared/assets/images/game2048.png');
+  const viktorinaImage = require('~/shared/assets/images/viktorina.jpg');
   const [visible,setVisible] = useState(false);
 
   const handleNavigateToGame = () => {
@@ -31,6 +33,10 @@ const GamesList = ({ navigation, points }) => {
     setTimeout(()=>setVisible(false),50);
 
   };
+
+  const handleStartQuiz = () => {
+    navigation.navigate('QuizScreen', { fromStartButton: true });
+  }
 
   return (
     <ScreenTransition>
@@ -54,6 +60,8 @@ const GamesList = ({ navigation, points }) => {
           </View>
         }>
         <View style={styles.container}>
+          {/*<Button title="Начать викторину" onPress={handleStartQuiz} />*/}
+
           <View style={styles.balanceContainer}>
             <InfoCard
               innerStyles={styles.innerStyles}
@@ -72,6 +80,21 @@ const GamesList = ({ navigation, points }) => {
 
           <View style={styles.gamesListContainer}>
             <DietOptionCard
+              scale={0.5}
+              transformY={-50}
+              transformX={-120}
+              title={
+              <View style={{display: 'flex', flexDirection: 'row'}}>
+                <Typo variant={'h4'}>Викторина</Typo>
+                <MaterialIcons style={{alignSelf:'start'}} name="star-border" size={20} color={COLORS.neutral.dark} />
+
+              </View>
+            }
+              subtitle="Получайте баллы за ответы"
+              image={viktorinaImage}
+              onPress={handleStartQuiz}
+            />
+            <DietOptionCard
               title="2048"
               subtitle="Собирай одинаковые числа"
               image={game2048Image}
@@ -87,7 +110,15 @@ const GamesList = ({ navigation, points }) => {
         </View>
       </ScreenBackground>
       <InfoModal
-        text="Копите баллы за активности в играх и викторинах и обменивайте их на бонусы у наших партнеров!"
+        text={
+          <Typo>Копите баллы
+            за активности в играх и викторинах
+            и обменивайте их на бонусы у наших партнеров!
+            {/*<br></br>*/}
+            Баллы можно получить в играх помеченных Звездочкой
+            <MaterialIcons name="star-border" size={18} color={COLORS.neutral.dark} />
+          </Typo>
+       }
         visible={visible}
         onClose={handleClose}
         title="Зачем мне игры?"
@@ -118,6 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   balanceContainer: {
+    // marginTop: SPACING.xl,
     gap: SPACING.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',

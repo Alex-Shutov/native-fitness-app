@@ -6,7 +6,6 @@ import {Typo}from '~/shared/ui/typo';
 import { COLORS, SPACING } from '~/core/styles/theme';
 
 const LoadingOrError = ({loading,error,children}) => {
-  console.log(loading,error,'loading123');
   if (loading) {
     return (
         <ScreenBackground>

@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     // ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
     paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.lg,
   },
   headerContent: {
     display:'flex',

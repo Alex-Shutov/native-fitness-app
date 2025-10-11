@@ -2,7 +2,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Platform, ImageBackground } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Platform,
+  ImageBackground,
+} from 'react-native';
 
 import { useSnackbar } from '~/core/hooks/useSnackbar';
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
@@ -38,7 +46,7 @@ const RecipeScreen = () => {
 
   const handleGoBack = () => {
     navigation.goBack();
-  }
+  };
 
   if (loading) {
     return (
@@ -61,22 +69,24 @@ const RecipeScreen = () => {
   }
 
   const renderBackButton = () => {
-      return (
-        <View style={styles.backButtonContainer}  pointerEvents="box-none"  onStartShouldSetResponder={() => true}>
+    return (
+      <View
+        style={styles.backButtonContainer}
+        pointerEvents="box-none"
+        onStartShouldSetResponder={() => true}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={handleGoBack}
-          hitSlop={{top: 26, bottom: 26, left:0, right: 16}}
+          hitSlop={{ top: 26, bottom: 26, left: 0, right: 16 }}
           accessibilityLabel="Back">
           <MaterialIcons name="arrow-back" size={24} color={COLORS.neutral.darkest} />
         </TouchableOpacity>
-        </View>
-      );
+      </View>
+    );
   };
 
   return (
     <ScreenTransition>
-
       <ScreenBackground
         hasBackButton={false}
         style={{ backgroundColor: COLORS.neutral.offWhite }}
@@ -85,7 +95,6 @@ const RecipeScreen = () => {
           <ImageBackground source={recipe.image} style={styles.recipeImage} resizeMode="cover">
             {/*{renderBackButton()}*/}
           </ImageBackground>
-
         </View>
         <ScrollView
           style={styles.scrollView}
@@ -95,13 +104,6 @@ const RecipeScreen = () => {
             {recipe.title}
           </Typo>
           {/*{renderBackButton()}*/}
-
-
-          {recipe.description && (
-            <Typo variant="body1" style={styles.description}>
-              {recipe.description}
-            </Typo>
-          )}
 
           <View style={styles.section}>
             <Typo variant="body0" style={styles.sectionTitle}>
@@ -124,22 +126,33 @@ const RecipeScreen = () => {
             ))}
           </View>
 
-          <View style={styles.section}>
-            <Typo variant="body0" style={styles.sectionTitle}>
-              Способ приготовления
-            </Typo>
+          {recipe.description && (
+            <View style={styles.section}>
+              <Typo variant="body0" style={styles.sectionTitle}>
+                Способ приготовления
+              </Typo>
+              <Typo variant="body1" style={styles.description}>
+                {recipe.description}
+              </Typo>
+            </View>
+          )}
 
-            {recipe.preparationSteps.map((step, index) => (
-              <View key={index} style={styles.stepItem}>
-                <View style={styles.stepNumber}>
-                  <Typo variant="body1">{index + 1}.</Typo>
-                </View>
-                <Typo variant="body1" style={styles.stepText}>
-                  {step}
-                </Typo>
-              </View>
-            ))}
-          </View>
+          {/*<View style={styles.section}>*/}
+          {/*  <Typo variant="body0" style={styles.sectionTitle}>*/}
+          {/*    Способ приготовления*/}
+          {/*  </Typo>*/}
+
+          {/*  {recipe.preparationSteps.map((step, index) => (*/}
+          {/*    <View key={index} style={styles.stepItem}>*/}
+          {/*      <View style={styles.stepNumber}>*/}
+          {/*        <Typo variant="body1">{index + 1}.</Typo>*/}
+          {/*      </View>*/}
+          {/*      <Typo variant="body1" style={styles.stepText}>*/}
+          {/*        {step}*/}
+          {/*      </Typo>*/}
+          {/*    </View>*/}
+          {/*  ))}*/}
+          {/*</View>*/}
         </ScrollView>
       </ScreenBackground>
     </ScreenTransition>
@@ -156,7 +169,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 
-
   scrollView: {
     flex: 1,
     width: '100%',
@@ -166,9 +178,9 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     backgroundColor: COLORS.neutral.darkest,
-    top:0,
-    left:0,
-    bottom:300,
+    top: 0,
+    left: 0,
+    bottom: 300,
     zIndex: 0,
     // position: 'fixed',
     width: '100%',
@@ -176,19 +188,19 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === 'android' ? 16 : 0,
   },
   recipeImage: {
-    zIndex:9,
+    zIndex: 9,
     position: 'relative',
     width: '100%',
     height: '100%',
   },
-  backButtonContainer:{
+  backButtonContainer: {
     backgroundColor: 'rgba(245, 245, 240, 0.8)',
-    backgroundColor:'red',
+    backgroundColor: 'red',
     position: 'fixed',
     // top: 16,
-    zIndex:123,
+    zIndex: 123,
     marginTop: Platform.OS === 'android' ? 16 : 0,
-    marginLeft:16,
+    marginLeft: 16,
     // left: 16,
     width: 40,
     display: 'flex',
@@ -196,7 +208,6 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.full,
     // justifyContent: 'center',  // Добавлено
     // alignItems: 'center',      // Добавлено
-
   },
   backButton: {
     // position:'relative',
@@ -230,7 +241,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
 
     fontSize: SPACING.xl * 1,
-    marginBottom: SPACING.md,
   },
   section: {
     textAlign: 'left',
@@ -243,23 +253,25 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     fontSize: SPACING.lg,
   },
+  description: {
+    textAlign: 'justify',
+  },
   ingredientItem: {
     marginLeft: SPACING.md,
     textAlign: 'left',
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: SPACING.sm,
-    fontWeight:'400',
-    color:'#13131A'
-//     font-family: Catamaran;
-// font-weight: 400;
-// font-style: Regular;
-// font-size: 40px;
-// leading-trim: CAP_HEIGHT;
-// line-height: 35px;
-// letter-spacing: 0%;
-
-},
+    fontWeight: '400',
+    color: '#13131A',
+    //     font-family: Catamaran;
+    // font-weight: 400;
+    // font-style: Regular;
+    // font-size: 40px;
+    // leading-trim: CAP_HEIGHT;
+    // line-height: 35px;
+    // letter-spacing: 0%;
+  },
   stepItem: {
     marginLeft: SPACING.md,
     flexDirection: 'row',
@@ -276,6 +288,7 @@ const styles = StyleSheet.create({
   },
   ingredientText: {
     // flex: 1,
+    textAlign: 'left',
   },
   ingredientAmount: {
     color: COLORS.neutral.medium,

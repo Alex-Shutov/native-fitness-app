@@ -1,6 +1,14 @@
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, StyleSheet, Modal, ActivityIndicator, Image, BackHandler, ScrollView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Modal,
+  ActivityIndicator,
+  Image,
+  BackHandler,
+  ScrollView,
+} from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
 import QuizService from './api/quiz.service';
@@ -11,14 +19,13 @@ import ScreenBackground from '../../shared/ui/layout/ScreenBackground';
 import ScreenTransition from '../../shared/ui/layout/ScreenTransition';
 import RadioButtonGroup from '../../shared/ui/radio';
 import { Typo } from '../../shared/ui/typo';
-
-import { authState } from '../auth/models/auth.atom';
 import InfoModal from '../../widgets/modal/InfoModal';
+import { authState } from '../auth/models/auth.atom';
 
-const QuizScreen = ({route}) => {
+const QuizScreen = ({ route }) => {
   const [quiz, setQuiz] = useRecoilState(quizState);
   const quizLoadable = useRecoilValueLoadable(quizQuery);
-  const { fromStartButton} = route.params || {};
+  const { fromStartButton } = route.params || {};
 
   const [showExitConfirm, setShowExitConfirm] = React.useState(false);
   const [showResultsModal, setShowResultsModal] = React.useState(false);
@@ -33,7 +40,6 @@ const QuizScreen = ({route}) => {
     setShowExitConfirm(true);
     return true; // Предотвращаем действие по умолчанию
   }, []);
-
 
   useFocusEffect(
     useCallback(() => {
@@ -58,7 +64,6 @@ const QuizScreen = ({route}) => {
       if (quizLoadable.contents.length === 0) {
         setNoQuestionsModalVisible(true);
       } else {
-        console.log(quizLoadable.contents,'content');
         setQuiz((prev) => ({
           ...prev,
           questions: quizLoadable.contents,
@@ -69,8 +74,8 @@ const QuizScreen = ({route}) => {
 
   const handleCloseNoQuestionsModal = () => {
     setNoQuestionsModalVisible(false);
-    navigation.navigate('MainScreen', );
-    navigation.setParams({fromStartButton:false})
+    navigation.navigate('MainScreen');
+    navigation.setParams({ fromStartButton: false });
   };
 
   const handleAnswerSelect = (answerId) => {
@@ -87,13 +92,9 @@ const QuizScreen = ({route}) => {
   const checkAnswer = async () => {
     const currentQuestion = quiz.questions[quiz.currentQuestionIndex];
     setRightAnswer(currentQuestion.rightAnswer.id);
-
-    // Проверяем ответ
     const isCorrect = selectedAnswer === currentQuestion.rightAnswer.id;
     setAnswerChecked(true);
 
-
-    // Ждем 2 секунды перед переходом
     setTimeout(() => {
       handleNextQuestion();
     }, 2000);
@@ -127,7 +128,6 @@ const QuizScreen = ({route}) => {
       currentQuestionIndex: prev.currentQuestionIndex + 1,
     }));
     if (quiz.currentQuestionIndex >= quiz.questions.length - 2) {
-      // Если последний вопрос, показываем кнопку "Завершить"
       setQuiz((prev) => ({
         ...prev,
         isFinished: true,
@@ -136,18 +136,21 @@ const QuizScreen = ({route}) => {
   };
 
   const handleFinishQuiz = async () => {
-    try {
-      // Преобразуем ответы в нужный формат
+    const handleCheckLastQuestion = () => {
+      const currentQuestion = quiz.questions[quiz.currentQuestionIndex];
+      setRightAnswer(currentQuestion.rightAnswer.id);
+      setAnswerChecked(true);
+    };
+    const handleFinishQuizAfterCheckLastQuestion = async () => {
       const answers = Object.entries(quiz.answers).map(([questionId, answerId]) => ({
         userId: auth.user.id,
         questionId: Number(questionId),
-        answerId: Number(answerId)
+        answerId: Number(answerId),
       }));
 
       // Используем новый метод для проверки всех ответов одним запросом
       const results = await QuizService.checkAnswersBatch(answers);
       // Подсчитываем количество правильных ответов
-
 
       setQuiz((prev) => ({
         ...prev,
@@ -157,13 +160,19 @@ const QuizScreen = ({route}) => {
         },
       }));
       setShowResultsModal(true);
+    };
+    try {
+      handleCheckLastQuestion();
+      // Преобразуем ответы в нужный формат
+      await handleFinishQuizAfterCheckLastQuestion()
     } catch (error) {
       console.error('Error finishing quiz:', error);
       try {
         const fallbackResults = await Promise.all(
           Object.entries(quiz.answers).map(([questionId, answerId]) =>
             QuizService.checkAnswer(auth.user.id, Number(questionId), Number(answerId))
-          ))
+          )
+        );
         const correctCount = fallbackResults.filter(Boolean).length;
 
         setQuiz((prev) => ({
@@ -203,7 +212,7 @@ const QuizScreen = ({route}) => {
   const renderQuestion = () => {
     const currentQuestion = quiz.questions[quiz.currentQuestionIndex];
     if (!currentQuestion) return null;
-    const rightAnswer = currentQuestion.rightAnswer
+    const rightAnswer = currentQuestion.rightAnswer;
 
     return (
       <ScreenTransition>
@@ -217,19 +226,20 @@ const QuizScreen = ({route}) => {
               </Typo>
             </View>
           }>
-
           {currentQuestion.imageUrl && (
             <Image
               source={{
-                uri: currentQuestion.imageUrl ?? 'https://img.freepik.com/free-vector/modern-stylish-problem-solving-faq-symbol-background-design_1017-58258.jpg?semt=ais_hybrid&w=740',
+                uri:
+                  currentQuestion.imageUrl ??
+                  'https://img.freepik.com/free-vector/modern-stylish-problem-solving-faq-symbol-background-design_1017-58258.jpg?semt=ais_hybrid&w=740',
               }}
               style={styles.image}
               onError={(e) => console.log('Image error:', e.nativeEvent.error)}
               onLoad={() => console.log('Image loaded successfully')}
             />
           )}
-          <ScrollView showsVerticalScrollIndicator={true} style={styles.scrollContent}>
-            <Typo variant={'hSub'} style={styles.questionHeader}>
+          <ScrollView showsVerticalScrollIndicator style={styles.scrollContent}>
+            <Typo variant="hSub" style={styles.questionHeader}>
               Вопрос {quiz.currentQuestionIndex + 1}
             </Typo>
             <Typo variant="body1" style={styles.questionText}>
@@ -254,7 +264,7 @@ const QuizScreen = ({route}) => {
     if (!quiz.result) return null;
 
     return (
-      <Modal visible={showResultsModal} transparent statusBarTranslucent animationType="fade" >
+      <Modal visible={showResultsModal} transparent statusBarTranslucent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Typo variant="hSub" style={styles.modalTitle}>
@@ -274,7 +284,7 @@ const QuizScreen = ({route}) => {
                   isFinished: false,
                   result: null,
                 });
-                navigation.navigate('MainScreen')
+                navigation.navigate('MainScreen');
               }}
             />
           </View>
@@ -294,10 +304,8 @@ const QuizScreen = ({route}) => {
     );
   }
 
-
   return (
     <View style={styles.container}>
-
       {quizLoadable.state === 'loading' && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary.main} />
@@ -309,7 +317,13 @@ const QuizScreen = ({route}) => {
         <>
           {renderQuestion()}
           <Button
-            title={quiz.isFinished ? 'Завершить викторину' : answerChecked ? 'Продолжаем...' : 'Проверить ответ'}
+            title={
+              quiz.isFinished
+                ? 'Завершить викторину'
+                : answerChecked
+                  ? 'Продолжаем...'
+                  : 'Проверить ответ'
+            }
             onPress={quiz.isFinished ? handleFinishQuiz : answerChecked ? null : checkAnswer}
             disabled={!selectedAnswer || answerChecked}
           />
@@ -382,15 +396,15 @@ const styles = StyleSheet.create({
     fontSize: 36,
     fontWeight: 'bold',
   },
-  scrollContent:{
-    paddingRight:SPACING.xl*1.2,
-    textAlign:'left'
+  scrollContent: {
+    paddingRight: SPACING.xl * 1.2,
+    textAlign: 'left',
   },
-  questionHeader:{
+  questionHeader: {
     fontSize: SPACING.xl,
-    textAlign:'left',
+    textAlign: 'left',
     marginVertical: SPACING.sm,
-  }
+  },
 });
 
 export default QuizScreen;
