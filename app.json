@@ -10,11 +10,12 @@
       "themeColor": "#c7f5ae",
       "backgroundColor": "#c7f5ae",
       "display": "standalone",
-      "startUrl": "/"
+      "startUrl": "/app/"
     },
     "experiments": {
       "tsconfigPaths": true,
-      "jsconfigPaths": true
+      "jsconfigPaths": true,
+      "baseUrl": "/app"
     },
     "plugins": [
       [

@@ -2,24 +2,14 @@
   "name": "СтройнаЯ",
   "short_name": "СтройнаЯ",
   "description": "СтройнаЯ — приложение",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/app/",
+  "scope": "/app/",
   "display": "standalone",
   "theme_color": "#c7f5ae",
   "background_color": "#c7f5ae",
   "orientation": "portrait",
   "icons": [
-    {
-      "src": "/icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "/app/icon.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/app/icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }
