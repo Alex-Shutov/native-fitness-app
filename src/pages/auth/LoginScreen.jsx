@@ -16,6 +16,7 @@ import AuthService from '~/pages/auth/api/auth.service';
 import useAuth from '~/pages/auth/lib/useAuth';
 import { Typo } from '../../shared/ui/typo';
 import ScreenBackground from '../../shared/ui/layout/ScreenBackground';
+import ForgotPasswordModal from './widgets/ForgotPasswordModal';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -35,6 +36,7 @@ const LoginScreen = () => {
   const activeForm = loginMethod === 0 ? emailForm : phoneForm;
   const [passwordVisible, setPasswordVisible] = useState(false);
   const {login,loading} = useAuth()
+  const [forgotVisible, setForgotVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -153,16 +155,15 @@ const LoginScreen = () => {
               )}
             </View>
 
-            {/*<Typo*/}
-            {/*  variant="body2"*/}
-            {/*  align="right"*/}
-            {/*  style={styles.forgotPassword}*/}
-            {/*  onPress={() => navigation.navigate('ForgotPassword')}*/}
-            {/*>*/}
-            {/*  Нет аккаунта?*/}
-            {/*  <Typo>Зарегистрироваться</Typo>*/}
-            {/*</Typo>*/}
-            <View style={styles.fake}></View>
+            <Typo
+              variant="body2"
+              align="right"
+              style={styles.forgotPassword}
+              onPress={() => setForgotVisible(true)}
+            >
+              Забыли пароль?
+            </Typo>
+            <View style={styles.fake} />
 
             <Button
               title="Войти"
@@ -188,6 +189,7 @@ const LoginScreen = () => {
           </View>
         </Container>
       </ScreenBackground>
+      <ForgotPasswordModal visible={forgotVisible} onClose={() => setForgotVisible(false)} />
     </ScreenTransition>
   );
 };
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     marginTop: SPACING.md,
-    marginBottom: SPACING.xl,
+    marginBottom: SPACING.md,
     color: '#7AB648',
   },
   loginButton: {

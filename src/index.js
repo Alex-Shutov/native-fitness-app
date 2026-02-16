@@ -12,7 +12,7 @@ import { setNavigationRef } from './shared/api/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import VideoScreen from './pages/onboarding/VideoScreen';
 import * as Sentry from '@sentry/react-native';
-import { SENTRY_DSN } from './shared/api/const';
+// import { SENTRY_DSN } from './shared/api/const';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -53,20 +53,18 @@ const App = () => {
     if (appReady && fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [appReady,fontsLoaded]);
+  }, [appReady, fontsLoaded]);
 
   if (!appReady && !fontsLoaded) {
     return null;
   }
 
-  Sentry.captureException(new Error("First error"));
-  // throw new Error()
   return (
     <SafeAreaProvider>
       <RecoilProvider>
         <SnackbarProvider>
-          <NavigationContainer ref={(ref)=>setNavigationRef(ref)}>
-              {showVideo ? (
+          <NavigationContainer ref={(ref) => setNavigationRef(ref)}>
+            {showVideo ? (
               <VideoScreen onComplete={handleVideoComplete} skippable={true} />
             ) : (
               <>

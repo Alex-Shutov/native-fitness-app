@@ -10,11 +10,11 @@ import SvgRoad from '../svgs/SvgRoad';
 const { width, height } = Dimensions.get('window');
 const svg = require('../../assets/images/svg_road.svg')
 const GradientBackground = ({
-                              children,
-                              style,
-                              colors = [Theme.colors.gradient.start, Theme.colors.gradient.end],
-                              padding = 50, // Отступ для синусоид
-                            }) => {
+  children,
+  style,
+  colors = [Theme.colors.gradient.start, Theme.colors.gradient.end],
+  padding = 50, // Отступ для синусоид
+}) => {
   const svgJsx = resolveAssetSource(svg)
   const generateSinePath = () => {
     // Параметры синусоиды

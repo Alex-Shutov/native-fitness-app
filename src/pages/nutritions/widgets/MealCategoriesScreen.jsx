@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
     paddingBottom: 80, // Отступ для нижней навигации
   },
   headerContainer: {
-    paddingVertical: SPACING.lg,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
     width: '100%',
   },
   header: {

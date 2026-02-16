@@ -4,7 +4,13 @@
     "slug": "new-fitness-app",
     "version": "1.0.1",
     "web": {
-      "favicon": "./src/shared/assets/images/favicon.png"
+      "favicon": "./src/shared/assets/images/favicon.png",
+      "name": "СтройнаЯ",
+      "shortName": "СтройнаЯ",
+      "themeColor": "#c7f5ae",
+      "backgroundColor": "#c7f5ae",
+      "display": "standalone",
+      "startUrl": "/"
     },
     "experiments": {
       "tsconfigPaths": true,

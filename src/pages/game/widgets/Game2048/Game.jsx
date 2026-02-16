@@ -97,8 +97,6 @@ const Game2048 = () => {
   return (
     <ScreenTransition>
       <ScreenBackground showHeader={true} title={<Typo variant={'subtitle1'} style={styles.screenHeader}>2048</Typo>} >
-    <PanGestureHandler onHandlerStateChange={gestureHandler}>
-
       <View style={styles.container}>
         <View style={styles.headerContainer}>
 
@@ -111,8 +109,16 @@ const Game2048 = () => {
 
         </View>
 
-
-        <Board board={board} />
+        <PanGestureHandler 
+          onHandlerStateChange={gestureHandler}
+          activeOffsetX={[-10, 10]}
+          activeOffsetY={[-10, 10]}
+          minPointers={1}
+          maxPointers={1}>
+          <View>
+            <Board board={board} />
+          </View>
+        </PanGestureHandler>
         <TouchableOpacity onPress={restartGame} style={styles.restartButton}>
           <Typo variant={'body0'} style={styles.buttonText}>Перезапустить</Typo>
         </TouchableOpacity>
@@ -120,7 +126,6 @@ const Game2048 = () => {
         <GameOverModal visible={gameOver} onRestart={restartGame} onClose={closeGame} />
         <GameWonModal visible={gameWon} onRestart={restartGame} onClose={closeGame} />
       </View>
-    </PanGestureHandler>
       </ScreenBackground>
     </ScreenTransition>
   );

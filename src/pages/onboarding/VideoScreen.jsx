@@ -1,14 +1,30 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Typo } from '~/shared/ui/typo/typo';
 
 const VIDEO_STORAGE_KEY = '@has_watched_intro_video';
+const isWeb = Platform.OS === 'web';
+
+const videoAsset = require('../../shared/assets/images/onboarding-video.mp4');
+// на вебе Image.resolveAssetSource нет (react-native-web), видео отдаём из public/onboarding-video.mp4
+const videoSource = isWeb ? { uri: '/onboarding-video.mp4' } : videoAsset;
 
 const VideoScreen = ({ navigation, skippable = true, onComplete }) => {
   const videoRef = useRef(null);
+  const [webStarted, setWebStarted] = useState(false);
+
+  const startPlayback = () => {
+    if (!isWeb) return;
+    try {
+      videoRef.current?.resume?.();
+      setWebStarted(true);
+    } catch (e) {
+      console.warn('Video resume:', e);
+    }
+  };
 
   const handleVideoEnd = async () => {
     try {
@@ -36,17 +52,28 @@ const VideoScreen = ({ navigation, skippable = true, onComplete }) => {
     }
   };
 
+  const paused = isWeb ? !webStarted : false;
+
   return (
     <SafeAreaView style={styles.container}>
       <Video
-        source={require('../../shared/assets/images/onboarding-video.mp4')}
+        source={videoSource}
         ref={videoRef}
         style={styles.video}
         resizeMode="cover"
-        paused={false}
+        paused={paused}
         onEnd={handleVideoEnd}
         repeat={false}
       />
+
+      {isWeb && !webStarted && (
+        <TouchableOpacity
+          style={styles.playOverlay}
+          onPress={startPlayback}
+          activeOpacity={1}>
+          <Typo style={styles.playOverlayText}>Нажмите, чтобы смотреть</Typo>
+        </TouchableOpacity>
+      )}
 
       {skippable && (
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
@@ -79,6 +106,16 @@ const styles = StyleSheet.create({
   },
   skipText: {
     color: 'white',
+  },
+  playOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playOverlayText: {
+    color: 'white',
+    fontSize: 18,
   },
 });
 

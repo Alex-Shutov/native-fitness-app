@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Sentry from '@sentry/react-native';
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
 import AddTrackModal from './AddTrackModal';
@@ -11,7 +11,10 @@ import ScreenTransition from '../../../shared/ui/layout/ScreenTransition';
 import { Tooltip } from '../../../shared/ui/tooltip/Tooltip';
 import InfoModal from '../../../widgets/modal/InfoModal';
 import TrackerService from '../api/tracker.service';
-import { trackerQuery, trackerState, trackerVersion } from '../state/tracker.state';
+import HabitsService from '../api/habits.service';
+import { mapApiTrackToFrontend, mapApiHabitToFrontend, trackerQuery, trackerState, trackerVersion } from '../state/tracker.state';
+import { useRecoilValue } from 'recoil';
+import { authState } from '~/pages/auth/models/auth.atom';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
 import {
@@ -24,12 +27,30 @@ import { Typo } from '~/shared/ui/typo';
 
 
 const TrackerScreen = () => {
+  const auth = useRecoilValue(authState);
+  const userId = auth?.user?.id;
   const [tracker, setTracker] = useRecoilState(trackerState);
   const trackerLoadable = useRecoilValueLoadable(trackerQuery);
   const [trackerVs, setTrackerVersion] = useRecoilState(trackerVersion);
+  const [habits, setHabits] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [addModalVisible, setAddModalVisible] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [stats, setStats] = useState(null);
+
+  const fetchHabits = async () => {
+    if (!userId) return;
+    try {
+      const list = await HabitsService.getHabits(userId);
+      setHabits(list.map(mapApiHabitToFrontend).filter(Boolean));
+    } catch (e) {
+      console.error('Error fetching habits:', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchHabits();
+  }, [userId]);
 
   const handleOpenStats = async () => {
     try {
@@ -70,30 +91,49 @@ const TrackerScreen = () => {
   }, [trackerLoadable]);
   const weekdays = getCurrentWeekdays();
   const currentDayIndex = getCurrentWeekdayIndex();
-  const { tracks } = useMemo(() => {
-    return tracker;
-  }, [trackerLoadable, tracker]);
+  const { tracks } = useMemo(() => tracker, [trackerLoadable, tracker]);
+
+  const listData = useMemo(() => {
+    const items = [...tracks];
+    if (tracks.length > 0 && habits.length > 0) {
+      items.push({ id: 'divider', isDivider: true });
+      items.push(...habits);
+    } else if (habits.length > 0) {
+      items.push(...habits);
+    }
+    return items;
+  }, [tracks, habits]);
 
   const handleAddTrack = async (newTrack) => {
+    if (!userId) return;
     try {
-      // Преобразуем данные в формат API
-      const daysStatus = newTrack.completionStatus;
-
-      // Отправляем запрос на создание трека
-      const createdTrack = await TrackerService.createTrack(newTrack.title, daysStatus);
-
-      // Обновляем локальное состояние
-      setTracker((prev) => ({
-        ...prev,
-        tracks: [createdTrack, ...prev.tracks],
-      }));
+      const pattern = (newTrack.completionStatus || []).join('');
+      await HabitsService.createHabit(userId, pattern, newTrack.title);
+      await fetchHabits();
     } catch (error) {
-      console.error('Error adding track:', error);
-      // Можно добавить обработку ошибки (например, показать уведомление)
+      console.error('Error adding habit:', error);
     }
   };
 
   const handleTrackStatusChange = async (frontendTrackId, dayIndex, status) => {
+    const habit = habits.find((h) => h.id === frontendTrackId);
+    if (habit && userId) {
+      const newStatus = [...habit.completionStatus];
+      newStatus[dayIndex] = status ? 1 : 0;
+      const pattern = newStatus.join('');
+      try {
+        await HabitsService.updateHabit(habit.habitId, userId, pattern);
+        setHabits((prev) =>
+          prev.map((h) =>
+            h.id === frontendTrackId ? { ...h, completionStatus: newStatus } : h
+          )
+        );
+      } catch (error) {
+        console.error('Error updating habit:', error);
+      }
+      return;
+    }
+
     try {
       setTracker((prev) => {
         const updatedTracks = prev.tracks.map((track) => {
@@ -126,20 +166,22 @@ const TrackerScreen = () => {
       });
     } catch (error) {
       console.error('Error updating track status:', error);
-      setTracker((prev) => ({
-        ...prev,
-        error,
-      }));
+      setTracker((prev) => ({ ...prev, error }));
     }
   };
-  const renderItem = ({ item }) => (
-    <TrackItem
-      track={item}
-      onStatusChange={handleTrackStatusChange}
-      onPress={() => {}}
-      weekdays={weekdays} // Передаем дни недели
-    />
-  );
+  const renderItem = ({ item }) => {
+    if (item.isDivider) {
+      return <View style={styles.divider} />;
+    }
+    return (
+      <TrackItem
+        track={item}
+        onStatusChange={handleTrackStatusChange}
+        onPress={() => {}}
+        weekdays={weekdays}
+      />
+    );
+  };
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
@@ -154,9 +196,9 @@ const TrackerScreen = () => {
       <View style={styles.dayLabelRow}>
         <View style={{ flexGrow: 3, alignSelf: 'center', marginLeft: 6 }}>
           <TouchableWithoutFeedback onPress={handleOpenStats}>
-            <View style={{display:'flex', flexDirection: 'row', alignItems: 'flex-end', gap:4}}>
-            <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
-            <Typo  variant={''}  align={""}>Статистика</Typo>
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 4 }}>
+              <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
+              <Typo variant={''} align={""}>Статистика</Typo>
             </View>
           </TouchableWithoutFeedback>
         </View>
@@ -183,21 +225,24 @@ const TrackerScreen = () => {
   return (
     <ScreenTransition>
       <ScreenBackground
-        headerRight={
-          <TouchableWithoutFeedback onPress={handleOpen}>
-            <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />
-          </TouchableWithoutFeedback>
-        }
         title={
           <View style={styles.headerContainer}>
             <Typo variant="hSub" style={styles.header}>
               Трекер
-              {/*<View style={{flexGrow:3,alignSelf: 'center',marginLeft:6}}>*/}
-              {/*  <TouchableWithoutFeedback  onPress={handleOpen}>*/}
-              {/*    <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />*/}
-              {/*  </TouchableWithoutFeedback>*/}
-              {/*</View>*/}
             </Typo>
+          </View>
+        }
+        headerRight={
+          <View style={styles.headerRight}>
+            <TouchableWithoutFeedback onPress={handleOpen}>
+              <MaterialIcons name="help-outline" size={24} color={COLORS.neutral.dark} />
+            </TouchableWithoutFeedback>
+            <TouchableOpacity
+              style={styles.fab}
+              onPress={() => setAddModalVisible(true)}
+              activeOpacity={0.8}>
+              <MaterialIcons name="add" size={28} color={COLORS.neutral.white} />
+            </TouchableOpacity>
           </View>
         }
         hasBackButton={false}
@@ -205,11 +250,11 @@ const TrackerScreen = () => {
         {renderDayLabels()}
 
         <FlatList
-          data={tracks}
+          data={listData}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
-          ListEmptyComponent={renderEmptyState}
+          ListEmptyComponent={tracks.length === 0 && habits.length === 0 ? renderEmptyState : null}
           showsVerticalScrollIndicator={false}
         />
 
@@ -227,16 +272,24 @@ const TrackerScreen = () => {
               stats
                 ? `Общий рейтинг: ${stats.position} из ${stats.totalUsers}\nОбщее количество баллов: ${stats.totalPoints}\n
 Система начисления баллов:
-За каждое выполненное действие вы получаете 10 баллов.
+за каждое выполненное действие вы получаете 10 баллов.
 Дополнительно предусмотрены двойные баллы по неделям:
 
 1-я неделя: ужин не позднее чем за 3–4 часа до сна
+
 2-я неделя: тщательное пережёвывание пищи
+
 3-я неделя: полный отказ от промышленного сахара
+
 Важно: счётчик баллов обнуляется в начале каждого месяца.`
                 : 'Загрузка...'
             }
             onClose={handleCloseStats}
+          />
+          <AddTrackModal
+            visible={addModalVisible}
+            onClose={() => setAddModalVisible(false)}
+            onAddTrack={handleAddTrack}
           />
         </View>
       </ScreenBackground>
@@ -258,6 +311,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  fab: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.primary.main,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   subtitle: {
     marginBottom: SPACING.lg,
@@ -300,6 +366,12 @@ const styles = StyleSheet.create({
   dayLabelText: {
     textTransform: 'uppercase',
     color: COLORS.neutral.medium,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.neutral.light,
+    marginVertical: SPACING.lg,
+    marginHorizontal: SPACING.sm,
   },
 });
 

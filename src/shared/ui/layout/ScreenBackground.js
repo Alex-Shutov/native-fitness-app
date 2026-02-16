@@ -4,7 +4,7 @@ import React from 'react';
 import { TouchableOpacity, View, StyleSheet, SafeAreaView } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '~/core/styles/theme';
-import {Typo}from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
 import { StatusBar } from 'expo-status-bar';
 
 const ScreenBackground = ({
@@ -16,11 +16,11 @@ const ScreenBackground = ({
   style,
   contentStyle,
   headerStyle,
-
-                            onPlusPress,
+  titleStyle,
+  onPlusPress,
   hasBackButton = true,
-                            headerRight,
-                            ...props
+  headerRight,
+  ...props
 }) => {
   const navigation = useNavigation();
 
@@ -33,7 +33,7 @@ const ScreenBackground = ({
   };
 
   const renderBackButton = () => {
-    if(!hasBackButton) return null
+    if (!hasBackButton) return null
     if (backIcon === 'close') {
       return (
         <TouchableOpacity
@@ -58,10 +58,10 @@ const ScreenBackground = ({
 
 
   const renderPlusButton = () => {
-    if (headerRight){
+    if (headerRight) {
       return <View
         style={styles.plusButton}
-        >
+      >
         {headerRight}
       </View>
     }
@@ -82,7 +82,7 @@ const ScreenBackground = ({
     <View style={[styles.container, style]} {...props}>
       <StatusBar
         backgroundColor={COLORS.primary.main}
-        // barStyle={statusBarStyle}
+      // barStyle={statusBarStyle}
       />
       <SafeAreaView style={styles.safeArea}>
         {showHeader && (
@@ -91,7 +91,7 @@ const ScreenBackground = ({
               {renderBackButton()}
               {title && (
                 <View>
-                  <Typo variant="body0"  style={styles.headerTitle} align="center">
+                  <Typo variant="body0" style={[styles.headerTitle, titleStyle]} align="center">
                     {title}
                   </Typo>
                 </View>
@@ -122,13 +122,13 @@ const styles = StyleSheet.create({
     paddingTop: SPACING.md,
   },
   header: {
-    // ...StyleSheet.absoluteFillObject,
+    // ...StyleSheet.,
     backgroundColor: 'transparent',
     paddingHorizontal: SPACING.xl,
     paddingVertical: SPACING.lg,
   },
   headerContent: {
-    display:'flex',
+    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'relative',
-    zIndex:20,
+    zIndex: 20,
     left: -12,
     width: 44,
     height: 44,
@@ -157,9 +157,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle:{
+  headerTitle: {
     fontSize: Theme.fontSizes.xl,
-    lineHeight: Theme.fontSizes.xl *1.5,
+    lineHeight: Theme.fontSizes.xl * 1.8,
   }
 });
 

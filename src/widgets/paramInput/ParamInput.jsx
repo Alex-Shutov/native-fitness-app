@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Typo}from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
 import { BORDER_RADIUS, COLORS, FONT_FAMILY, SPACING } from '~/core/styles/theme';
 import {
   TextInput,
@@ -13,17 +13,18 @@ import {
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
 
 const ParamInput = ({
-                      label,
-                      value,
-                      onChangeText,
-                      onBlur,
-                      placeholder = '--',
-                      isSelect = false,
-                      options = [],
-                      selectedElement = null,
-                      keyboardType = "default",
-                      maxLength=3
-                    }) => {
+  label,
+  value,
+  onChangeText,
+  onBlur,
+  placeholder = '--',
+  isSelect = false,
+  options = [],
+  selectedElement = null,
+  keyboardType = "default",
+  maxLength = 3,
+  allowDecimals = false
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleOpenModal = () => {
@@ -39,6 +40,52 @@ const ParamInput = ({
   const handleSelectOption = (option) => {
     onChangeText(option.value);
     handleCloseModal();
+  };
+
+  // Валидация для числовых полей
+  const validateNumericInput = (text) => {
+    // Если поле пустое, разрешаем очистку
+    if (text === '') {
+      return '';
+    }
+
+    // Для десятичных чисел (вес с точностью до десятых)
+    if (allowDecimals || keyboardType === 'decimal-pad') {
+      // Удаляем все символы кроме цифр и точки
+      let cleaned = text.replace(/[^\d.]/g, '');
+
+      // Проверяем, что точка только одна
+      const dotCount = (cleaned.match(/\./g) || []).length;
+      if (dotCount > 1) {
+        // Если больше одной точки, оставляем только первую
+        const firstDotIndex = cleaned.indexOf('.');
+        cleaned = cleaned.substring(0, firstDotIndex + 1) + cleaned.substring(firstDotIndex + 1).replace(/\./g, '');
+      }
+
+      // Если есть точка, проверяем что после неё максимум одна цифра
+      if (cleaned.includes('.')) {
+        const parts = cleaned.split('.');
+        if (parts[1] && parts[1].length > 1) {
+          // Оставляем только первую цифру после точки
+          cleaned = parts[0] + '.' + parts[1][0];
+        }
+      }
+
+      return cleaned;
+    }
+
+    // Для обычных числовых полей - только цифры
+    if (keyboardType === 'numeric' || keyboardType === 'number-pad') {
+      return text.replace(/[^\d]/g, '');
+    }
+
+    // Для остальных типов полей возвращаем как есть
+    return text;
+  };
+
+  const handleTextChange = (text) => {
+    const validatedText = validateNumericInput(text);
+    onChangeText(validatedText);
   };
 
   const renderInputField = () => {
@@ -61,7 +108,7 @@ const ParamInput = ({
                 !selectedOption && styles.placeholderText
               ]}
               numberOfLines={1}
-              // ellipsizeMode="tail"
+            // ellipsizeMode="tail"
             >
               {selectedOption ? selectedOption.label : placeholder}
             </Typo>
@@ -70,13 +117,15 @@ const ParamInput = ({
       );
     } else {
       // Regular input mode
+      const isNumericField = keyboardType === 'numeric' || keyboardType === 'number-pad' || keyboardType === 'decimal-pad' || allowDecimals;
+
       return (
         <View style={styles.inputContainer}>
           <TextInput
             onBlur={onBlur}
             style={styles.parameterInput}
             value={value}
-            onChangeText={onChangeText}
+            onChangeText={isNumericField ? handleTextChange : onChangeText}
             keyboardType={keyboardType}
             placeholder={placeholder}
             placeholderTextColor={COLORS.neutral.medium}
@@ -127,7 +176,7 @@ const ParamInput = ({
                       {label || 'Выберите значение'}
                     </Typo>
                     <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
-                      <CrossIcon size={24}/>
+                      <CrossIcon size={24} />
                     </TouchableOpacity>
                   </View>
 
@@ -222,7 +271,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     flex: 1,
-    textAlign:'left',
+    textAlign: 'left',
     paddingRight: SPACING.md,
   },
   closeButton: {

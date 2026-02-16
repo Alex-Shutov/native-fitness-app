@@ -20,6 +20,7 @@ import { useFonts } from '../../core/hooks/useFonts';
 import { Typo } from '../../shared/ui/typo/typo';
 import VideoScreen from '../onboarding/VideoScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PWAInstallPrompt from '~/shared/ui/pwa/PWAInstallPrompt';
 
 const FADE_IN_DURATION = ANIMATION.medium; // 300мс для плавного появления
 const STAGGER_DELAY = ANIMATION.fast; // 200мс для последовательной анимации элементов
@@ -67,7 +68,7 @@ const WelcomeScreen = () => {
     setExiting(true);
     // Delay navigation to allow for exit animation
     setTimeout(() => {
-      navigation.navigate('Start');
+      navigation.navigate('Register');
       // Reset state for when we return to this screen
       setTimeout(() => setExiting(false), 50);
     }, ANIMATION.medium);
@@ -98,8 +99,6 @@ const WelcomeScreen = () => {
 
   return (
     <ScreenTransition>
-
-
       <GradientBackground>
         <Container type="centered" safeArea>
           <LogoSection duration={FADE_IN_DURATION} logoStyle={logoAnimatedStyle} />
@@ -108,6 +107,7 @@ const WelcomeScreen = () => {
           <Button fullWidth={true} loading={false} title="Хочу стройнеть" onPress={handleGetStarted} />
           <View style={{ flex: 0.2 }} />
         </Container>
+        <PWAInstallPrompt />
       </GradientBackground>
     </ScreenTransition>
   );

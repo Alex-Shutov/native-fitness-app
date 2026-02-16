@@ -17,7 +17,7 @@ const TrackerService = {
       throw error;
     }
   },
-  async getStats(){
+  async getStats() {
     const response = await apiClient.get('/api/stat');
     return response.data;
   },
@@ -33,9 +33,10 @@ const TrackerService = {
     }
   },
 
-  async createTrack() {
+  async createTrack(title, completionStatus) {
     try {
-      const response = await apiClient.post('/api/trackers');
+      const body = title != null ? { title, habitsStatus: (completionStatus || []).join('') } : undefined;
+      const response = await apiClient.post('/api/trackers', body);
       return response.data;
     } catch (error) {
       console.error('Error creating tracker:', error);

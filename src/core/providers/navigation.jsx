@@ -17,6 +17,7 @@ import TabNavigator from './tabNavigation';
 import QuizScreen from '../../pages/quiz/QuizScreen';
 import OnBoardProgressScreen from '../../pages/onboarding/ProgressScreen';
 import PersonalInfoScreen from '../../pages/onboarding/PersonalInfoScreen';
+import AddMeasurementsScreen from '../../pages/profile/widgets/AddMeasurementsScreen';
 import { ActivityIndicator, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuth from '../../pages/auth/lib/useAuth';
@@ -83,6 +84,7 @@ const Navigation = () => {
       <Stack.Screen name="DescribeGoalScreen" component={DescribeGoalScreen} />
       <Stack.Screen name="OnBoardProgressScreen" component={OnBoardProgressScreen} />
       <Stack.Screen name="PersonalInfoScreen" component={PersonalInfoScreen} />
+      <Stack.Screen name="AddMeasurementsScreen" component={AddMeasurementsScreen} />
       <Stack.Screen name="DietSelectionScreen" component={DietSelectionScreen} />
       <Stack.Screen name="RecipeScreen" component={RecipeScreen} />
       <Stack.Screen name="QuizScreen" component={QuizScreen} />

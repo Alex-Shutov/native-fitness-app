@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 import { useSnackbar } from '~/core/hooks/useSnackbar';
-import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
+import { COLORS, SPACING, BORDER_RADIUS, FONT_FAMILY, FONT_SIZES } from '~/core/styles/theme';
 import MealService from '~/pages/nutritions/api/meals.service';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import {Typo}from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
 
 const MealDaysScreen = () => {
   const navigation = useNavigation();
@@ -75,7 +75,9 @@ const MealDaysScreen = () => {
 
   return (
     <ScreenTransition>
-      <ScreenBackground title={title}>
+      <ScreenBackground
+        title={title}
+        titleStyle={styles.titleStyle}>
         <View style={styles.container}>
           <ScrollView
             style={styles.scrollView}
@@ -127,6 +129,10 @@ const styles = StyleSheet.create({
   emptyCell: {
     flex: 1,
     marginHorizontal: SPACING.xs,
+  },
+  titleStyle: {
+    fontSize: FONT_SIZES.xxxl,
+    fontFamily: FONT_FAMILY.accent.regular,
   },
 });
 

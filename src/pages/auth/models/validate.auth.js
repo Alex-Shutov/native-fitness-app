@@ -38,7 +38,18 @@ export const registerSchema = z.object({
   phone: z
     .string()
     .optional()
-    .refine((val) => !val || val.length >= 10, { message: messages.phone.invalid }),
+    .refine((val) => {
+      if (!val) return true; // Phone is optional
+      // Remove all non-digit characters except + for validation
+      const cleaned = val.replace(/[^\d+]/g, '');
+      // Check if starts with +7 or 8, then has 10 more digits
+      if (cleaned.startsWith('+7')) {
+        return cleaned.length === 12; // +7 + 10 digits = 12
+      } else if (cleaned.startsWith('8')) {
+        return cleaned.length === 11; // 8 + 10 digits = 11
+      }
+      return false;
+    }, { message: messages.phone.invalid }),
 
   password: z
     .string()

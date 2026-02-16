@@ -90,69 +90,68 @@ const RecipeScreen = () => {
       <ScreenBackground
         hasBackButton={false}
         style={{ backgroundColor: COLORS.neutral.offWhite }}
-        contentStyle={styles.screenBackground}>
-        <View style={styles.imageContainer} onStartShouldSetResponder={() => true}>
-          <ImageBackground source={recipe.image} style={styles.recipeImage} resizeMode="cover">
-            {/*{renderBackButton()}*/}
-          </ImageBackground>
-        </View>
+        contentStyle={styles.screenBackground}
+        showHeader={false}
+
+      >
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.contentContainer}
-          showsHorizontalScrollIndicator>
-          <Typo variant="hSub" style={styles.recipeTitle}>
-            {recipe.title}
-          </Typo>
-          {/*{renderBackButton()}*/}
-
-          <View style={styles.section}>
-            <Typo variant="body0" style={styles.sectionTitle}>
-              Ингредиенты
+          contentContainerStyle={styles.scrollContentContainer}
+          showsVerticalScrollIndicator>
+          <View style={styles.imageContainer} onStartShouldSetResponder={() => true}>
+            <ImageBackground source={recipe.image} style={styles.recipeImage} resizeMode="cover">
+              {renderBackButton()}
+            </ImageBackground>
+          </View>
+          <View style={styles.contentContainer}>
+            <Typo variant="hSub" style={styles.recipeTitle}>
+              {recipe.title}
             </Typo>
 
-            {recipe.ingredients.map((ingredient, index) => (
-              <View key={index} style={styles.ingredientItem}>
-                <View style={styles.bulletPoint} />
-                <Typo variant="body1" style={styles.ingredientText}>
-                  {ingredient.name}
-                  {ingredient.amount && (
-                    <Typo variant="body1" style={styles.ingredientAmount}>
-                      {'   '}
-                      {ingredient.amount}
-                    </Typo>
-                  )}
-                </Typo>
-              </View>
-            ))}
-          </View>
-
-          {recipe.description && (
             <View style={styles.section}>
               <Typo variant="body0" style={styles.sectionTitle}>
-                Способ приготовления
+                Ингредиенты
               </Typo>
-              <Typo variant="body1" style={styles.description}>
-                {recipe.description}
-              </Typo>
+
+              {recipe.ingredients.map((ingredient, index) => (
+                <View key={index} style={styles.ingredientItem}>
+                  <View style={styles.bulletPoint} />
+                  <Typo variant="body1" style={styles.ingredientText}>
+                    {ingredient.name}
+                    {ingredient.amount && ` - ${ingredient.amount}`}
+                  </Typo>
+                </View>
+              ))}
             </View>
-          )}
 
-          {/*<View style={styles.section}>*/}
-          {/*  <Typo variant="body0" style={styles.sectionTitle}>*/}
-          {/*    Способ приготовления*/}
-          {/*  </Typo>*/}
+            {recipe.description && (
+              <View style={styles.section}>
+                <Typo variant="body0" style={styles.sectionTitle}>
+                  Способ приготовления
+                </Typo>
+                <Typo variant="body1" style={styles.description}>
+                  {recipe.description}
+                </Typo>
+              </View>
+            )}
 
-          {/*  {recipe.preparationSteps.map((step, index) => (*/}
-          {/*    <View key={index} style={styles.stepItem}>*/}
-          {/*      <View style={styles.stepNumber}>*/}
-          {/*        <Typo variant="body1">{index + 1}.</Typo>*/}
-          {/*      </View>*/}
-          {/*      <Typo variant="body1" style={styles.stepText}>*/}
-          {/*        {step}*/}
-          {/*      </Typo>*/}
-          {/*    </View>*/}
-          {/*  ))}*/}
-          {/*</View>*/}
+            {/*<View style={styles.section}>*/}
+            {/*  <Typo variant="body0" style={styles.sectionTitle}>*/}
+            {/*    Способ приготовления*/}
+            {/*  </Typo>*/}
+
+            {/*  {recipe.preparationSteps.map((step, index) => (*/}
+            {/*    <View key={index} style={styles.stepItem}>*/}
+            {/*      <View style={styles.stepNumber}>*/}
+            {/*        <Typo variant="body1">{index + 1}.</Typo>*/}
+            {/*      </View>*/}
+            {/*      <Typo variant="body1" style={styles.stepText}>*/}
+            {/*        {step}*/}
+            {/*      </Typo>*/}
+            {/*    </View>*/}
+            {/*  ))}*/}
+            {/*</View>*/}
+          </View>
         </ScrollView>
       </ScreenBackground>
     </ScreenTransition>
@@ -160,60 +159,47 @@ const RecipeScreen = () => {
 };
 const styles = StyleSheet.create({
   screenBackground: {
-    height: '100%',
+    flex: 1,
     padding: 0,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    zIndex: 1,
+    paddingTop: 0,
   },
-
   scrollView: {
     flex: 1,
     width: '100%',
+  },
+  scrollContentContainer: {
+    paddingBottom: SPACING.xl * 3,
   },
   container: {
     flex: 1,
   },
   imageContainer: {
     backgroundColor: COLORS.neutral.darkest,
-    top: 0,
-    left: 0,
-    bottom: 300,
-    zIndex: 0,
-    // position: 'fixed',
     width: '100%',
-    height: 300,
+    height: 280,
     marginTop: Platform.OS === 'android' ? 16 : 0,
   },
   recipeImage: {
-    zIndex: 9,
-    position: 'relative',
     width: '100%',
     height: '100%',
   },
   backButtonContainer: {
-    backgroundColor: 'rgba(245, 245, 240, 0.8)',
-    backgroundColor: 'red',
-    position: 'fixed',
-    // top: 16,
-    zIndex: 123,
-    marginTop: Platform.OS === 'android' ? 16 : 0,
-    marginLeft: 16,
-    // left: 16,
+    position: 'absolute',
+    top: SPACING.md,
+    left: SPACING.md,
     width: 40,
-    display: 'flex',
     height: 40,
     borderRadius: BORDER_RADIUS.full,
-    // justifyContent: 'center',  // Добавлено
-    // alignItems: 'center',      // Добавлено
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
   backButton: {
-    // position:'relative',
-
-    position: 'absolute',
-    display: 'flex',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   favoriteButton: {
     position: 'absolute',
@@ -228,14 +214,12 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     textAlign: 'left',
-
     backgroundColor: COLORS.neutral.offWhite,
     paddingHorizontal: SPACING.md,
     paddingTop: SPACING.lg,
-    paddingBottom: SPACING.xl * 3, // Большой отступ снизу для навигации
     borderTopLeftRadius: BORDER_RADIUS.xl,
     borderTopRightRadius: BORDER_RADIUS.xl,
-    marginTop: -20, // Накладываем на изображение
+    marginTop: -20,
   },
   recipeTitle: {
     textAlign: 'left',
@@ -289,9 +273,6 @@ const styles = StyleSheet.create({
   ingredientText: {
     // flex: 1,
     textAlign: 'left',
-  },
-  ingredientAmount: {
-    color: COLORS.neutral.medium,
   },
   stepText: {
     textAlign: 'left',

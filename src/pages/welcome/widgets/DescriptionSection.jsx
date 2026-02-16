@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Theme, { COLORS, FONT_FAMILY, SPACING } from '../../../core/styles/theme';
 import AnimatedView from '../../../shared/ui/animation/AnimatedView';
-import {Typo}from '../../../shared/ui/typo/typo';
+import { Typo } from '../../../shared/ui/typo/typo';
 import AdvantagesView from './AdvantagesView';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import Button from '../../../shared/ui/button';
@@ -13,26 +13,33 @@ const DescriptionSection = ({ duration, delay, children, handleAboutApp, hasWatc
     <>
       <View style={styles.middleSection}>
         <AnimatedView animation="fade" duration={duration} delay={delay}>
-          <Typo variant="body2"  align="center" style={styles.title}>
-            Стройность{' '}
-            <Typo variant="hSub"   color={COLORS.primary.main}>
-              навсегда
+          <View style={styles.titleRow}>
+            <Typo variant="hSub" align="center" style={styles.titleMain}>
+              Стройность
             </Typo>
-          </Typo>
-
-
+            <Typo color={COLORS.primary.main} variant="hSub" align="center" >
+              {' '}навсегда
+            </Typo>
+          </View>
         </AnimatedView>
-        <AnimatedView animation="fade" duration={duration} >
+
+        <AnimatedView animation="fade" duration={duration}>
           <Typo variant="body0" align="center" style={styles.subtitle}>
             через мышление
           </Typo>
         </AnimatedView>
-          <AdvantagesView delay={delay} duration={duration}></AdvantagesView>
-        {(
-          <AnimatedView animation="fade" duration={duration} delay={delay * 4}>
-            <Button onPress={handleAboutApp} fullWidth={true} textStyle={{color:'gray'}} variant={'outlined'} title={'О чем это приложение ▶️'}>О чем</Button>
-          </AnimatedView>
-        )}
+
+        <AdvantagesView delay={delay} duration={duration} />
+
+        <AnimatedView animation="fade" duration={duration} delay={delay * 4}>
+          <Button
+            onPress={handleAboutApp}
+            fullWidth={true}
+            textStyle={{ color: 'gray' }}
+            variant={'outlined'}
+            title={'О чем это приложение ▶️'}
+          />
+        </AnimatedView>
       </View>
     </>
   );
@@ -46,20 +53,29 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 
-  title: {
-    width: '100%',
-    fontSize: Theme.fontSizes.xxl,
-    lineHeight: Theme.fontSizes.xxxl * 1.5,
-    fontWeight: 'bold',
-    marginBottom: -SPACING.xl,
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+    marginBottom: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
   },
-  accent:{
+  titleMain: {
+    fontSize: Theme.fontSizes.xxl,
+    lineHeight: Theme.fontSizes.xxxl * 1.2,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  titleAccent: {
     fontFamily: FONT_FAMILY.header.regular,
-    fontSize: Theme.fontSizes.xxxl*1.2,
-    lineHeight: Theme.fontSizes.xxxl*1.2,
+    fontSize: Theme.fontSizes.xxxl * 1.1,
+    lineHeight: Theme.fontSizes.xxxl * 1.2,
+    color: COLORS.primary.main,
+    textAlign: 'center',
   },
   subtitle: {
     marginBottom: SPACING.sm,
+    fontSize: Theme.fontSizes.lg,
   },
 });
 

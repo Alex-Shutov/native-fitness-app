@@ -14,7 +14,7 @@ import RegisterForm from './widgets/RegisterForm';
 import Button from '../../shared/ui/button';
 import Container from '../../shared/ui/layout/Container';
 import ScreenTransition from '../../shared/ui/layout/ScreenTransition';
-import {Typo}from '../../shared/ui/typo/typo';
+import { Typo } from '../../shared/ui/typo/typo';
 import { authState } from '../auth/models/auth.atom';
 
 import { useSnackbar } from '~/core/hooks/useSnackbar';
@@ -35,13 +35,13 @@ const RegisterScreen = () => {
     password: '',
     agreementAccepted: false,
   });
-  const { register, loading,error,setError } = useAuth();
+  const { register, loading, error, setError } = useAuth();
   const { showSnackbar } = useSnackbar();
 
   const handleRegister = async () => {
     await form.handleSubmit(async (values) => {
       try {
-        const x= await register({
+        const x = await register({
           username: values.name,
           ...values,
         });
@@ -60,7 +60,7 @@ const RegisterScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={true}>
       <ScreenTransition>
         <ScreenBackground title="Создать аккаунт" backIcon="close">
           <Container fullScreen={true} safeArea>
@@ -77,7 +77,7 @@ const RegisterScreen = () => {
                 // fullWidth
                 style={styles.registerButton}
               />
-              {error && <Typo variant={'body1'} style={{color:'red',marginTop:SPACING.lg}}>{error}</Typo>}
+              {error && <Typo variant={'body1'} style={{ color: 'red', marginTop: SPACING.lg }}>{error}</Typo>}
             </View>
 
             <View style={styles.loginLinkContainer}>

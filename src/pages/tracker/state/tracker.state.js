@@ -11,17 +11,38 @@ const HABIT_NAMES = [
   'Отказ от сахара'
 ];
 
+const DAYS_PER_HABIT = 5;
+
+export const mapApiHabitToFrontend = (habit) => {
+  if (!habit) return null;
+  const pattern = habit.pattern || '00000';
+  const completionStatus = pattern
+    .slice(0, DAYS_PER_HABIT)
+    .padEnd(DAYS_PER_HABIT, '0')
+    .split('')
+    .map(Number);
+  return {
+    id: `habit-${habit.id}`,
+    habitId: habit.id,
+    title: habit.name != null && habit.name !== '' ? String(habit.name) : 'Цель',
+    completionStatus,
+    startDate: habit.createdAt,
+    createdAt: habit.createdAt,
+    isHabit: true,
+    isDoublePoints: false,
+  };
+};
+
 export const mapApiTrackToFrontend = (apiTrack) => {
   if (!apiTrack) return { tracks: [], isLoading: false, error: null };
 
-  const daysPerHabit = 5;
   const habitsStatus = apiTrack.habitsStatus || '0000000000000000000000000';
-  const habitsCount = apiTrack.habitsCount || daysPerHabit;
+  const habitsCount = apiTrack.habitsCount || DAYS_PER_HABIT;
 
   const tracks = Array.from({ length: habitsCount }).map((_, habitIndex) => {
-    const startIndex = habitIndex * daysPerHabit;
+    const startIndex = habitIndex * DAYS_PER_HABIT;
     const completionStatus = habitsStatus
-      .slice(startIndex, startIndex + daysPerHabit)
+      .slice(startIndex, startIndex + DAYS_PER_HABIT)
       .split('')
       .map(Number);
 

@@ -227,6 +227,7 @@ const QuizScreen = ({ route }) => {
             </View>
           }>
           {currentQuestion.imageUrl && (
+            <View style={styles.imageContainer}>
             <Image
               source={{
                 uri:
@@ -237,6 +238,7 @@ const QuizScreen = ({ route }) => {
               onError={(e) => console.log('Image error:', e.nativeEvent.error)}
               onLoad={() => console.log('Image loaded successfully')}
             />
+            </View>
           )}
           <ScrollView showsVerticalScrollIndicator style={styles.scrollContent}>
             <Typo variant="hSub" style={styles.questionHeader}>
@@ -352,17 +354,25 @@ const styles = StyleSheet.create({
   },
   questionContainer: {
     marginBottom: SPACING.lg,
+    flex: 1,
   },
   questionText: {
     fontWeight: 'bold',
     textAlign: 'left',
   },
+  imageContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    maxHeight: 250,
+    paddingVertical: SPACING.xl,
+  },
   image: {
     width: '100%',
     height: 200,
-    // resizeMode: 'cover',
     borderRadius: BORDER_RADIUS.md,
-    marginTop: SPACING.sm,
+    resizeMode: 'contain',
   },
   loadingContainer: {
     backgroundColor: COLORS.page.background,

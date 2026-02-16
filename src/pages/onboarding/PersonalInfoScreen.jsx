@@ -394,7 +394,7 @@ const PersonalInfoScreen = () => {
         <View style={styles.container}>
           <InfoModal
             image={require('../../shared/assets/images/chest.jpg')}
-            text="Измеряйте объем груди а уровне подмышек и над грудью."
+            text="Измеряйте объем груди на уровне подмышек и над грудью."
             visible={visibleChest}
             onClose={handleCloseChest}
             title="Как измерять?"

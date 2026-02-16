@@ -1,0 +1,6 @@
+EXPO_PUBLIC_API_URL=https://fit-stroynaya.ru
+EXPO_PUBLIC_SENTRY_DSN=
+
+# how to use
+# 1) copy this file to .env.local (recommended) or .env
+# 2) set values for your environment

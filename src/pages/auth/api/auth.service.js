@@ -53,6 +53,50 @@ class AuthService {
   }
 
   /**
+   * Request password reset code to email
+   * @param {string} email
+   */
+  async forgotPassword(email) {
+    try {
+      const response = await apiClient.post('/api/auth/forgot-password', { email });
+      return response.data;
+    } catch (error) {
+      this._handleError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Validate reset code
+   * @param {string} code
+   */
+  async validateResetCode(code) {
+    try {
+      const response = await apiClient.get('/api/auth/validate-reset-code', {
+        params: { code },
+      });
+      return response.data;
+    } catch (error) {
+      this._handleError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * Reset password with code
+   * @param {{token: string, newPassword: string, confirmPassword: string}} data
+   */
+  async resetPassword(data) {
+    try {
+      const response = await apiClient.post('/api/auth/reset-password', data);
+      return response.data;
+    } catch (error) {
+      this._handleError(error);
+      throw error;
+    }
+  }
+
+  /**
    * Logout user
    * @returns {Promise} - Promise indicating logout success
    */
@@ -92,7 +136,7 @@ class AuthService {
         ProfileApi.getCurrentUser(),
         ProgressService.getProgressData().catch(e => null)
       ]);
-      const x = userResponse ? {user:userResponse,progress:progress??null} : {user:null,progress: null};
+      const x = userResponse ? { user: userResponse, progress: progress ?? null } : { user: null, progress: null };
       return x
     } catch (error) {
       console.error('Get user data error:', error);
@@ -132,8 +176,10 @@ class AuthService {
           error.response.data.error = 'Неверно введен логин или пароль'
           break;
         case 409:
-          console.error('Registration failed: User already exists');
-          error.response.data.error = 'Кажется, имяп ользователя уже занято :( Попробуйте еще раз'
+          error.response.data.error = 'Произошла ошибка, данный e-mail адрес уже зарегистрирован.';
+          break;
+        case 422:
+          error.response.data.error = 'Произошла ошибка, имя пользователя уже занято.';
           break;
         case 400:
           console.error('Bad request:', error.response.data);

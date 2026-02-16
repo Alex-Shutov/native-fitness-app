@@ -1,9 +1,9 @@
 // src/pages/profile/PersonalCabinetScreen.jsx
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { View, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, Modal, Linking } from 'react-native';
 import { useRecoilState } from 'recoil';
 
 import { BORDER_RADIUS, COLORS, SPACING } from '../../../core/styles/theme';
@@ -12,8 +12,10 @@ import useAuth from '../../auth/lib/useAuth';
 import { useSnackbar } from '~/core/hooks/useSnackbar';
 import { useGoals } from '~/pages/onboarding/lib/useGoals';
 import ProfileApi from '~/pages/profile/api/profile.api';
+import { getStatistics, getHistory } from '~/pages/profile/api/measurements.api';
 import { blobToBase64 } from '~/pages/profile/lib/utils';
 import AvatarSkeleton from '~/pages/profile/widgets/AvatarSkeleton';
+import MeasurementsStatsWidget from '~/pages/profile/widgets/MeasurementsStatsWidget';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import { Typo } from '~/shared/ui/typo';
@@ -24,7 +26,7 @@ import { authState } from '../../auth/models/auth.atom';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PersonalCabinetScreen = () => {
-  const {user:auth, setUser:setAuth} = useAuth()
+  const { user: auth, setUser: setAuth } = useAuth()
   const [loading, setLoading] = useState({});
   const { goals, loading: goalsLoading, updateGoal } = useGoals();
   const [avatarLoading, setAvatarLoading] = useState(false);
@@ -33,17 +35,39 @@ const PersonalCabinetScreen = () => {
   const [tempValues, setTempValues] = useState(auth);
   const navigation = useNavigation();
   const goalValue = goals.find((el) => el.id === Number(auth.goal))?.value
-  const dietValue =  DIET_OPTIONS.find(el=>el.id === Number(auth.diet))?.id ?? '--';
+  const dietValue = DIET_OPTIONS.find(el => el.id === Number(auth.diet))?.id ?? '--';
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  const [measurementsHistory, setMeasurementsHistory] = useState([]);
+  const [measurementsStats, setMeasurementsStats] = useState(null);
 
-  const handleLogout = async ()  => {
+  const fetchMeasurements = async () => {
+    try {
+      const [list, stats] = await Promise.all([getHistory(), getStatistics()]);
+      setMeasurementsHistory(Array.isArray(list) ? list : []);
+      setMeasurementsStats(stats || null);
+    } catch (e) {
+      console.error('Fetch measurements:', e);
+    }
+  };
+
+  useEffect(() => {
+    fetchMeasurements();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchMeasurements();
+    }, [])
+  );
+
+  const handleLogout = async () => {
     try {
       // Здесь должна быть логика выхода из аккаунта
       // Например, вызов API для выхода и очистка состояния
       await AuthService.logout();
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Login' },{ name: 'Register' }],
+        routes: [{ name: 'Login' }, { name: 'Register' }],
       });
       await AsyncStorage.removeItem('user_credentials');
 
@@ -211,7 +235,7 @@ const PersonalCabinetScreen = () => {
     { value: 'female', label: 'Женский' },
   ];
 
-  const dietOptions = DIET_OPTIONS.map((el)=>({
+  const dietOptions = DIET_OPTIONS.map((el) => ({
     value: el.id,
     label: el.title,
   }))
@@ -298,14 +322,18 @@ const PersonalCabinetScreen = () => {
                   value={String(tempValues.weight ?? '')}
                   onChangeText={(value) => handleTempChange('weight', value)}
                   onBlur={() => handleBlur('weight')}
-                  keyboardType="numeric"
+                  keyboardType="decimal-pad"
+                  maxLength={6}
+                  allowDecimals={true}
                 />
                 <ParamInput
                   label="Желаемый вес"
                   value={String(tempValues.targetWeight ?? '')}
                   onChangeText={(value) => handleTempChange('targetWeight', value)}
                   onBlur={() => handleBlur('targetWeight')}
-                  keyboardType="numeric"
+                  keyboardType="decimal-pad"
+                  maxLength={6}
+                  allowDecimals={true}
                 />
                 <ParamInput
                   label="Цель"
@@ -345,6 +373,19 @@ const PersonalCabinetScreen = () => {
               </View>
             </View>
 
+            {/* Measurements stats + add button */}
+            <View style={styles.card}>
+              <MeasurementsStatsWidget items={measurementsHistory} statistics={measurementsStats} />
+              <TouchableOpacity
+                style={styles.addMeasurementsButton}
+                onPress={() => navigation.navigate('AddMeasurementsScreen')}
+                activeOpacity={0.7}>
+                <Typo variant="body2" style={styles.addMeasurementsText}>
+                  Добавить измерения
+                </Typo>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.card}>
               <View style={styles.row}>
                 <ParamInput
@@ -365,7 +406,15 @@ const PersonalCabinetScreen = () => {
                 </View>
               </View>
             )}
-            {/* Кнопка выхода */}
+            <TouchableOpacity
+              style={styles.siteLink}
+              onPress={() => Linking.openURL('http://stroynaya.online')}
+              activeOpacity={0.7}>
+              <Typo variant="body2" style={styles.siteLinkText}>
+                Перейти на сайт stroynaya.online
+              </Typo>
+            </TouchableOpacity>
+
             <Typo
               variant="body2"
               weight="bold"
@@ -377,13 +426,13 @@ const PersonalCabinetScreen = () => {
             <View style={{ height: 80 }} />
           </ScrollView>
         </View>
-        { (
+        {(
           <Modal
             animationType="slide"
             visible={isLogoutModalVisible}
             onBackdropPress={closeLogoutModal}
-            // animationIn="fadeIn"
-            // animationOut="fadeOut"
+          // animationIn="fadeIn"
+          // animationOut="fadeOut"
           >
             <View style={styles.modalContainer}>
               <Typo variant="h3" style={styles.modalTitle}>
@@ -429,6 +478,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xl,
   },
   profileContainer: {
+    zIndex: 9,
     position: 'relative',
     marginBottom: SPACING.sm,
   },
@@ -463,6 +513,26 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  addMeasurementsButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: SPACING.md,
+    marginTop: SPACING.sm,
+  },
+  addMeasurementsText: {
+    color: COLORS.primary.main,
+    textDecorationLine: 'underline',
+  },
+  siteLink: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACING.md,
+    marginTop: SPACING.sm,
+  },
+  siteLinkText: {
+    color: COLORS.primary.main,
+    textDecorationLine: 'underline',
   },
   logoutButton: {
     flexDirection: 'row',
@@ -506,7 +576,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.neutral.medium,
   },
   confirmButton: {
-      backgroundColor: COLORS.primary.dark,
+    backgroundColor: COLORS.primary.dark,
   },
 });
 
