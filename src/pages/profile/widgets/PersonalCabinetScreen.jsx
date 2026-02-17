@@ -155,9 +155,11 @@ const PersonalCabinetScreen = () => {
 
   const handlePickImage = async () => {
     try {
+      console.log('[PersonalCabinet] handlePickImage start');
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permissionResult.granted) {
         Alert.alert('Требуется разрешение', 'Нужно разрешение для доступа к фотографиям');
+        console.log('[PersonalCabinet] media permission denied', permissionResult);
         return;
       }
 
@@ -169,21 +171,48 @@ const PersonalCabinetScreen = () => {
         base64: true,
       });
 
-      if (pickerResult.canceled) return;
+      console.log('[PersonalCabinet] picker result', {
+        canceled: pickerResult.canceled,
+        assetsCount: pickerResult.assets?.length,
+        firstAsset: pickerResult.assets?.[0]
+          ? {
+              uri: pickerResult.assets[0].uri,
+              fileName: pickerResult.assets[0].fileName,
+              type: pickerResult.assets[0].type,
+              mimeType: pickerResult.assets[0].mimeType,
+              base64Length: pickerResult.assets[0].base64?.length,
+            }
+          : null,
+      });
+
+      if (pickerResult.canceled) {
+        console.log('[PersonalCabinet] picker canceled');
+        return;
+      }
 
       setAvatarLoading(true);
       const file = pickerResult.assets[0];
       // Загружаем на сервер
+      console.log('[PersonalCabinet] uploadAvatar call', {
+        uri: file.uri,
+        fileName: file.fileName,
+        type: file.type,
+        mimeType: file.mimeType,
+      });
       await ProfileApi.uploadAvatar(file);
 
       // Обновляем локальное состояние
       if (file.base64) {
         setAvatarBase64(`data:${file.type};base64,${file.base64}`);
+        console.log('[PersonalCabinet] avatar base64 set', {
+          type: file.type,
+          base64Length: file.base64.length,
+        });
       }
 
       showSnackbar('Аватар успешно обновлен', 'success');
     } catch (error) {
-      console.error('Error uploading avatar:', error);
+      console.error('[PersonalCabinet] Error uploading avatar:', error);
       showSnackbar('Ошибка при обновлении аватара', 'error');
     } finally {
       setAvatarLoading(false);

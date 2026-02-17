@@ -59,7 +59,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#c7f5ae"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -70,7 +72,9 @@
       "bundleIdentifier": "com.anonymous.new-fitness-app"
     },
     "android": {
-      "permissions": ["android.permission.READ_EXTERNAL_STORAGE"],
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ],
       "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./src/shared/assets/images/adaptive-logo-1.png",

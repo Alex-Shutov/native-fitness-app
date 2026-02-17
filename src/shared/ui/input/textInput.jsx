@@ -1,8 +1,10 @@
 import React from 'react';
-import { TextInput, ScrollView, StyleSheet, View } from 'react-native';
+import { TextInput, ScrollView, StyleSheet, View, Dimensions, Platform } from 'react-native';
 
 import Theme, { COLORS, SPACING } from '~/core/styles/theme';
-import {Typo}from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
+
+const { height } = Dimensions.get('window');
 
 const ScrollableTextInput = ({
   label,
@@ -18,8 +20,8 @@ const ScrollableTextInput = ({
 
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
-        // style={styles.scrollView}>
-        >
+      // style={styles.scrollView}>
+      >
         {label && (
           <Typo variant="body1" style={styles.label}>
             {label}
@@ -47,7 +49,10 @@ const ScrollableTextInput = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    flex:1
+    flex: 1,
+    ...(Platform.OS === 'web'
+      ? { maxHeight: '60vh' }
+      : { maxHeight: height * 0.6 }),
   },
   label: {
     paddingHorizontal: SPACING.md,
@@ -59,7 +64,6 @@ const styles = StyleSheet.create({
   scrollView: {
     // flexGrow:1,
     flex: 1,
-    // maxHeight: 200, // Adjust as needed
     // minHeight: 200,
     // height: '100%',
     backgroundColor: COLORS.neutral.white,
@@ -68,6 +72,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   scrollViewContent: {
+
     backgroundColor: COLORS.neutral.white,
     borderRadius: Theme.borderRadius.md,
     borderWidth: 1,

@@ -60,7 +60,7 @@ const AddMeasurementsScreen = () => {
     (async () => {
       try {
         const list = await getHistory();
-        const last = list[0];
+        const last = list[list.length - 1];
         if (cancelled) return;
         if (last) {
           setChest(String(last.chestCircumference ?? ''));

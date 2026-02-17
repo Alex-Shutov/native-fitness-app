@@ -60,8 +60,8 @@ const Navigation = () => {
 
   if (isLoading) {
     return (
-      <View style={{ backgroundColor:COLORS.page.background, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator  size="large" />
+      <View style={{ backgroundColor: COLORS.page.background, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
       </View>
     );
   }

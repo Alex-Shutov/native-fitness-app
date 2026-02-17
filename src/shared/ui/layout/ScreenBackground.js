@@ -6,6 +6,7 @@ import { TouchableOpacity, View, StyleSheet, SafeAreaView } from 'react-native';
 import Theme, { COLORS, SPACING } from '~/core/styles/theme';
 import { Typo } from '~/shared/ui/typo';
 import { StatusBar } from 'expo-status-bar';
+import { useSwipeBack } from '~/shared/hooks/useSwipeBack';
 
 const ScreenBackground = ({
   children,
@@ -31,6 +32,12 @@ const ScreenBackground = ({
       navigation.goBack();
     }
   };
+
+  // свайп назад для web/pwa, на native не влияет
+  useSwipeBack({
+    enabled: hasBackButton,
+    onBack: handleBackPress,
+  });
 
   const renderBackButton = () => {
     if (!hasBackButton) return null

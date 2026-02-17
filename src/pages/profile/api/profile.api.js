@@ -1,5 +1,8 @@
 import apiClient from '~/shared/api/client';
 import { mapBackendToAuthState } from '../../auth/lib/auth.mapper';
+import { APP_API_URL } from '~/shared/api/const';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 /**
  * Service for handling user-related API calls
@@ -40,21 +43,63 @@ class ProfileService {
 
   async uploadAvatar(file) {
     try {
-      const formData = new FormData();
-      formData.append('file', {
-        uri: file.uri,
-        type: file.mimeType || 'image/jpeg', // используем mimeType из результата
-        name: file.fileName || `avatar-${Date.now()}.jpg`
-      });
-      const response = await apiClient.post('/api/users/me/avatar', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        transformRequest: () => formData
+      console.log('[profile.api] uploadAvatar start', {
+        platform: Platform.OS,
+        uri: file?.uri,
+        type: file?.mimeType || file?.type,
+        name: file?.fileName,
       });
 
-      return response.data;
+      const formData = new FormData();
+      const fileName = file.fileName || `avatar-${Date.now()}.jpg`;
+      const mimeType = file.mimeType || 'image/jpeg';
+
+      if (Platform.OS === 'web') {
+        // в web нужно получить blob из uri, иначе бэк видит не файл
+        const blob = await fetch(file.uri).then((res) => res.blob());
+        formData.append('file', blob, fileName);
+      } else {
+        formData.append('file', {
+          uri: file.uri,
+          type: mimeType,
+          name: fileName,
+        });
+      }
+
+      const token = await AsyncStorage.getItem('auth_token');
+      console.log('[profile.api] uploadAvatar request', {
+        url: `${APP_API_URL}/api/users/me/avatar`,
+        hasToken: !!token,
+        mimeType,
+        fileName,
+      });
+
+      const response = await fetch(`${APP_API_URL}/api/users/me/avatar`, {
+        method: 'POST',
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+          // content-type не ставим вручную, чтобы boundary проставился корректно
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        console.error('[profile.api] uploadAvatar failed', {
+          status: response.status,
+          text,
+        });
+        throw new Error(`uploadAvatar failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('[profile.api] uploadAvatar success', {
+        status: response.status,
+        responseKeys: data ? Object.keys(data) : null,
+      });
+      return data;
     } catch (error) {
+      console.error('[profile.api] uploadAvatar error', error);
       this._handleError(error);
       throw error;
     }

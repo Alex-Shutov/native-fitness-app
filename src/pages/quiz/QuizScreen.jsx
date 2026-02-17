@@ -8,6 +8,7 @@ import {
   Image,
   BackHandler,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
@@ -20,6 +21,7 @@ import ScreenTransition from '../../shared/ui/layout/ScreenTransition';
 import RadioButtonGroup from '../../shared/ui/radio';
 import { Typo } from '../../shared/ui/typo';
 import InfoModal from '../../widgets/modal/InfoModal';
+import { useSwipeBack } from '~/shared/hooks/useSwipeBack';
 import { authState } from '../auth/models/auth.atom';
 
 const QuizScreen = ({ route }) => {
@@ -36,6 +38,8 @@ const QuizScreen = ({ route }) => {
   const [rightAnswer, setRightAnswer] = useState(null);
   const [auth, _] = useRecoilState(authState);
   const [noQuestionsModalVisible, setNoQuestionsModalVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+
   const handleBackPress = useCallback(() => {
     setShowExitConfirm(true);
     return true; // Предотвращаем действие по умолчанию
@@ -43,6 +47,7 @@ const QuizScreen = ({ route }) => {
 
   useFocusEffect(
     useCallback(() => {
+      setIsFocused(true);
       const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
       // Добавляем слушатель для жеста свайпа назад
@@ -53,11 +58,19 @@ const QuizScreen = ({ route }) => {
       });
 
       return () => {
+        setIsFocused(false);
         backHandler.remove();
         unsubscribe();
       };
     }, [handleBackPress, navigation])
   );
+
+  // свайп назад на web/pwa должен вести себя так же, как системная «назад»
+  // активируем только когда экран в фокусе, чтобы избежать конфликтов с другими экранами
+  useSwipeBack({
+    enabled: isFocused,
+    onBack: handleBackPress,
+  });
 
   useEffect(() => {
     if (quizLoadable.state === 'hasValue') {

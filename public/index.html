@@ -10,16 +10,16 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="СтройнаЯ" />
     <style id="expo-reset">
-      /* These styles make the body full-height */
+      /* делаем тело и корневой элемент на всю высоту */
       html,
       body {
         height: 100%;
       }
-      /* These styles disable body scrolling if you are using <ScrollView> */
+      /* включаем обычный скролл страницы в web/pwa */
       body {
-        overflow: hidden;
+        overflow: auto;
       }
-      /* These styles make the root element full-height */
+      /* корневой элемент также тянется на всю высоту */
       #root {
         display: flex;
         height: 100%;

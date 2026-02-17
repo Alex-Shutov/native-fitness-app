@@ -13,7 +13,7 @@ import Container from '~/shared/ui/layout/Container';
 import LoadingOrError from '~/shared/ui/layout/LoadingOrError';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
-import {Typo}from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
 
 const SelectGoalsScreen = () => {
   const navigation = useNavigation();
@@ -37,7 +37,7 @@ const SelectGoalsScreen = () => {
       setOnboarding((prev) => ({
         ...prev,
         currentStep: prev.currentStep + 1,
-        primaryGoal: goals.find(el=>el.id === selectedGoals[0]),
+        primaryGoal: goals.find(el => el.id === selectedGoals[0]),
 
       }));
       navigation.navigate('DescribeGoalScreen');

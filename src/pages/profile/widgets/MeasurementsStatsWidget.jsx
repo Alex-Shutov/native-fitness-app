@@ -9,6 +9,8 @@ const chestVal = (m) => m?.chest ?? m?.chestCircumference ?? 0;
 const waistVal = (m) => m?.waist ?? m?.waistCircumference ?? 0;
 const hipsVal = (m) => m?.hips ?? m?.hipCircumference ?? 0;
 
+const dateKey = (m) => m?.measurementDate ?? m?.createdAt ?? m?.date ?? '';
+
 const formatLabel = (dateStr) => {
   if (!dateStr) return '';
   const d = new Date(dateStr);
@@ -39,15 +41,24 @@ const chartConfig = {
 
 const MeasurementsStatsWidget = ({ items, statistics }) => {
   const list = items ?? [];
-  const last = list[0];
+  const last = list[list.length - 1];
   const hasData = list.length > 0;
   const [selectedPointIndex, setSelectedPointIndex] = useState(null);
 
-  const forChart = useMemo(() => list.slice(0, 10).reverse(), [list]);
+  const forChart = useMemo(() => {
+    if (!list.length) return [];
+
+    // сортируем по дате по возрастанию и берём последние 10,
+    // чтобы новые замеры добавлялись в конец графика, а не в начало
+    const sorted = [...list].sort(
+      (a, b) => new Date(dateKey(a)).getTime() - new Date(dateKey(b)).getTime()
+    );
+
+    return sorted.slice(-10);
+  }, [list]);
 
   const chartData = useMemo(() => {
     if (forChart.length === 0) return null;
-    const dateKey = (m) => m?.measurementDate ?? m?.createdAt ?? m?.date ?? '';
     return {
       labels: forChart.map((m) => formatLabel(dateKey(m)) || '—'),
       datasets: [
@@ -60,7 +71,6 @@ const MeasurementsStatsWidget = ({ items, statistics }) => {
 
   const selectedPoint =
     selectedPointIndex != null && forChart[selectedPointIndex] != null ? forChart[selectedPointIndex] : null;
-  const dateKey = (m) => m?.measurementDate ?? m?.createdAt ?? m?.date ?? '';
 
   const chartWidth = Math.max(Dimensions.get('window').width - SPACING.md * 4 - 48, 260);
   const chartHeight = 180;

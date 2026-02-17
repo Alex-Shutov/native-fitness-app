@@ -324,7 +324,7 @@ const PersonalInfoScreen = () => {
           </View>
 
           {/* Вторая страница - Желаемый вес и параметры */}
-          <View style={[styles.page]}>
+          <View style={styles.addInfoView}>
             {/*<View style={styles.headerContainer}>*/}
             {/*  <Typo variant="body0" style={styles.subHeader}>*/}
             {/*    Параметры*/}
@@ -663,13 +663,13 @@ const styles = StyleSheet.create({
     borderTopColor: COLORS.neutral.light,
   },
   parametersInputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    gap: SPACING.sm,
     marginTop: SPACING.md,
   },
   parameterInputWrapper: {
-    flex: 1,
-    marginHorizontal: SPACING.xs,
+    width: '100%',
+    marginHorizontal: 0,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -705,6 +705,9 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  addInfoView: {
+    paddingHorizontal: 16
+  }
 });
 
 export default PersonalInfoScreen;

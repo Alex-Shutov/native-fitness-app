@@ -15,7 +15,7 @@ const GamesList = ({ navigation, points }) => {
   // Mock image for 2048 game card
   const game2048Image = require('~/shared/assets/images/game2048.png');
   const viktorinaImage = require('~/shared/assets/images/viktorina.jpg');
-  const [visible,setVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const handleNavigateToGame = () => {
     navigation.navigate('Game2048');
@@ -26,11 +26,11 @@ const GamesList = ({ navigation, points }) => {
   };
 
   const handleOpen = () => {
-    setTimeout(()=>setVisible(true),50);
+    setTimeout(() => setVisible(true), 50);
   };
 
   const handleClose = () => {
-    setTimeout(()=>setVisible(false),50);
+    setTimeout(() => setVisible(false), 50);
 
   };
 
@@ -84,12 +84,12 @@ const GamesList = ({ navigation, points }) => {
               transformY={-50}
               transformX={-120}
               title={
-              <View style={{display: 'flex', flexDirection: 'row'}}>
-                <Typo variant={'h4'}>Викторина</Typo>
-                <MaterialIcons style={{alignSelf:'start'}} name="star-border" size={20} color={COLORS.neutral.dark} />
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <Typo variant={'h4'}>Викторина</Typo>
+                  <MaterialIcons style={{ alignSelf: 'start', top: -4 }} name="star-border" size={20} color={COLORS.neutral.dark} />
 
-              </View>
-            }
+                </View>
+              }
               subtitle="Получайте баллы за ответы"
               image={viktorinaImage}
               onPress={handleStartQuiz}
@@ -118,7 +118,7 @@ const GamesList = ({ navigation, points }) => {
             {' '}Баллы можно получить в играх помеченных Звездочкой
             <MaterialIcons name="star-border" size={18} color={COLORS.neutral.dark} />
           </Typo>
-       }
+        }
         visible={visible}
         onClose={handleClose}
         title="Зачем мне игры?"
