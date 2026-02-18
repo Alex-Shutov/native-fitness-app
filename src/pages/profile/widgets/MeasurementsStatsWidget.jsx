@@ -9,7 +9,7 @@ const chestVal = (m) => m?.chest ?? m?.chestCircumference ?? 0;
 const waistVal = (m) => m?.waist ?? m?.waistCircumference ?? 0;
 const hipsVal = (m) => m?.hips ?? m?.hipCircumference ?? 0;
 
-const dateKey = (m) => m?.measurementDate ?? m?.createdAt ?? m?.date ?? '';
+const dateKey = (m) => m?.createdAt ?? m?.date ?? '';
 
 const formatLabel = (dateStr) => {
   if (!dateStr) return '';
@@ -41,7 +41,7 @@ const chartConfig = {
 
 const MeasurementsStatsWidget = ({ items, statistics }) => {
   const list = items ?? [];
-  const last = list[list.length - 1];
+  const last = list[0];
   const hasData = list.length > 0;
   const [selectedPointIndex, setSelectedPointIndex] = useState(null);
 
