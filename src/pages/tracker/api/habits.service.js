@@ -38,6 +38,18 @@ const HabitsService = {
     );
     return data;
   },
+
+  async updateHabitName(habitId, userId, name) {
+    const { data } = await apiClient.put(
+      `/api/habits/${habitId}/user/${userId}`,
+      { name: String(name).trim() }
+    );
+    return data;
+  },
+
+  async deleteHabit(habitId, userId) {
+    await apiClient.delete(`/api/habits/${habitId}/user/${userId}`);
+  },
 };
 
 export default HabitsService;

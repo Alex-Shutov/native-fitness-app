@@ -5,6 +5,7 @@ import { View, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity 
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
 import AddTrackModal from './AddTrackModal';
+import EditTrackModal from './EditTrackModal';
 import TrackItem from './TrackItem';
 import ScreenBackground from '../../../shared/ui/layout/ScreenBackground';
 import ScreenTransition from '../../../shared/ui/layout/ScreenTransition';
@@ -35,6 +36,8 @@ const TrackerScreen = () => {
   const [habits, setHabits] = useState([]);
   const [visible, setVisible] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingHabit, setEditingHabit] = useState(null);
   const [statsVisible, setStatsVisible] = useState(false);
   const [stats, setStats] = useState(null);
 
@@ -97,9 +100,9 @@ const TrackerScreen = () => {
     const items = [...tracks];
     if (tracks.length > 0 && habits.length > 0) {
       items.push({ id: 'divider', isDivider: true });
-      items.push(...habits);
+      items.push(...habits.map((habit) => ({ ...habit, type: 'habit' })));
     } else if (habits.length > 0) {
-      items.push(...habits);
+      items.push(...habits.map((habit) => ({ ...habit, type: 'habit' })));
     }
     return items;
   }, [tracks, habits]);
@@ -169,6 +172,39 @@ const TrackerScreen = () => {
       setTracker((prev) => ({ ...prev, error }));
     }
   };
+
+  const handleOpenEditHabit = (habit) => {
+    if (!habit) return;
+    setEditingHabit(habit);
+    setEditModalVisible(true);
+  };
+
+  const handleCloseEditHabit = () => {
+    setEditModalVisible(false);
+    setEditingHabit(null);
+  };
+
+  const handleSaveHabit = async (name) => {
+    if (!userId || !editingHabit) return;
+    try {
+      await HabitsService.updateHabitName(editingHabit.habitId, userId, name);
+      await fetchHabits();
+      handleCloseEditHabit();
+    } catch (error) {
+      console.error('Error updating habit name:', error);
+    }
+  };
+
+  const handleDeleteHabit = async () => {
+    if (!userId || !editingHabit) return;
+    try {
+      await HabitsService.deleteHabit(editingHabit.habitId, userId);
+      await fetchHabits();
+      handleCloseEditHabit();
+    } catch (error) {
+      console.error('Error deleting habit:', error);
+    }
+  };
   const renderItem = ({ item }) => {
     if (item.isDivider) {
       return <View style={styles.divider} />;
@@ -177,7 +213,7 @@ const TrackerScreen = () => {
       <TrackItem
         track={item}
         onStatusChange={handleTrackStatusChange}
-        onPress={() => {}}
+        onPress={item.type === 'habit' || item.isHabit ? () => handleOpenEditHabit(item) : undefined}
         weekdays={weekdays}
       />
     );
@@ -290,6 +326,13 @@ const TrackerScreen = () => {
             visible={addModalVisible}
             onClose={() => setAddModalVisible(false)}
             onAddTrack={handleAddTrack}
+          />
+          <EditTrackModal
+            visible={editModalVisible}
+            onClose={handleCloseEditHabit}
+            habit={editingHabit}
+            onSave={handleSaveHabit}
+            onDelete={handleDeleteHabit}
           />
         </View>
       </ScreenBackground>

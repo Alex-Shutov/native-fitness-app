@@ -6,24 +6,28 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
-  Platform, ActivityIndicator, Keyboard, ScrollView,
+  Platform,
+  ActivityIndicator,
+  Keyboard,
+  ScrollView,
 } from 'react-native';
 
 import { COLORS, SPACING, BORDER_RADIUS } from '~/core/styles/theme';
-import { createTrack, getStartOfWeek } from '~/pages/tracker/lib/utils';
-import WeekdaysSelector from '~/pages/tracker/widgets/WeekdaysSelector';
 import Button from '~/shared/ui/button';
 import CrossIcon from '~/shared/ui/icons/CrossIcon';
 import Input from '~/shared/ui/input/input';
 import { Typo } from '~/shared/ui/typo';
 
-const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
+const EditTrackModal = ({ visible, onClose, habit, onSave, onDelete }) => {
   const [trackName, setTrackName] = useState('');
-  const [selectedDays, setSelectedDays] = useState([0, 0, 0, 0, 0]);
   const [nameError, setNameError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const startDate = getStartOfWeek();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    setTrackName(habit?.title || '');
+    setNameError(null);
+  }, [habit, visible]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -41,12 +45,6 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
     };
   }, []);
 
-  const handleDayToggle = (dayIndex, status) => {
-    const newSelectedDays = [...selectedDays];
-    newSelectedDays[dayIndex] = status;
-    setSelectedDays(newSelectedDays);
-  };
-
   const validateInput = () => {
     if (!trackName.trim()) {
       setNameError('Введите название трека');
@@ -56,55 +54,61 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
     return true;
   };
 
-  const handleAddTrack = async () => {
+  const handleSave = async () => {
     if (!validateInput()) return;
-
+    if (!onSave) return;
     setIsLoading(true);
     try {
-      await onAddTrack({
-        title: trackName,
-        completionStatus: selectedDays,
-      });
-
-      // Сбрасываем форму только если успешно
-      setTrackName('');
-      setSelectedDays([0, 0, 0, 0, 0]);
-      onClose();
+      await onSave(trackName.trim());
     } catch (error) {
-      console.error('Error adding track:', error);
+      console.error('Error saving habit:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    setIsLoading(true);
+    try {
+      await onDelete();
+    } catch (error) {
+      console.error('Error deleting habit:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    setTrackName('');
-    setSelectedDays([0, 0, 0, 0, 0]);
     setNameError(null);
-    onClose();
+    onClose?.();
   };
 
-
-
-
   return (
-    <Modal statusBarTranslucent={true} visible={visible} transparent animationType="slide" onRequestClose={handleCancel}>
+    <Modal
+      statusBarTranslucent={true}
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={handleCancel}>
       <TouchableWithoutFeedback onPress={handleCancel}>
         <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback onPress={() => { }}>
+          <TouchableWithoutFeedback onPress={() => {}}>
             <KeyboardAvoidingView
               behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
               style={styles.modalContainer}
               keyboardVerticalOffset={Platform.select({
                 ios: 60,
-                android: 0
+                android: 0,
               })}
-              enabled={keyboardVisible}
-            >
-              <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={'handled'} style={styles.modalContent}>
+              enabled={keyboardVisible}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+                style={styles.modalContent}>
                 <View style={styles.header}>
                   <Typo variant="body0" weight="medium">
-                    Новая привычка
+                    Редактирование привычки
                   </Typo>
                   <TouchableOpacity onPress={handleCancel}>
                     <CrossIcon size={24} />
@@ -119,24 +123,21 @@ const AddTrackModal = ({ visible, onClose, onAddTrack }) => {
                     error={nameError}
                     style={styles.input}
                   />
-
-                  {/* <View style={styles.selectorContainer}>
-                    <Typo variant="bodyBolder" style={styles.selectorLabel}>
-                      Выберите дни
-                    </Typo>
-                    <WeekdaysSelector
-                      selectedDays={selectedDays}
-                      onDayToggle={handleDayToggle}
-                      startDate={startDate}
-                    />
-                  </View> */}
                 </View>
 
                 <View style={[styles.actions, isLoading && styles.addBackground]}>
                   {isLoading ? (
                     <ActivityIndicator size="small" color={COLORS.primary.main} />
                   ) : (
-                    <Button title="Добавить" onPress={handleAddTrack} style={styles.addButton} />
+                    <>
+                      <Button
+                        title="Удалить"
+                        onPress={handleDelete}
+                        style={styles.deleteButton}
+                        variant="secondary"
+                      />
+                      <Button title="Сохранить" onPress={handleSave} style={styles.saveButton} />
+                    </>
                   )}
                 </View>
               </ScrollView>
@@ -176,28 +177,23 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: SPACING.md,
   },
-  selectorContainer: {
-    marginTop: SPACING.md,
-  },
-  selectorLabel: {
-    textAlign: 'left',
-  },
   actions: {
     paddingBottom: SPACING.xl,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  cancelButton: {
+  addBackground: {
+    backgroundColor: COLORS.page?.background || COLORS.neutral.offWhite,
+  },
+  deleteButton: {
     flex: 1,
     marginRight: SPACING.sm,
   },
-  addBackground: {
-    backgroundColor: COLORS.page.background,
-  },
-  addButton: {
+  saveButton: {
     flex: 1,
     marginLeft: SPACING.sm,
   },
 });
 
-export default AddTrackModal;
+export default EditTrackModal;
+
