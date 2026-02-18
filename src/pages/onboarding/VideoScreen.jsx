@@ -4,13 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Video from 'react-native-video';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Typo } from '~/shared/ui/typo/typo';
+import { APP_API_URL } from '~/shared/api/const'
 
 const VIDEO_STORAGE_KEY = '@has_watched_intro_video';
 const isWeb = Platform.OS === 'web';
 
-const videoAsset = require('../../shared/assets/images/onboarding-video.mp4');
-// на вебе Image.resolveAssetSource нет (react-native-web), видео отдаём из public/onboarding-video.mp4
-const videoSource = isWeb ? { uri: '/onboarding-video.mp4' } : videoAsset;
+const VIDEO_URL = `${APP_API_URL}/uploads/onboarding-video.mp4`;
+const videoSource = { uri: VIDEO_URL };
 
 const VideoScreen = ({ navigation, skippable = true, onComplete }) => {
   const videoRef = useRef(null);
@@ -61,19 +61,13 @@ const VideoScreen = ({ navigation, skippable = true, onComplete }) => {
         ref={videoRef}
         style={styles.video}
         resizeMode="cover"
+        controls
         paused={paused}
         onEnd={handleVideoEnd}
         repeat={false}
       />
 
-      {isWeb && !webStarted && (
-        <TouchableOpacity
-          style={styles.playOverlay}
-          onPress={startPlayback}
-          activeOpacity={1}>
-          <Typo style={styles.playOverlayText}>Нажмите, чтобы смотреть</Typo>
-        </TouchableOpacity>
-      )}
+
 
       {skippable && (
         <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
@@ -98,7 +92,7 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 28,
     right: 20,
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,

@@ -43,13 +43,6 @@ class ProfileService {
 
   async uploadAvatar(file) {
     try {
-      console.log('[profile.api] uploadAvatar start', {
-        platform: Platform.OS,
-        uri: file?.uri,
-        type: file?.mimeType || file?.type,
-        name: file?.fileName,
-      });
-
       const formData = new FormData();
       const fileName = file.fileName || `avatar-${Date.now()}.jpg`;
       const mimeType = file.mimeType || 'image/jpeg';
@@ -67,12 +60,6 @@ class ProfileService {
       }
 
       const token = await AsyncStorage.getItem('auth_token');
-      console.log('[profile.api] uploadAvatar request', {
-        url: `${APP_API_URL}/api/users/me/avatar`,
-        hasToken: !!token,
-        mimeType,
-        fileName,
-      });
 
       const response = await fetch(`${APP_API_URL}/api/users/me/avatar`, {
         method: 'POST',
@@ -85,21 +72,13 @@ class ProfileService {
 
       if (!response.ok) {
         const text = await response.text().catch(() => '');
-        console.error('[profile.api] uploadAvatar failed', {
-          status: response.status,
-          text,
-        });
+        console.error('uploadAvatar failed', response.status, text);
         throw new Error(`uploadAvatar failed with status ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('[profile.api] uploadAvatar success', {
-        status: response.status,
-        responseKeys: data ? Object.keys(data) : null,
-      });
       return data;
     } catch (error) {
-      console.error('[profile.api] uploadAvatar error', error);
       this._handleError(error);
       throw error;
     }
