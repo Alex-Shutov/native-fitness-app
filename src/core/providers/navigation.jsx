@@ -9,6 +9,7 @@ import RegisterScreen from '~/pages/auth/RegisterScreen';
 import RecipeScreen from '~/pages/nutritions/widgets/RecipeScreen';
 import DescribeGoalScreen from '~/pages/onboarding/DescribeGoalScreen';
 import DietSelectionScreen from '~/pages/onboarding/DietScreen';
+import MonthlyGoalReviewScreen from '~/pages/onboarding/MonthlyGoalReviewScreen';
 import SelectGoalsScreen from '~/pages/onboarding/SelectGoalsScreen';
 import StartScreen from '~/pages/welcome/StartScreen';
 import { customTransition } from '~/shared/lib/animations/transitions';
@@ -24,6 +25,27 @@ import useAuth from '../../pages/auth/lib/useAuth';
 import { COLORS } from '../styles/theme';
 
 const Stack = createStackNavigator();
+const MONTHLY_REVIEW_DONE_KEY = 'monthly_goal_review_completed_month';
+const FORCE_MONTHLY_REVIEW_FOR_TEST = false;
+const MONTHLY_REVIEW_START_DATE = new Date(2026, 3, 1); // 1 April 2026
+
+const getCurrentMonthKey = () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  return `${now.getFullYear()}-${month}`;
+};
+
+const hasFirstDayOfMonthPassed = (date = new Date()) => {
+  return date.getDate() >= 1;
+};
+
+const isMonthlyReviewFeatureStarted = (date = new Date()) => {
+  const current = new Date(date);
+  current.setHours(0, 0, 0, 0);
+  const startDate = new Date(MONTHLY_REVIEW_START_DATE);
+  startDate.setHours(0, 0, 0, 0);
+  return current >= startDate;
+};
 
 const Navigation = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +61,17 @@ const Navigation = () => {
 
         if (token) {
           const isAuthenticated = await checkAuth();
-          setInitialRoute(isAuthenticated ? 'MainScreen' : 'Login');
+          if (isAuthenticated) {
+            const completedMonth = await AsyncStorage.getItem(MONTHLY_REVIEW_DONE_KEY);
+            const currentMonth = getCurrentMonthKey();
+            const shouldShowMonthlyReview = FORCE_MONTHLY_REVIEW_FOR_TEST
+              || (isMonthlyReviewFeatureStarted()
+                && hasFirstDayOfMonthPassed()
+                && completedMonth !== currentMonth);
+            setInitialRoute(shouldShowMonthlyReview ? 'MonthlyGoalReviewScreen' : 'MainScreen');
+          } else {
+            setInitialRoute('Login');
+          }
         } else if (isRegistered === 'true') {
           // Если нет токена, но пользователь уже регистрировался
           setInitialRoute('Login');
@@ -80,6 +112,7 @@ const Navigation = () => {
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="SelectGoals" component={SelectGoalsScreen} />
+      <Stack.Screen name="MonthlyGoalReviewScreen" component={MonthlyGoalReviewScreen} />
       <Stack.Screen name="SelectPrimaryGoal" component={SelectPrimaryGoalScreen} />
       <Stack.Screen name="DescribeGoalScreen" component={DescribeGoalScreen} />
       <Stack.Screen name="OnBoardProgressScreen" component={OnBoardProgressScreen} />

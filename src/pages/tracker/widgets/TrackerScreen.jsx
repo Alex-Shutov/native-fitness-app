@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Sentry from '@sentry/react-native';
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableWithoutFeedback, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useRecoilState, useRecoilValueLoadable } from 'recoil';
 
 import AddTrackModal from './AddTrackModal';
@@ -28,6 +28,15 @@ import { Typo } from '~/shared/ui/typo';
 
 
 const TrackerScreen = () => {
+  const { width, fontScale } = useWindowDimensions();
+  const isTabletLayout = width >= 768;
+  const isLowerLayout = width <= 415;
+  const isCompactLayout = width <= 380 || fontScale > 1.15;
+  const isVeryCompactLayout = width <= 340 || fontScale > 1.3;
+  const isUltraCompactLayout = width <= 320 || fontScale > 1.45;
+  const dayButtonSize = isTabletLayout ? 24 : isUltraCompactLayout ? 16 : isVeryCompactLayout ? 18 : isCompactLayout ? 22 : 24;
+  const dayButtonSpacing = isTabletLayout ? 4 : isUltraCompactLayout ? 1 : isVeryCompactLayout ? 2 : isCompactLayout ? 3 : isLowerLayout ? 3 : 4;
+  const dayCellWidth = dayButtonSize + dayButtonSpacing * 2.1;
   const auth = useRecoilValue(authState);
   const userId = auth?.user?.id;
   const [tracker, setTracker] = useRecoilState(trackerState);
@@ -94,6 +103,8 @@ const TrackerScreen = () => {
   }, [trackerLoadable]);
   const weekdays = getCurrentWeekdays();
   const currentDayIndex = getCurrentWeekdayIndex();
+  const dayLabelsRowWidth = weekdays.length * dayCellWidth;
+  const contentMaxWidth = isTabletLayout ? 960 : undefined;
   const { tracks } = useMemo(() => tracker, [trackerLoadable, tracker]);
 
   const listData = useMemo(() => {
@@ -230,7 +241,7 @@ const TrackerScreen = () => {
   const renderDayLabels = () => {
     return (
       <View style={styles.dayLabelRow}>
-        <View style={{ flexGrow: 3, alignSelf: 'center', marginLeft: 6 }}>
+        <View style={{ flexGrow: 1, alignSelf: 'center', marginLeft: 6 }}>
           <TouchableWithoutFeedback onPress={handleOpenStats}>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 4 }}>
               <MaterialIcons name="star-border" size={28} color={COLORS.neutral.dark} />
@@ -239,21 +250,23 @@ const TrackerScreen = () => {
           </TouchableWithoutFeedback>
         </View>
 
-        {weekdays.map((day, index) => {
-          const isFuture = isFutureDay(index, currentDayIndex);
-          return (
-            <View key={index} style={styles.dayLabelItem}>
-              <Typo
-                variant="caption"
-                style={[styles.dayLabelText, isFuture && styles.futureDayLabelText]}>
-                {day.label}
-              </Typo>
-              <Typo variant="body2" weight="medium" style={[isFuture && styles.futureDayText]}>
-                {day.day}
-              </Typo>
-            </View>
-          );
-        })}
+        <View style={[styles.dayLabelDaysRow, { width: dayLabelsRowWidth }]}>
+          {weekdays.map((day, index) => {
+            const isFuture = isFutureDay(index, currentDayIndex);
+            return (
+              <View key={index} style={[styles.dayLabelItem, { width: dayCellWidth }]}>
+                <Typo
+                  variant="caption"
+                  style={[styles.dayLabelText, isFuture && styles.futureDayLabelText]}>
+                  {day.label}
+                </Typo>
+                <Typo variant="body2" weight="medium" style={[isFuture && styles.futureDayText]}>
+                  {day.day}
+                </Typo>
+              </View>
+            );
+          })}
+        </View>
       </View>
     );
   };
@@ -283,13 +296,15 @@ const TrackerScreen = () => {
         }
         hasBackButton={false}
         contentStyle={styles.contentContainer}>
-        {renderDayLabels()}
+        <View style={[styles.adaptiveContent, isTabletLayout && { maxWidth: contentMaxWidth }]}>
+          {renderDayLabels()}
+        </View>
 
         <FlatList
           data={listData}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
+          contentContainerStyle={[styles.listContainer, styles.adaptiveContent, isTabletLayout && { maxWidth: contentMaxWidth }]}
           ListEmptyComponent={tracks.length === 0 && habits.length === 0 ? renderEmptyState : null}
           showsVerticalScrollIndicator={false}
         />
@@ -377,6 +392,10 @@ const styles = StyleSheet.create({
     zIndex: 1,
     flexGrow: 1,
   },
+  adaptiveContent: {
+    width: '100%',
+    alignSelf: 'center',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -397,8 +416,11 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.sm,
   },
   dayLabelItem: {
-    width: `${9.3}%`,
     alignItems: 'center',
+  },
+  dayLabelDaysRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   futureDayText: {
     color: COLORS.neutral.medium,

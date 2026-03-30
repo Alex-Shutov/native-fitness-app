@@ -42,8 +42,10 @@ const SectionContainer = ({ label, children, onOpen }) => (
   </View>
 );
 
-const AddMeasurementsScreen = () => {
+const AddMeasurementsScreen = ({ route }) => {
   const navigation = useNavigation();
+  const dynamicTitle = route?.params?.title || 'Добавить измерения';
+
   const [auth, setAuth] = useRecoilState(authState);
   const { showSnackbar } = useSnackbar();
   const [chest, setChest] = useState('');
@@ -102,7 +104,7 @@ const AddMeasurementsScreen = () => {
       });
       setAuth((prev) => ({ ...prev, ...updated }));
       showSnackbar('Измерения сохранены', 'success');
-      navigation.goBack();
+      navigation.navigate('MainScreen');
     } catch (e) {
       console.error('Update measurements:', e);
       showSnackbar('Ошибка сохранения', 'error');
@@ -126,7 +128,7 @@ const AddMeasurementsScreen = () => {
   return (
     <ScreenTransition>
       <ScreenBackground
-        title="Добавить измерения"
+        title={dynamicTitle}
         hasBackButton
         onBackPress={() => navigation.goBack()}
         titleStyle={styles.titleStyle}

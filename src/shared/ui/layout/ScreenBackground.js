@@ -40,7 +40,7 @@ const ScreenBackground = ({
   });
 
   const renderBackButton = () => {
-    if (!hasBackButton) return null
+    if (!hasBackButton) return <></>
     if (backIcon === 'close') {
       return (
         <TouchableOpacity
@@ -107,6 +107,7 @@ const ScreenBackground = ({
             </View>
           </View>
         )}
+        {!showHeader && <View style={{ height: 16 }} />}
 
         <View style={[styles.contentContainer, contentStyle]}>{children}</View>
       </SafeAreaView>

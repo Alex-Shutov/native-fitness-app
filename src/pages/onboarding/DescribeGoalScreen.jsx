@@ -11,16 +11,31 @@ import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import {Typo}from '~/shared/ui/typo';
 import Container from '../../shared/ui/layout/Container';
+import ProfileApi from '../profile/api/profile.api';
+import { authState } from '../auth/models/auth.atom';
 
 const DescribeGoalScreen = ({ route }) => {
   const navigation = useNavigation();
   const [onboarding, setOnboarding] = useRecoilState(onboardingState);
+  const [, setAuth] = useRecoilState(authState);
   const [description, setDescription] = useState('');
-  const { goalId, goalValue, fromProfile } = route.params || {};
-  const primaryGoal = fromProfile ? { id: goalId, value: goalValue } : onboarding.primaryGoal;
+  const { goalId, goalValue, fromProfile, fromMonthlyReview } = route.params || {};
+  const primaryGoal = (fromProfile || fromMonthlyReview) ? { id: goalId, value: goalValue } : onboarding.primaryGoal;
 
-  const handleContinue = () => {
-    if (fromProfile) {
+  const handleContinue = async () => {
+    if (fromMonthlyReview) {
+      try {
+        const updated = await ProfileApi.updateProfile({
+          goalDescription: description.trim(),
+        });
+        setAuth((prev) => ({ ...prev, ...updated }));
+      } catch (error) {
+        console.error('Failed to update goal description:', error);
+      }
+      navigation.navigate('AddMeasurementsScreen', {
+        title: 'Обновить измерения',
+      });
+    } else if (fromProfile) {
       // Если пришли из профиля, сразу переходим к экрану прогресса
       navigation.navigate('OnBoardProgressScreen', {
         goalId,
