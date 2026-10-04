@@ -13,6 +13,7 @@ import { Typo } from '~/shared/ui/typo';
 import GoalsGrid from '~/pages/onboarding/widgets/GoalsGrid';
 import useAuth from '~/pages/auth/lib/useAuth';
 import ProfileApi from '~/pages/profile/api/profile.api';
+import ConfirmModal from '~/widgets/modal/ConfirmModal';
 
 const MONTHLY_REVIEW_DONE_KEY = 'monthly_goal_review_completed_month';
 
@@ -28,10 +29,7 @@ const MonthlyGoalReviewScreen = () => {
   const { user, setUser } = useAuth();
   const [selectedGoals, setSelectedGoals] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-
-  const selectedGoal = null
-
-
+  const [showChangeGoalModal, setShowChangeGoalModal] = useState(true);
 
   useEffect(() => {
     if (goals.length > 0) {
@@ -40,6 +38,24 @@ const MonthlyGoalReviewScreen = () => {
   }, [goals, user]);
 
 
+
+  const handleGoalUnchanged = async () => {
+    try {
+      await AsyncStorage.setItem(MONTHLY_REVIEW_DONE_KEY, getCurrentMonthKey());
+    } catch (e) {
+      console.error('Failed to mark monthly review as completed:', e);
+    }
+    setShowChangeGoalModal(false);
+    navigation.replace('OnBoardProgressScreen', {
+      goalId: Number(user?.goal),
+      goalDescription: user?.goalDescription,
+      fromProfile: true,
+    });
+  };
+
+  const handleGoalChanged = () => {
+    setShowChangeGoalModal(false);
+  };
 
   const handleContinue = async () => {
     const selectedGoal = goals.find((goal) => goal.id == selectedGoals[0])
@@ -62,7 +78,17 @@ const MonthlyGoalReviewScreen = () => {
   };
 
   return (
-    <LoadingOrError loading={loading} error={error}>
+    <>
+      <ConfirmModal
+        visible={showChangeGoalModal}
+        title="Изменить цель?"
+        text="Ваша цель изменилась за этот месяц?"
+        confirmText="Да"
+        cancelText="Нет"
+        onConfirm={handleGoalChanged}
+        onCancel={handleGoalUnchanged}
+      />
+      <LoadingOrError loading={loading} error={error}>
       <ScreenTransition>
         <ScreenBackground showHeader={false} hasBackButton={false}>
           <View style={styles.container}>
@@ -95,7 +121,8 @@ const MonthlyGoalReviewScreen = () => {
           </View>
         </ScreenBackground>
       </ScreenTransition>
-    </LoadingOrError>
+      </LoadingOrError>
+    </>
   );
 };
 

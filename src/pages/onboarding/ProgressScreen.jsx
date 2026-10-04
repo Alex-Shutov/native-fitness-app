@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, TouchableWithoutFeedback } from 'react-native';
 import { useRecoilState } from 'recoil';
 
@@ -9,8 +9,9 @@ import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import Button from '~/shared/ui/button';
 import ProgressBar from '~/pages/onboarding/widgets/ProgressBar';
-import {Typo}from '~/shared/ui/typo';
+import { Typo } from '~/shared/ui/typo';
 import ProfileApi from '../profile/api/profile.api';
+import ProgressService from '../progress/api/progress.service';
 import InfoModal from '../../widgets/modal/InfoModal';
 import { authState } from '../auth/models/auth.atom';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -20,19 +21,39 @@ import { MaterialIcons } from '@expo/vector-icons';
 const OnBoardProgressScreen = ({ route }) => {
   const navigation = useNavigation();
   const [onboarding, setOnboarding] = useRecoilState(onboardingState);
-  const [auth,setAuth] = useRecoilState(authState);
+  const [auth, setAuth] = useRecoilState(authState);
   const [progress, setProgress] = useState(onboarding.currentProgress || 5); // по дефолту на середине
   const [loading, setLoading] = useState(false);
   const { goalId, goalDescription, fromProfile } = route.params || {};
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [visible, setVisible] = useState(false);
 
+  useEffect(() => {
+    if (!fromProfile) return;
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await ProgressService.getProgressData();
+        console.log('data', data);
+        const value = Math.round(Number(data?.goalProgress));
+        if (mounted && Number.isFinite(value)) {
+          setProgress(value <= 0 ? 1 : value);
+        }
+      } catch (e) {
+        console.error('Failed to load current progress:', e);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [fromProfile]);
+
   const handleOpen = () => {
-    setTimeout(()=>setVisible(true),50);
+    setTimeout(() => setVisible(true), 50);
   };
 
   const handleClose = () => {
-    setTimeout(()=>setVisible(false),50);
+    setTimeout(() => setVisible(false), 50);
 
   };
   const handleContinue = async () => {
@@ -92,11 +113,11 @@ const OnBoardProgressScreen = ({ route }) => {
       }>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-          <Typo variant="hSub" style={styles.header}>На каком этапе ты находишься</Typo>
-          <Typo variant="body1" style={styles.subheader}>На текущий момент</Typo>
+            <Typo variant="hSub" style={styles.header}>На каком этапе ты находишься</Typo>
+            <Typo variant="body1" style={styles.subheader}>На текущий момент</Typo>
           </View>
           <ProgressBar progress={progress} setProgress={setProgress} />
-          <View style={styles.divider}/>
+          <View style={styles.divider} />
           <View style={styles.buttonContainer}>
             <Button
               title="Иду к цели"
@@ -132,15 +153,15 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   header: {
-    fontSize: SPACING.xl*1.4,
-    lineHeight: SPACING.xl*1.4,
+    fontSize: SPACING.xl * 1.4,
+    lineHeight: SPACING.xl * 1.4,
   },
   subheader: {
     color: COLORS.neutral.dark,
   },
-  divider:{
+  divider: {
     display: 'flex',
-    flexGrow:2
+    flexGrow: 2
   },
   buttonContainer: {
     marginTop: SPACING.xl,

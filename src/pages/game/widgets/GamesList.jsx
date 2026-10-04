@@ -10,12 +10,14 @@ import InfoCard from '~/widgets/InfoCard/InfoCard';
 import { DietOptionCard } from '~/widgets/OptionCard/OptionCard';
 import InfoModal from '../../../widgets/modal/InfoModal';
 import Button from '../../../shared/ui/button';
+import Game2048InfoModal from './Game2048/InfoModal';
 
 const GamesList = ({ navigation, points }) => {
   // Mock image for 2048 game card
   const game2048Image = require('~/shared/assets/images/game2048.png');
   const viktorinaImage = require('~/shared/assets/images/viktorina.jpg');
   const [visible, setVisible] = useState(false);
+  const [game2048InfoVisible, setGame2048InfoVisible] = useState(false);
 
   const handleNavigateToGame = () => {
     navigation.navigate('Game2048');
@@ -95,7 +97,19 @@ const GamesList = ({ navigation, points }) => {
               onPress={handleStartQuiz}
             />
             <DietOptionCard
-              title="2048"
+              title={
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <Typo variant={'h4'}>2048</Typo>
+                  <TouchableWithoutFeedback onPress={() => setGame2048InfoVisible(true)}>
+                    <MaterialIcons
+                      style={{ marginLeft: 6 }}
+                      name="help-outline"
+                      size={20}
+                      color={COLORS.neutral.dark}
+                    />
+                  </TouchableWithoutFeedback>
+                </View>
+              }
               subtitle="Собирай одинаковые числа"
               image={game2048Image}
               onPress={handleNavigateToGame}
@@ -122,6 +136,10 @@ const GamesList = ({ navigation, points }) => {
         visible={visible}
         onClose={handleClose}
         title="Зачем мне игры?"
+      />
+      <Game2048InfoModal
+        visible={game2048InfoVisible}
+        onClose={() => setGame2048InfoVisible(false)}
       />
     </ScreenTransition>
   );

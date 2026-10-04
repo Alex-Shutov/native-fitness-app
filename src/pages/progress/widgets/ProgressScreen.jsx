@@ -22,7 +22,7 @@ const ProgressScreen = () => {
   const auth = useRecoilValue(authState);
   const onboarding = useRecoilValue(onboardingState);
 
-  const [progress,setProgress] = useRecoilState(progressState);
+  const [progress, setProgress] = useRecoilState(progressState);
   const trackerVs = useRecoilValue(trackerVersion)
   const [progressData, setProgressData] = useState(null);
 
@@ -45,7 +45,7 @@ const ProgressScreen = () => {
     };
 
     loadProgressData();
-  }, [auth?.startWeight,auth?.weight,auth?.targetWeight,trackerVs]);
+  }, [auth?.startWeight, auth?.weight, auth?.targetWeight, trackerVs]);
 
   // const handleStartQuiz = () => {
   //   navigation.navigate('QuizScreen', { fromStartButton: true });
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   //   fontSize: 36,
   //   marginBottom: SPACING.xl,
   // },
-  loadingContainer:{
+  loadingContainer: {
     backgroundColor: COLORS.page.background,
   },
   card: {

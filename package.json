@@ -7,7 +7,9 @@
     "start": "expo start",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "web": "node scripts/ensure-web-video.js && expo start --web"
+    "web": "node scripts/ensure-web-video.js && expo start --web",
+    "prebuild:android": "expo prebuild --platform android",
+    "build:android:release": "cd android && SENTRY_DISABLE_AUTO_UPLOAD=true NODE_ENV=production ./gradlew assembleRelease"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",

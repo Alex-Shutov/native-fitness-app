@@ -10,13 +10,16 @@ import {
 import { useSwipeHandler } from '~/pages/game/lib/useSwipeHandler';
 import ScreenTransition from '~/shared/ui/layout/ScreenTransition';
 import ScreenBackground from '~/shared/ui/layout/ScreenBackground';
-import {Typo}from '~/shared/ui/typo';
-import Theme, { SPACING } from '~/core/styles/theme';
+import { Typo } from '~/shared/ui/typo';
+import Theme, { COLORS, SPACING } from '~/core/styles/theme';
 import InfoCard from '~/widgets/InfoCard/InfoCard';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import Game2048InfoModal from './InfoModal';
 
 const Game2048 = () => {
   const navigation = useNavigation();
+  const [showInfo, setShowInfo] = useState(false);
 
   const [board, setBoard] = useState(() => {
     let initialBoard = [
@@ -96,36 +99,42 @@ const Game2048 = () => {
 
   return (
     <ScreenTransition>
-      <ScreenBackground showHeader={true} title={<Typo variant={'subtitle1'} style={styles.screenHeader}>2048</Typo>} >
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
+      <ScreenBackground showHeader={true} title={
+        <Typo variant={'subtitle1'} style={styles.screenHeader}>
+          2048{'  '}
 
-        </View>
-        <View style={styles.cards}>
-        {/*<Text style={styles.score}>Счет {score}</Text>*/}
-        <InfoCard label={'Счет'} value={
-          <Typo variant={'body0'}>{score}</Typo>
-        }/>
+        </Typo>
+      } >
+        <View style={styles.container}>
+          <View style={styles.headerContainer}>
 
-        </View>
-
-        <PanGestureHandler 
-          onHandlerStateChange={gestureHandler}
-          activeOffsetX={[-10, 10]}
-          activeOffsetY={[-10, 10]}
-          minPointers={1}
-          maxPointers={1}>
-          <View>
-            <Board board={board} />
           </View>
-        </PanGestureHandler>
-        <TouchableOpacity onPress={restartGame} style={styles.restartButton}>
-          <Typo variant={'body0'} style={styles.buttonText}>Перезапустить</Typo>
-        </TouchableOpacity>
+          <View style={styles.cards}>
+            {/*<Text style={styles.score}>Счет {score}</Text>*/}
+            <InfoCard label={'Счет'} value={
+              <Typo variant={'body0'}>{score}</Typo>
+            } />
 
-        <GameOverModal visible={gameOver} onRestart={restartGame} onClose={closeGame} />
-        <GameWonModal visible={gameWon} onRestart={restartGame} onClose={closeGame} />
-      </View>
+          </View>
+
+          <PanGestureHandler
+            onHandlerStateChange={gestureHandler}
+            activeOffsetX={[-10, 10]}
+            activeOffsetY={[-10, 10]}
+            minPointers={1}
+            maxPointers={1}>
+            <View>
+              <Board board={board} />
+            </View>
+          </PanGestureHandler>
+          <TouchableOpacity onPress={restartGame} style={styles.restartButton}>
+            <Typo variant={'body0'} style={styles.buttonText}>Перезапустить</Typo>
+          </TouchableOpacity>
+
+          <GameOverModal visible={gameOver} onRestart={restartGame} onClose={closeGame} />
+          <GameWonModal visible={gameWon} onRestart={restartGame} onClose={closeGame} />
+          <Game2048InfoModal visible={showInfo} onClose={() => setShowInfo(false)} />
+        </View>
       </ScreenBackground>
     </ScreenTransition>
   );
@@ -140,8 +149,8 @@ const styles = StyleSheet.create({
     paddingBottom: 136, // Отступ для нижней навигации
 
   },
-  screenHeader:{
-    fontSize: SPACING.xl * 1.5 ,
+  screenHeader: {
+    fontSize: SPACING.xl * 1.5,
     lineHeight: SPACING.xl * 2.2,
   },
   headerContainer: {
@@ -151,8 +160,8 @@ const styles = StyleSheet.create({
     fontSize: SPACING.xl * 1.5,
     lineHeight: SPACING.xl * 1.8,
   },
-  cards:{
-    gap:12,
+  cards: {
+    gap: 12,
     flexDirection: 'row',
   },
   restartButton: {
@@ -168,7 +177,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#2A2A34',
     fontWeight: 'bold',
-    fontSize:Theme.fontSizes.xl,
+    fontSize: Theme.fontSizes.xl,
   },
   title: {
     fontSize: 32,
